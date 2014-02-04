@@ -122,7 +122,7 @@ public:
 
 	void print_ast(ostream & file_buffer);
 
-	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+	//Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
 
@@ -138,5 +138,21 @@ public:
 
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
+
+
+class Goto_Ast:public Ast
+{
+	int bbno;
+public:
+	Goto_Ast(int temp_bb);
+	int get_bbno();
+	~Goto_Ast();
+	void print_ast(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+
+
 
 #endif

@@ -159,7 +159,9 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 
 	else if (eval_env.is_variable_defined(variable_name) && loc_var_val != NULL)
 	{
+
 		if (loc_var_val->get_result_enum() == int_result)
+
 			file_buffer << loc_var_val->get_value() << "\n";
 		else
 			report_internal_error("Result type can only be int and float");
@@ -265,6 +267,7 @@ void Return_Ast::print_ast(ostream & file_buffer)
 
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
+	file_buffer << AST_SPACE << "Return <NOTHING>\n";
 	Eval_Result & result = *new Eval_Result_Value_Int();
 	return result;
 }
@@ -276,11 +279,11 @@ template class Number_Ast<int>;
 
 
 
-Relational_Expr_Ast::Relational_Expr_Ast(Ast * temp_lhs, Ast * temp_rhs, relationalOperator temp_oper)
+Relational_Expr_Ast::Relational_Expr_Ast(Ast * temp_lhs, Ast * temp_rhs, relationalOperator temp_opr)
 {
 	lhs = temp_lhs;
 	rhs = temp_rhs;	
-	ro = temp_oper;
+	ro = temp_opr;
 }
 
 Relational_Expr_Ast::~Relational_Expr_Ast()
@@ -318,7 +321,7 @@ void Relational_Expr_Ast::print_ast(ostream & file_buffer)
 	file_buffer << ")\n";
 }
 
-
+/*
 Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
 	Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
@@ -334,5 +337,38 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 
 	lhs->print_value(eval_env, file_buffer);
 
+	return result;
+}
+*/
+
+
+
+/**********************************< GOTO >********************************************/
+
+
+Goto_Ast::Goto_Ast(int temp_bb)
+{
+	bbno = temp_bb;
+}
+
+Goto_Ast::~Goto_Ast()
+{}
+
+int Goto_Ast::get_bbno(){
+	return bbno;
+}
+
+void Goto_Ast::print_ast(ostream & file_buffer){
+	file_buffer << AST_SPACE << "Goto statement:\n";
+
+	file_buffer << AST_NODE_SPACE"Successor: "<<bbno<<"\n";
+	
+}
+
+
+Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+	Eval_Result & result = *new Eval_Result_Value_Goto();
+	result.set_value(bbno);
 	return result;
 }

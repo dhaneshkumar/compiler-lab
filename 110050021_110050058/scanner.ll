@@ -96,6 +96,9 @@ goto		{
 			store_token_name("BASIC BLOCK");
 		
 		//	std::cout<< "passing bb\n";
+		ParserBase::STYPE__ * val = getSval();
+					val->string_value = new std::string(matched());
+
 			return Parser::BB;
 		}
 			 

@@ -34,7 +34,8 @@ using namespace std;
 typedef enum
 {
 	int_result,
-	void_result
+	void_result,
+	goto_result
 } Result_Enum;
 
 class Eval_Result;
@@ -76,6 +77,25 @@ class Eval_Result_Value_Int:public Eval_Result_Value
 public:
 	Eval_Result_Value_Int();
 	~Eval_Result_Value_Int();
+
+	void set_value(int number);
+	int get_value();
+
+	void set_variable_status(bool def);
+	bool is_variable_defined();
+
+	void set_result_enum(Result_Enum res);
+	Result_Enum get_result_enum();
+};
+
+
+class Eval_Result_Value_Goto:public Eval_Result_Value
+{
+	int value;
+	bool defined;
+public:
+	Eval_Result_Value_Goto();
+	~Eval_Result_Value_Goto();
 
 	void set_value(int number);
 	int get_value();
