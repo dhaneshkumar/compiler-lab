@@ -95,7 +95,7 @@ goto		{
 "<bb "[0-9]+">" {
 			store_token_name("BASIC BLOCK");
 		
-		//	std::cout<< "passing bb\n";
+			std::cout<< "passing bb\n";
 			return Parser::BB;
 		}
 			 
