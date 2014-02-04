@@ -1,0 +1,29 @@
+Roll No- 110050021, Dhanesh Kumar
+Roll No- 110050058, Abhilash Gupta
+
+Changes made in scanner.ll :
+Three new tokens IF, ELSE, GOTO for the keywords "if","else","goto".
+also a meta char '!' was added.
+
+Changes made in parser.yy :
+the following types were updated :
+
+->	assignment_statement got a new rule- variable '=' relop_expression ';'
+
+->	executable_statement_list got two new rules- assignment_statement_list GOTO '<' NAME INTEGER_NUMBER '>'';'
+						     assignment_statement_list if_else_clause ';'
+					
+The following types were added :
+
+->	if_else_clause: //covers the if expression goto __ else goto __
+	IF '(' relop_expression ')' GOTO '<' NAME INTEGER_NUMBER '>'';' ELSE GOTO '<' NAME INTEGER_NUMBER '>'
+	
+->	relop : //defines relational operator
+	'>' or '<' or '==' or '!=' or '>=' or '<='
+	
+->	relop_expression : //defines relational expression
+	variable relop variable
+or	constant relop variable
+or	variable relop constant
+or	relop_expression relop  variable
+or	relop_expression relop  constant	
