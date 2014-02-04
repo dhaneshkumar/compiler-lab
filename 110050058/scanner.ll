@@ -53,7 +53,7 @@ goto		{
 
 [{}():;]	{
 			store_token_name("META CHAR");
-		//	std:: cout<<"pass"<< matched()[0] <<"\n";
+			std:: cout<<"pass"<< matched()[0] <<"\n";
 			return matched()[0];
 		}
 		
@@ -95,7 +95,9 @@ goto		{
 "<bb "[0-9]+">" {
 			store_token_name("BASIC BLOCK");
 		
-		//	std::cout<< "passing bb\n";
+			std::cout<< "passing bb\n";
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string(matched());
 			return Parser::BB;
 		}
 			 

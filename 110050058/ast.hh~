@@ -104,24 +104,22 @@ public:
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
-class Conditional_Ast:public Ast {
+class Goto_Ast:public Ast{
 
-	int number;
-	Symbol_Table_Entry variable_symbol_entry;
+	int bbnum;
+	//string bb;
 
 public:
-	Name_Ast(string & name, Symbol_Table_Entry & var_entry);
-	~Name_Ast();
+	Goto_Ast(int & num);
+	~Goto_Ast();
 
 	Data_Type get_data_type();
 
 	void print_ast(ostream & file_buffer);
 
-	void print_value(Local_Environment & eval_env, ostream & file_buffer);
-	Eval_Result & get_value_of_evaluation(Local_Environment & eval_env);
-	void set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & result);
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
+
 
 class Return_Ast:public Ast
 {

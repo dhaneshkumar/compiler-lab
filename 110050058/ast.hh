@@ -103,8 +103,24 @@ public:
 
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
+/*
+class Goto_Ast:public Ast{
 
+	int bbnum;
+	//string bb;
 
+public:
+	Goto_Ast(int & num);
+	~Goto_Ast();
+
+	Data_Type get_data_type();
+
+	void print_ast(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+*/
 class Return_Ast:public Ast
 {
 
