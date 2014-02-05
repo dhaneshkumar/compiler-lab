@@ -64,31 +64,43 @@ goto		{
 
 ">="		{
 			store_token_name("GE");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string("GE");
 			return Parser::GE;
 		}
 
 ">"		{
 			store_token_name("GT");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string("GT");
 			return Parser::GT;
 		}
 
 "<"		{
 			store_token_name("LT");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string("LT");
 			return Parser::LT;
 		}
 
 "<="		{
 			store_token_name("LE");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string("LE");
 			return Parser::LE;
 		}
 
 "!="		{
 			store_token_name("NE");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string("NE");
 			return Parser::NE;
 		}
 
 "=="		{
 			store_token_name("EQ");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string("EQ");
 			return Parser::EQ;
 		}
 
@@ -97,7 +109,7 @@ goto		{
 		
 		//	std::cout<< "passing bb\n";
 		ParserBase::STYPE__ * val = getSval();
-					val->string_value = new std::string(matched());
+		val->string_value = new std::string(matched());
 
 			return Parser::BB;
 		}

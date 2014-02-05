@@ -137,7 +137,6 @@ Result_Enum Eval_Result_Value_Goto::get_result_enum()
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////////
 
 Local_Environment::Local_Environment()

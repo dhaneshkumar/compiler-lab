@@ -46,12 +46,9 @@
 %token <string_value> ELSE
 %token <string_value> GOTO
 %token <string_value> ASSIGN_OP
-%token <string_value> LT
-%token <string_value> LE
-%token <string_value> EQ
-%token <string_value> NE
-%token <string_value> GT
-%token <string_value> GE
+
+%left <string_value>NE EQ
+%left <string_value> LT LE  GT GE 
 
 
  
@@ -62,6 +59,7 @@
 %type <ast_list> executable_statement_list
 %type <ast_list> assignment_statement_list
 %type <ast> assignment_statement
+%type <ast> relop_expression
 %type <ast> variable
 %type <ast> constant
 
@@ -268,67 +266,81 @@ basic_block:
 	}
 ;
 
-/*
+
 if_else_clause:
 	IF '(' relop_expression ')' GOTO BB ';' ELSE GOTO BB 
 	{
 	}
 ;
 
-relop_expression :
-	variable relop variable
+
+relop_expression : 
+	relop_expression LT relop_expression
 	{
+		$$ = new Relational_Expr_Ast($1, $3, $2);
+
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
-	constant relop variable
+	relop_expression LE relop_expression
 	{
+		$$ = new Relational_Expr_Ast($1, $3, $2);
+
+		int line = get_line_number();
+		$$->check_ast(line);
+
 	}
 |
-	variable relop constant
+	relop_expression GT relop_expression
 	{
+		$$ = new Relational_Expr_Ast($1, $3, $2);
+
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
-	constant relop constant
+	relop_expression GE relop_expression
 	{
+		$$ = new Relational_Expr_Ast($1, $3, $2);
+
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
-	relop_expression relop  variable
+	relop_expression EQ relop_expression
 	{
+		$$ = new Relational_Expr_Ast($1, $3, $2);
+
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
-	relop_expression relop  constant
+	relop_expression NE relop_expression
 	{
+		$$ = new Relational_Expr_Ast($1, $3, $2);
+
+		int line = get_line_number();
+		$$->check_ast(line);
+	}
+|
+	variable
+	{
+		$$ = $1;
+	}
+|
+	constant
+	{
+		$$=$1;
 	}
 
 ;
 
-relop :
-	LT
-	{
-	}
-|	
-	LE
-	{
-	}
-|
-	GT
-	{
-	}
-|
-	GE
-	{
-	}
-|
-	NE
-	{
-	}
-|
-	EQ
-	{
-	}	
-;
 
-*/
+
+
+
+
 executable_statement_list:
 	assignment_statement_list
 	{	 
@@ -413,12 +425,16 @@ assignment_statement:
 		$$->check_ast(line);
 		 
 	}
-	/*
+	
 |
 	variable ASSIGN_OP relop_expression ';'
 	{
+		$$ = new Assignment_Ast($1, $3);
+
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
-	*/
+	
 ;
 
 
