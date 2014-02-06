@@ -104,6 +104,8 @@ void Parser::check_bbno_exist(list<Basic_Block *> * bb_list)
   for(int j=0;j<1000 ; j++)
   {
    // cout<<111<<endl;
+
+   if(gt[j]!=0){
     int flag=0;
   for(i = bb_list->begin(); i != bb_list->end(); i++)
   {
@@ -125,6 +127,7 @@ void Parser::check_bbno_exist(list<Basic_Block *> * bb_list)
         string s= buff;
         report_error(s, -2);
         break;
+        }
         }
   }
 }

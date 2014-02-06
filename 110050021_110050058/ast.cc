@@ -470,7 +470,7 @@ Conditional_Ast::~Conditional_Ast()
 }
 
 void Conditional_Ast::print_ast(ostream & file_buffer){
-	file_buffer <<AST_SPACE<<"If_Else statement:\n";
+	file_buffer <<"\n"<<AST_SPACE<<"If_Else statement:\n";
 
 	r1->print_ast(file_buffer);
 	file_buffer<<"\n"<<AST_NODE_SPACE<<"True Successor: "<<g1->get_bbno()<<"\n";

@@ -421,25 +421,7 @@ assignment_statement_list:
 ;
 
 assignment_statement:
-	variable ASSIGN_OP variable ';'
-	{	 
-		$$ = new Assignment_Ast($1, $3);
-
-		int line = get_line_number();
-		$$->check_ast(line);
-		 
-	}
-|
-	variable ASSIGN_OP constant ';'
-	{	 
-		$$ = new Assignment_Ast($1, $3);
-
-		int line = get_line_number();
-		$$->check_ast(line);
-		 
-	}
 	
-|
 	variable ASSIGN_OP relop_expression ';'
 	{
 		$$ = new Assignment_Ast($1, $3);
