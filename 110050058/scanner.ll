@@ -53,7 +53,7 @@ goto		{
 
 [{}():;]	{
 			store_token_name("META CHAR");
-			std:: cout<<"pass"<< matched()[0] <<"\n";
+		//	std:: cout<<"pass"<< matched()[0] <<"\n";
 			return matched()[0];
 		}
 		
@@ -64,40 +64,53 @@ goto		{
 
 ">="		{
 			store_token_name("GE");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string("GE");
 			return Parser::GE;
 		}
 
 ">"		{
 			store_token_name("GT");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string("GT");
 			return Parser::GT;
 		}
 
 "<"		{
 			store_token_name("LT");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string("LT");
 			return Parser::LT;
 		}
 
 "<="		{
 			store_token_name("LE");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string("LE");
 			return Parser::LE;
 		}
 
 "!="		{
 			store_token_name("NE");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string("NE");
 			return Parser::NE;
 		}
 
 "=="		{
 			store_token_name("EQ");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string("EQ");
 			return Parser::EQ;
 		}
 
 "<bb "[0-9]+">" {
 			store_token_name("BASIC BLOCK");
 		
-			std::cout<< "passing bb\n";
-			ParserBase::STYPE__ * val = getSval();
-			val->string_value = new std::string(matched());
+		//	std::cout<< "passing bb\n";
+		ParserBase::STYPE__ * val = getSval();
+		val->string_value = new std::string(matched());
+
 			return Parser::BB;
 		}
 			 

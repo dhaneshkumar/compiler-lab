@@ -107,6 +107,7 @@ void Assignment_Ast::print_ast(ostream & file_buffer)
 	file_buffer << ")\n";
 }
 
+
 Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
 	Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
@@ -145,6 +146,7 @@ void Name_Ast::print_ast(ostream & file_buffer)
 	file_buffer << "Name : " << variable_name;
 }
 
+
 void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 {
 	Eval_Result_Value * loc_var_val = eval_env.get_variable_value(variable_name);
@@ -157,7 +159,9 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 
 	else if (eval_env.is_variable_defined(variable_name) && loc_var_val != NULL)
 	{
+
 		if (loc_var_val->get_result_enum() == int_result)
+
 			file_buffer << loc_var_val->get_value() << "\n";
 		else
 			report_internal_error("Result type can only be int and float");
@@ -177,6 +181,7 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 	}
 	file_buffer << "\n";
 }
+
 
 Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env)
 {
@@ -248,23 +253,6 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-/*
-Name_Ast::Name_Ast(string & name, Symbol_Table_Entry & var_entry)
-{
-	variable_name = name;
-	variable_symbol_entry = var_entry;
-}
-
-Name_Ast::~Name_Ast()
-{}
-
-Data_Type Name_Ast::get_data_type()
-{
-	return variable_symbol_entry.get_data_type();
-}
-
-*/
-///////////////////////////////////////////////////////////////////////////////
 
 Return_Ast::Return_Ast()
 {}
@@ -279,8 +267,240 @@ void Return_Ast::print_ast(ostream & file_buffer)
 
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
+	file_buffer << AST_SPACE << "Return <NOTHING>\n";
 	Eval_Result & result = *new Eval_Result_Value_Int();
 	return result;
 }
 
 template class Number_Ast<int>;
+
+
+/**********************< RELATIONAL >***************************************************/
+
+
+
+Relational_Expr_Ast::Relational_Expr_Ast(Ast * temp_lhs, Ast * temp_rhs, string* temp_opr)
+{
+	lhs = temp_lhs;
+	rhs = temp_rhs;	
+	ro = *temp_opr;
+}
+
+Relational_Expr_Ast::~Relational_Expr_Ast()
+{
+	delete lhs;
+	delete rhs;
+}
+
+Data_Type Relational_Expr_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+bool Relational_Expr_Ast::check_ast(int line)
+{
+	if (lhs->get_data_type() == rhs->get_data_type())
+	{
+		node_data_type = lhs->get_data_type();
+		return true;
+	}
+
+	report_error("Assignment statement data type not compatible", line);
+}
+
+void Relational_Expr_Ast::print_ast(ostream & file_buffer)
+{
+	file_buffer << "\n"<<AST_SPACE << "Condition: "<<ro<<"\n";
+
+	file_buffer << AST_NODE_SPACE"LHS (";
+	lhs->print_ast(file_buffer);
+	file_buffer << ")\n";
+
+	file_buffer << AST_NODE_SPACE << "RHS (";
+	rhs->print_ast(file_buffer);
+	file_buffer << ")";
+}
+
+
+Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+	Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
+
+	if (result.is_variable_defined() == false)
+		report_error("Variable should be defined to be on rhs", NOLINE);
+
+
+	Eval_Result & result1 = lhs->evaluate(eval_env, file_buffer);
+
+	if (result1.is_variable_defined() == false)
+		report_error("Variable should be defined to be on lhs", NOLINE);
+
+	//lhs->set_value_of_evaluation(eval_env, result);
+	Eval_Result & result3 = *new Eval_Result_Value_Int();
+	if (ro == "LE"){
+		if(result1.get_value() <= result.get_value())
+		{
+			result3.set_value(1);
+		}
+		else
+		{
+			result3.set_value(0);	
+		}
+	}
+	else if (ro == "LT")
+	{
+		if(result1.get_value() < result.get_value())
+		{
+			result3.set_value(1);
+		}
+		else
+		{
+			result3.set_value(0);	
+		}
+	}
+	else if (ro == "GE")
+	{
+		if(result1.get_value() >= result.get_value())
+		{
+			result3.set_value(1);
+		}
+		else
+		{
+			result3.set_value(0);	
+		}
+	}
+	else if (ro == "GT")
+	{
+		if(result1.get_value() > result.get_value())
+		{
+			result3.set_value(1);
+		}
+		else
+		{
+			result3.set_value(0);	
+		}
+	}
+	else if (ro == "EQ")
+	{
+		if(result1.get_value() == result.get_value())
+		{
+			result3.set_value(1);
+		}
+		else
+		{
+			result3.set_value(0);	
+		}
+	}
+	else if (ro == "NE")
+	{
+		if(result1.get_value() != result.get_value())
+		{
+			result3.set_value(1);
+		}
+		else
+		{
+			result3.set_value(0);	
+		}
+	}
+
+
+	// Print the result
+	//print_ast(file_buffer);
+
+	//lhs->print_value(eval_env, file_buffer);
+
+	return result3;
+}
+
+
+
+
+/**********************************< GOTO >********************************************/
+
+
+Goto_Ast::Goto_Ast(int temp_bb)
+{
+	bbno = temp_bb;
+}
+
+
+
+Goto_Ast::~Goto_Ast()
+{}
+
+int Goto_Ast::get_bbno(){
+	return bbno;
+}
+
+void Goto_Ast::print_ast(ostream & file_buffer){
+	file_buffer << AST_SPACE << "Goto statement:\n";
+
+	file_buffer << AST_NODE_SPACE"Successor: "<<bbno<<"\n";
+	
+}
+
+
+Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+
+	
+	file_buffer <<AST_SPACE<<"Goto statement:\n";
+	file_buffer <<AST_NODE_SPACE<< "Successor: " << bbno << "\n";
+	file_buffer <<AST_NODE_SPACE<< "GOTO (BB "<<bbno<<")"<< "\n";	
+
+	Eval_Result & result = *new Eval_Result_Value_Goto();
+	result.set_value(bbno);
+	return result;
+}
+
+/*********************************< IF-Else >********************************************/
+
+Conditional_Ast::Conditional_Ast(Ast* nr1,Goto_Ast* ng1,Goto_Ast* ng2)
+{
+	r1=nr1;
+	g1=ng1;
+	g2=ng2;
+}
+
+Conditional_Ast::~Conditional_Ast()
+{
+	delete r1;
+	delete g1;
+	delete g2;
+}
+
+void Conditional_Ast::print_ast(ostream & file_buffer){
+	file_buffer <<AST_SPACE<<"If_Else statement:\n";
+
+	r1->print_ast(file_buffer);
+	file_buffer<<"\n"<<AST_NODE_SPACE<<"True Successor: "<<g1->get_bbno()<<"\n";
+	file_buffer<<AST_NODE_SPACE<<"False Successor: "<<g2->get_bbno()<<"\n";
+}
+
+Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+
+
+	Eval_Result & result = r1->evaluate(eval_env, file_buffer);
+
+	if (result.is_variable_defined() == false)
+		report_error("Variable should be defined to be on rhs", NOLINE);
+
+	
+	Eval_Result & result1 = *new Eval_Result_Value_Goto();
+	print_ast(file_buffer);
+	if(result.get_value()==1)
+	{
+		file_buffer<<AST_SPACE<<"Condition True : Goto (BB "<<g1->get_bbno()<<")\n";
+		
+		result1.set_value(g1->get_bbno());
+		
+	}
+	else
+	{
+		file_buffer<<AST_SPACE<<"Condition False : Goto (BB "<<g2->get_bbno()<<")\n";
+		result1.set_value(g2->get_bbno());
+		
+	}
+	return result1;
+}

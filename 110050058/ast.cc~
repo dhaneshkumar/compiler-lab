@@ -248,22 +248,21 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-/*
-Name_Ast::Name_Ast(string & name, Symbol_Table_Entry & var_entry)
+
+Goto_Ast::Goto_Ast(int num)
 {
-	variable_name = name;
-	variable_symbol_entry = var_entry;
+	bbnum = num;
 }
 
-Name_Ast::~Name_Ast()
+Goto_Ast::~Goto_Ast()
 {}
 
-Data_Type Name_Ast::get_data_type()
+Data_Type Goto_Ast::get_data_type()
 {
 	return variable_symbol_entry.get_data_type();
 }
 
-*/
+
 ///////////////////////////////////////////////////////////////////////////////
 
 Return_Ast::Return_Ast()

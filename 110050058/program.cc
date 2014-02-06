@@ -52,14 +52,16 @@ void Program::delete_all()
 		delete i->second;
 }
 
+
 void Program::set_global_table(Symbol_Table & new_global_table)
 {
 	global_symbol_table = new_global_table;
 	global_symbol_table.set_table_scope(global);
 }
 
+
 void Program::set_procedure_map(Procedure & proc)
-{
+{	
 	procedure_map[proc.get_proc_name()] = &proc;
 }
 
@@ -90,6 +92,7 @@ Procedure * Program::get_main_procedure(ostream & file_buffer)
 	
 	return NULL;
 }
+
 
 void Program::print_ast()
 {

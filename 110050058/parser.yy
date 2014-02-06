@@ -1,5 +1,5 @@
 
- /*******************************************************************************************
+ /********************************************************************************************
 
                                 cfglp : A CFG Language Processor
                                 --------------------------------
@@ -19,7 +19,7 @@
            tools are  available at http://www.cse.iitb.ac.in/~uday/cfglp
 
 
-*********************************************************************************************/
+**********************************************************************************************/
 
 %scanner ../scanner.h
 %scanner-token-function d_scanner.lex()
@@ -46,12 +46,9 @@
 %token <string_value> ELSE
 %token <string_value> GOTO
 %token <string_value> ASSIGN_OP
-%token <string_value> LT
-%token <string_value> LE
-%token <string_value> EQ
-%token <string_value> NE
-%token <string_value> GT
-%token <string_value> GE
+
+%left <string_value>NE EQ
+%left <string_value> LT LE  GT GE 
 
 
  
@@ -62,6 +59,8 @@
 %type <ast_list> executable_statement_list
 %type <ast_list> assignment_statement_list
 %type <ast> assignment_statement
+%type <ast> relop_expression
+%type <ast> if_else_clause
 %type <ast> variable
 %type <ast> constant
 
@@ -204,13 +203,13 @@ declaration_statement:
 
 		delete $2;
 		 
-//		$$ = new Symbol_Table_Entry(*$2, int_data_type);
 	}
 ;
 
 basic_block_list:
 	basic_block_list basic_block
 	{	 
+		
 		if (!$2)
 		{
 			int line = get_line_number();
@@ -242,24 +241,18 @@ basic_block_list:
 basic_block:
 	BB ':' executable_statement_list
 	{	
-		if($1 == NULL) {
-		cout<<"$1 is null\n";
-		exit(0);
-		}
-		
 		if ((*$1).substr(1,2) != "bb")
 		{
-			
 			int line = get_line_number();
 			report_error("Not basic block lable", line);
 		}
-		//std::cout<<"bb\n";
+
 		if (atoi(((*$1).substr(4,((*$1).length()-5))).c_str()) < 2)
 		{
 			int line = get_line_number();
 			report_error("Illegal basic block lable", line);
 		}
-		
+
 		if ($3 != NULL)
 			$$ = new Basic_Block(atoi(((*$1).substr(4,((*$1).length()-5))).c_str()), *$3);
 		else
@@ -273,66 +266,86 @@ basic_block:
 		
 	}
 ;
-/*
+
+
 if_else_clause:
 	IF '(' relop_expression ')' GOTO BB ';' ELSE GOTO BB 
 	{
+		Goto_Ast  *ab = new  Goto_Ast(atoi(((*$6).substr(4,((*$6).length()-5))).c_str()));
+		Goto_Ast  *ab1 = new  Goto_Ast(atoi(((*$10).substr(4,((*$10).length()-5))).c_str()));
+
+		
+		$$ = new Conditional_Ast($3, ab, ab1);
 	}
 ;
 
-relop_expression :
-	variable relop variable
+
+relop_expression : 
+	relop_expression LT relop_expression
 	{
+		$$ = new Relational_Expr_Ast($1, $3, $2);
+
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
-	constant relop variable
+	relop_expression LE relop_expression
 	{
+		$$ = new Relational_Expr_Ast($1, $3, $2);
+
+		int line = get_line_number();
+		$$->check_ast(line);
+
 	}
 |
-	variable relop constant
+	relop_expression GT relop_expression
 	{
+		$$ = new Relational_Expr_Ast($1, $3, $2);
+
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
-	constant relop constant
+	relop_expression GE relop_expression
 	{
+		$$ = new Relational_Expr_Ast($1, $3, $2);
+
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
-	relop_expression relop  variable
+	relop_expression EQ relop_expression
 	{
+		$$ = new Relational_Expr_Ast($1, $3, $2);
+
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
-	relop_expression relop  constant
+	relop_expression NE relop_expression
 	{
+		$$ = new Relational_Expr_Ast($1, $3, $2);
+
+		int line = get_line_number();
+		$$->check_ast(line);
+	}
+|
+	variable
+	{
+		$$ = $1;
+	}
+|
+	constant
+	{
+		$$=$1;
 	}
 
 ;
 
-relop :
-	LT
-	{
-	}
-|	
-	LE
-	{
-	}
-|
-	GT
-	{
-	}
-|
-	GE
-	{
-	}
-|
-	NE
-	{
-	}
-|
-	EQ
-	{
-	}	
-;
-*/
+
+
+
+
 
 executable_statement_list:
 	assignment_statement_list
@@ -345,7 +358,7 @@ executable_statement_list:
 	{	 
 		Ast * ret = new Return_Ast();
 
-		return_statement_used_flag = true;			// Current procedure has an occurrence of return statement
+		return_statement_used_flag = true;					// Current procedure has an occurrence of return statement
 
 		if ($1 != NULL)
 			$$ = $1;
@@ -356,17 +369,35 @@ executable_statement_list:
 		$$->push_back(ret);
 		 
 	}
-/*
-| 	
 
+| 	
 	assignment_statement_list GOTO BB ';'
 	{
-		
+		Ast * ret = new Goto_Ast( atoi(((*$3).substr(4,((*$3).length()-5))).c_str()));
+
+		if ($1 != NULL)
+			$$ = $1;
+
+		else
+			$$ = new list<Ast *>;
+
+		$$->push_back(ret);
+
 	}
+
 |
 	assignment_statement_list if_else_clause ';'
 	{
-	} */
+		if ($1 == NULL)
+			$$ = new list<Ast *>;
+
+		else
+			$$ = $1;
+
+		$$->push_back($2);
+	}
+
+	
 ;
 
 assignment_statement_list:
@@ -406,12 +437,17 @@ assignment_statement:
 		int line = get_line_number();
 		$$->check_ast(line);
 		 
-	} /*
+	}
+	
 |
 	variable ASSIGN_OP relop_expression ';'
 	{
+		$$ = new Assignment_Ast($1, $3);
+
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
-*/
+	
 ;
 
 
