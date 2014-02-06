@@ -59,6 +59,11 @@ void Procedure::set_basic_block_list(list<Basic_Block *> bb_list)
 	basic_block_list = bb_list;
 }
 
+list<Basic_Block *>* Procedure::get_basic_block_list()
+{
+	return &basic_block_list;
+}
+
 void Procedure::set_local_list(Symbol_Table & new_list)
 {
 	local_symbol_table = new_list;
@@ -136,7 +141,7 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 		{
 			int k=result->get_value();
 			
-
+			int flag =0;
 			Basic_Block * goto_bb = &(get_start_basic_block());
 
 			while(goto_bb)
@@ -144,10 +149,23 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 				if(goto_bb->get_bb_number() == k)
 				{
 					current_bb=goto_bb;
+					flag=1;
 					break;
 				}
 				goto_bb = get_next_bb(*goto_bb);
 			}
+
+			if(flag==0)
+			{
+				char buff[50];
+				int cx= snprintf ( buff, 50, "bb %d doesn't exist", k);
+				string s= buff;// + k + " doesn't exist\n";
+				
+				//s.append(-2
+				report_error(s, -2);
+				
+			}
+			
 		}
 		else
 		{

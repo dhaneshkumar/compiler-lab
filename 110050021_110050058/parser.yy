@@ -117,27 +117,21 @@ procedure_body:
 	}
 	basic_block_list '}'
 	{	 
-		if (return_statement_used_flag == false)
-		{
-			int line = get_line_number();
-			report_error("Atleast 1 basic block should have a return statement", line);
-		}
 
 		current_procedure->set_basic_block_list(*$4);
-
+		check_bbno_exist(current_procedure->get_basic_block_list());
+		
 		delete $4;
 		 
 	}
 |	
 	'{' basic_block_list '}'
 	{	 
-		if (return_statement_used_flag == false)
-		{
-			int line = get_line_number();
-			report_error("Atleast 1 basic block should have a return statement", line);
-		}
+		
 
 		current_procedure->set_basic_block_list(*$2);
+
+		check_bbno_exist(current_procedure->get_basic_block_list());
 
 		delete $2;
 		 
@@ -218,6 +212,7 @@ basic_block_list:
 
 		bb_strictly_increasing_order_check($$, $2->get_bb_number());
 
+
 		$$ = $1;
 		$$->push_back($2);
 		 
@@ -274,6 +269,8 @@ if_else_clause:
 		Goto_Ast  *ab = new  Goto_Ast(atoi(((*$6).substr(4,((*$6).length()-5))).c_str()));
 		Goto_Ast  *ab1 = new  Goto_Ast(atoi(((*$10).substr(4,((*$10).length()-5))).c_str()));
 
+		store_goto( ab->get_bbno());
+		store_goto( ab1->get_bbno());
 		
 		$$ = new Conditional_Ast($3, ab, ab1);
 	}
@@ -374,6 +371,9 @@ executable_statement_list:
 	assignment_statement_list GOTO BB ';'
 	{
 		Ast * ret = new Goto_Ast( atoi(((*$3).substr(4,((*$3).length()-5))).c_str()));
+		Goto_Ast * ret1 = new Goto_Ast( atoi(((*$3).substr(4,((*$3).length()-5))).c_str()));
+
+		store_goto( ret1->get_bbno());
 
 		if ($1 != NULL)
 			$$ = $1;
