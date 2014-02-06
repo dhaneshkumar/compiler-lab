@@ -135,11 +135,7 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 		if(result->get_result_enum()==2)
 		{
 			int k=result->get_value();
-
-			file_buffer <<LOC_VAR_SPACE<<"Goto statement:\n";
-			file_buffer <<LOC_VAR_SPACE<< LOC_VAR_SPACE<< "Successor: " << k << "\n";
-			file_buffer <<LOC_VAR_SPACE<< "GOTO (BB "<<k<<")"<< "\n";
-
+			
 
 			Basic_Block * goto_bb = &(get_start_basic_block());
 

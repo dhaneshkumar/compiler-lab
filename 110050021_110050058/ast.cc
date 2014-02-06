@@ -310,7 +310,7 @@ bool Relational_Expr_Ast::check_ast(int line)
 
 void Relational_Expr_Ast::print_ast(ostream & file_buffer)
 {
-	file_buffer << AST_SPACE << "Condition: "<<ro<<"\n";
+	file_buffer << "\n"<<AST_SPACE << "Condition: "<<ro<<"\n";
 
 	file_buffer << AST_NODE_SPACE"LHS (";
 	lhs->print_ast(file_buffer);
@@ -318,7 +318,7 @@ void Relational_Expr_Ast::print_ast(ostream & file_buffer)
 
 	file_buffer << AST_NODE_SPACE << "RHS (";
 	rhs->print_ast(file_buffer);
-	file_buffer << ")\n";
+	file_buffer << ")";
 }
 
 
@@ -423,6 +423,8 @@ Goto_Ast::Goto_Ast(int temp_bb)
 	bbno = temp_bb;
 }
 
+
+
 Goto_Ast::~Goto_Ast()
 {}
 
@@ -440,7 +442,65 @@ void Goto_Ast::print_ast(ostream & file_buffer){
 
 Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
+
+	
+	file_buffer <<AST_SPACE<<"Goto statement:\n";
+	file_buffer <<AST_NODE_SPACE<< "Successor: " << bbno << "\n";
+	file_buffer <<AST_NODE_SPACE<< "GOTO (BB "<<bbno<<")"<< "\n";	
+
 	Eval_Result & result = *new Eval_Result_Value_Goto();
 	result.set_value(bbno);
 	return result;
+}
+
+/*********************************< IF-Else >********************************************/
+
+Conditional_Ast::Conditional_Ast(Ast* nr1,Goto_Ast* ng1,Goto_Ast* ng2)
+{
+	r1=nr1;
+	g1=ng1;
+	g2=ng2;
+}
+
+Conditional_Ast::~Conditional_Ast()
+{
+	delete r1;
+	delete g1;
+	delete g2;
+}
+
+void Conditional_Ast::print_ast(ostream & file_buffer){
+	file_buffer <<AST_SPACE<<"If_Else statement:\n";
+
+	r1->print_ast(file_buffer);
+	file_buffer<<"\n"<<AST_NODE_SPACE<<"True Successor: "<<g1->get_bbno()<<"\n";
+	file_buffer<<AST_NODE_SPACE<<"False Successor: "<<g2->get_bbno()<<"\n";
+}
+
+Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+
+
+	Eval_Result & result = r1->evaluate(eval_env, file_buffer);
+
+	if (result.is_variable_defined() == false)
+		report_error("Variable should be defined to be on rhs", NOLINE);
+
+	
+	Eval_Result & result1 = *new Eval_Result_Value_Goto();
+	print_ast(file_buffer);
+	if(result.get_value()==1)
+	{
+		file_buffer<<AST_SPACE<<"Condition True : Goto (BB "<<g1->get_bbno()<<")\n";
+		
+		result1.set_value(g1->get_bbno());
+		
+	}
+	else
+	{
+		file_buffer<<AST_SPACE<<"Condition False : Goto (BB "<<g2->get_bbno()<<")\n";
+		result1.set_value(g2->get_bbno());
+		
+	}
+	return result1;
 }

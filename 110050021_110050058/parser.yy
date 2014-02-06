@@ -60,6 +60,7 @@
 %type <ast_list> assignment_statement_list
 %type <ast> assignment_statement
 %type <ast> relop_expression
+%type <ast> if_else_clause
 %type <ast> variable
 %type <ast> constant
 
@@ -270,6 +271,11 @@ basic_block:
 if_else_clause:
 	IF '(' relop_expression ')' GOTO BB ';' ELSE GOTO BB 
 	{
+		Goto_Ast  *ab = new  Goto_Ast(atoi(((*$6).substr(4,((*$6).length()-5))).c_str()));
+		Goto_Ast  *ab1 = new  Goto_Ast(atoi(((*$10).substr(4,((*$10).length()-5))).c_str()));
+
+		
+		$$ = new Conditional_Ast($3, ab, ab1);
 	}
 ;
 
@@ -378,13 +384,20 @@ executable_statement_list:
 		$$->push_back(ret);
 
 	}
-/*
+
 |
 	assignment_statement_list if_else_clause ';'
 	{
+		if ($1 == NULL)
+			$$ = new list<Ast *>;
+
+		else
+			$$ = $1;
+
+		$$->push_back($2);
 	}
 
-	*/
+	
 ;
 
 assignment_statement_list:
