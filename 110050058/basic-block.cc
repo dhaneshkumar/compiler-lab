@@ -60,6 +60,7 @@ void Basic_Block::print_bb(ostream & file_buffer)
 		(*i)->print_ast(file_buffer);
 }
 
+
 Eval_Result & Basic_Block::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
 	Eval_Result * result = NULL;
@@ -73,6 +74,12 @@ Eval_Result & Basic_Block::evaluate(Local_Environment & eval_env, ostream & file
 			report_error ("Ast pointer seems to be NULL", NOLINE);
 
 		result = &((*i)->evaluate(eval_env, file_buffer)); 
+
+		/*if(result->get_result_enum()==2)
+		{
+			break;
+		}
+		*/
 	}
 
 	return *result;

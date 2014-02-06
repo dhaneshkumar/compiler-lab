@@ -28,10 +28,13 @@
 
 #define AST_SPACE "         "
 #define AST_NODE_SPACE "            "
+#define AST_IF_SPACE "               "
 
 using namespace std;
 
+
 class Ast;
+
 
 class Ast
 {
@@ -103,24 +106,29 @@ public:
 
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
-/*
-class Goto_Ast:public Ast{
 
-	int bbnum;
-	//string bb;
+/**************************************************************************************/
+//Relational AST
+class Relational_Expr_Ast:public Ast
+{
+	Ast * lhs;
+	Ast * rhs;
+	string ro;
 
 public:
-	Goto_Ast(int & num);
-	~Goto_Ast();
+	Relational_Expr_Ast(Ast * temp_lhs, Ast * temp_rhs, string* temp_opr);
+	~Relational_Expr_Ast();
 
 	Data_Type get_data_type();
+	bool check_ast(int line);
 
 	void print_ast(ostream & file_buffer);
 
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
-*/
+
+
 class Return_Ast:public Ast
 {
 
@@ -132,5 +140,39 @@ public:
 
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
+
+
+class Goto_Ast:public Ast
+{
+	int bbno;
+public:
+	Goto_Ast(int temp_bb);
+	int get_bbno();
+	~Goto_Ast();
+	void print_ast(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+/**************************************************************************************/
+
+/**************************************************************************************/
+//Cnditional AST
+class Conditional_Ast:public Ast
+{
+	Ast* r1;
+	Goto_Ast* g1;
+	Goto_Ast* g2;
+
+public:
+	Conditional_Ast(Ast* r1,Goto_Ast* g1,Goto_Ast* g2);
+	~Conditional_Ast();
+
+	void print_ast(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
+
+
 
 #endif
