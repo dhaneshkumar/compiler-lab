@@ -30,4 +30,22 @@ for f in cfgFiles:
 
     os.system("diff -bB expected generated")
 
-    print("\n*****Done with the checking cfg files EXCEPT infi loops!!***\n")
+print("\n*****Done with the checking cfg files EXCEPT infi loops!!***\n")
+
+
+error_files=[]
+for f in files:
+    fileName,fileExt = os.path.splitext( path + f)
+    if( fileExt == '.ecfg'):
+        error_files.append(path + "/" +f)
+
+
+for f in error_files:
+    print("Testing file  " + f ); 
+    command = "./cfglp -tokens  " + f + " 2> expected " 
+    os.system(command) 
+    command = "./cfglp -tokens " + f + " 2> generated " 
+    os.system(command)
+    os.system("diff -B expected generated")
+
+print("\n*****Done with the checking ecfg files!!***\n")

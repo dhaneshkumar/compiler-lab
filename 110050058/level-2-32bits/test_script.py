@@ -48,7 +48,7 @@ for f in files:
 
 for f in error_files:
     print("Testing file  " + f ); 
-    command = "./cfglp64 -tokens  " + f + " 2> expected " 
+    command = "./cfglp -tokens  " + f + " 2> expected " 
     os.system(command) 
     command = "./cfglp -tokens " + f + " 2> generated " 
     os.system(command)

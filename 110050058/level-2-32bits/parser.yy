@@ -394,6 +394,21 @@ typecast_exp:
 	{
 
 	}
+|
+	'(' FLOAT ')' '(' relop_expression ')'
+	{
+
+	}
+|
+	'(' DOUBLE ')' '(' relop_expression ')'
+	{
+
+	}
+|
+	'(' INTEGER ')' '(' relop_expression ')'
+	{
+
+	}
 ;
 
 arith_expression:
@@ -414,11 +429,7 @@ arith_expression:
 
 	}
 |
-	'(' arith_expression ')'
-	{
 
-	}
-|
 	variable arithop arith_expression
 	{
 
@@ -547,7 +558,7 @@ variable:
 |
 	'-' NAME
 	{
-	
+
 	}
 ;
 

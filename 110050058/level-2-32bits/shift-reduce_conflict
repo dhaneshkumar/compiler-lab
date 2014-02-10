@@ -83,3 +83,4 @@ Glob.cs306.cfg
 FloatUnary.cs306.cfg
 IfFloatArith.cs306.cfg
 IfFloatRelArith.cs306.cfg
+IfIntFloat.cs306.cfg
