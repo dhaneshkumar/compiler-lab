@@ -60,6 +60,7 @@ double 	{
 		store_token_name("META CHAR");
 		return Parser::DOUBLE;
 		}
+		
 [-+*/]  {
 		store_token_name("ARITHOP");
 		return matched()[0];

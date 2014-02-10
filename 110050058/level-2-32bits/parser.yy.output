@@ -24,19 +24,32 @@ Production Rules
 21: relop_expression (GE) ->  relop_expression GE relop_expression
 22: relop_expression (EQ) ->  relop_expression EQ relop_expression
 23: relop_expression (NE) ->  relop_expression NE relop_expression
-24: relop_expression ->  variable
-25: relop_expression ->  constant
-26: executable_statement_list ->  assignment_statement_list
-27: executable_statement_list (RETURN) ->  assignment_statement_list RETURN ';'
-28: executable_statement_list (GOTO) ->  assignment_statement_list GOTO BB ';'
-29: executable_statement_list (';') ->  assignment_statement_list if_else_clause ';'
-30: assignment_statement_list ->  <empty>
-31: assignment_statement_list ->  assignment_statement_list assignment_statement
-32: assignment_statement (ASSIGN_OP) ->  variable ASSIGN_OP relop_expression ';'
-33: variable (NAME) ->  NAME
-34: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
-35: constant (FLOAT_NUMBER) ->  FLOAT_NUMBER
-36: program_$ ->  program
+24: relop_expression ->  arith_expression
+25: arithop ('+') ->  '+'
+26: arithop ('-') ->  '-'
+27: arithop ('*') ->  '*'
+28: arithop ('/') ->  '/'
+29: typecast_exp ('(') ->  '(' FLOAT ')' relop_expression
+30: typecast_exp ('(') ->  '(' DOUBLE ')' relop_expression
+31: typecast_exp ('(') ->  '(' INTEGER ')' relop_expression
+32: arith_expression ->  variable
+33: arith_expression ->  constant
+34: arith_expression ->  typecast_exp
+35: arith_expression ('(') ->  '(' arith_expression ')'
+36: arith_expression ->  variable arithop arith_expression
+37: arith_expression ->  constant arithop arith_expression
+38: executable_statement_list ->  assignment_statement_list
+39: executable_statement_list (RETURN) ->  assignment_statement_list RETURN ';'
+40: executable_statement_list (GOTO) ->  assignment_statement_list GOTO BB ';'
+41: executable_statement_list (';') ->  assignment_statement_list if_else_clause ';'
+42: assignment_statement_list ->  <empty>
+43: assignment_statement_list ->  assignment_statement_list assignment_statement
+44: assignment_statement (ASSIGN_OP) ->  variable ASSIGN_OP relop_expression ';'
+45: variable (NAME) ->  NAME
+46: variable ('-') ->  '-' NAME
+47: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
+48: constant (FLOAT_NUMBER) ->  FLOAT_NUMBER
+49: program_$ ->  program
 
 
 Symbolic Terminal tokens:
@@ -54,24 +67,27 @@ Symbolic Terminal tokens:
    266: ELSE
    267: GOTO
    268: ASSIGN_OP
-   269: ARITHOP
-   270: NE
-   271: EQ
-   272: LT
-   273: LE
-   274: GT
-   275: GE
+   269: NE
+   270: EQ
+   271: LT
+   272: LE
+   273: GT
+   274: GE
     40: '('
     41: ')'
    123: '{'
    125: '}'
     59: ';'
     58: ':'
+    43: '+'
+    45: '-'
+    42: '*'
+    47: '/'
 
 
 Grammar States: 
 State 0:
-36: program_$ ->  . program 
+49: program_$ ->  . program 
   0:   On program to state 1
   1:   On declaration_statement_list to state 2
   2:   On procedure_name to state 3
@@ -83,7 +99,7 @@ State 0:
 
 
 State 1:
-36: program_$ -> program  . 
+49: program_$ -> program  . 
 
 
 State 2:
@@ -264,7 +280,7 @@ State 31:
 16: basic_block -> BB ':'  . executable_statement_list 
   0:   On executable_statement_list to state 33
   1:   On assignment_statement_list to state 34
-  Reduce by 30: assignment_statement_list ->  . 
+  Reduce by 42: assignment_statement_list ->  . 
 
 
 State 32:
@@ -281,11 +297,11 @@ State 33:
 
 
 State 34:
-26: executable_statement_list -> assignment_statement_list  . 
-27: executable_statement_list -> assignment_statement_list  . RETURN ';' 
-28: executable_statement_list -> assignment_statement_list  . GOTO BB ';' 
-29: executable_statement_list -> assignment_statement_list  . if_else_clause ';' 
-31: assignment_statement_list -> assignment_statement_list  . assignment_statement 
+38: executable_statement_list -> assignment_statement_list  . 
+39: executable_statement_list -> assignment_statement_list  . RETURN ';' 
+40: executable_statement_list -> assignment_statement_list  . GOTO BB ';' 
+41: executable_statement_list -> assignment_statement_list  . if_else_clause ';' 
+43: assignment_statement_list -> assignment_statement_list  . assignment_statement 
   0:   On RETURN to state 36
   1:   On GOTO to state 37
   2:   On if_else_clause to state 38
@@ -293,7 +309,8 @@ State 34:
   4:   On IF to state 40
   5:   On variable to state 41
   6:   On NAME to state 42
-  Reduce by 26: executable_statement_list -> assignment_statement_list  . 
+  7:   On '-' to state 43
+  Reduce by 38: executable_statement_list -> assignment_statement_list  . 
 
 
 State 35:
@@ -302,81 +319,99 @@ State 35:
 
 
 State 36:
-27: executable_statement_list -> assignment_statement_list RETURN  . ';' 
-  0:   On ';' to state 43
+39: executable_statement_list -> assignment_statement_list RETURN  . ';' 
+  0:   On ';' to state 44
 
 
 State 37:
-28: executable_statement_list -> assignment_statement_list GOTO  . BB ';' 
-  0:   On BB to state 44
+40: executable_statement_list -> assignment_statement_list GOTO  . BB ';' 
+  0:   On BB to state 45
 
 
 State 38:
-29: executable_statement_list -> assignment_statement_list if_else_clause  . ';' 
-  0:   On ';' to state 45
+41: executable_statement_list -> assignment_statement_list if_else_clause  . ';' 
+  0:   On ';' to state 46
 
 
 State 39:
-31: assignment_statement_list -> assignment_statement_list assignment_statement  . 
-  Reduce by 31: assignment_statement_list -> assignment_statement_list assignment_statement  . 
+43: assignment_statement_list -> assignment_statement_list assignment_statement  . 
+  Reduce by 43: assignment_statement_list -> assignment_statement_list assignment_statement  . 
 
 
 State 40:
 17: if_else_clause -> IF  . '(' relop_expression ')' GOTO BB ';' ELSE GOTO BB 
-  0:   On '(' to state 46
+  0:   On '(' to state 47
 
 
 State 41:
-32: assignment_statement -> variable  . ASSIGN_OP relop_expression ';' 
-  0:   On ASSIGN_OP to state 47
+44: assignment_statement -> variable  . ASSIGN_OP relop_expression ';' 
+  0:   On ASSIGN_OP to state 48
 
 
 State 42:
-33: variable -> NAME  . 
-  Reduce by 33: variable -> NAME  . 
+45: variable -> NAME  . 
+  Reduce by 45: variable -> NAME  . 
 
 
 State 43:
-27: executable_statement_list -> assignment_statement_list RETURN ';'  . 
-  Reduce by 27: executable_statement_list -> assignment_statement_list RETURN ';'  . 
+46: variable -> '-'  . NAME 
+  0:   On NAME to state 49
 
 
 State 44:
-28: executable_statement_list -> assignment_statement_list GOTO BB  . ';' 
-  0:   On ';' to state 48
+39: executable_statement_list -> assignment_statement_list RETURN ';'  . 
+  Reduce by 39: executable_statement_list -> assignment_statement_list RETURN ';'  . 
 
 
 State 45:
-29: executable_statement_list -> assignment_statement_list if_else_clause ';'  . 
-  Reduce by 29: executable_statement_list -> assignment_statement_list if_else_clause ';'  . 
+40: executable_statement_list -> assignment_statement_list GOTO BB  . ';' 
+  0:   On ';' to state 50
 
 
 State 46:
-17: if_else_clause -> IF '('  . relop_expression ')' GOTO BB ';' ELSE GOTO BB 
-  0:   On relop_expression to state 49
-  1:   On variable to state 50
-  2:   On constant to state 51
-  3:   On NAME to state 42
-  4:   On INTEGER_NUMBER to state 52
-  5:   On FLOAT_NUMBER to state 53
+41: executable_statement_list -> assignment_statement_list if_else_clause ';'  . 
+  Reduce by 41: executable_statement_list -> assignment_statement_list if_else_clause ';'  . 
 
 
 State 47:
-32: assignment_statement -> variable ASSIGN_OP  . relop_expression ';' 
-  0:   On relop_expression to state 54
-  1:   On variable to state 50
-  2:   On constant to state 51
-  3:   On NAME to state 42
-  4:   On INTEGER_NUMBER to state 52
-  5:   On FLOAT_NUMBER to state 53
+17: if_else_clause -> IF '('  . relop_expression ')' GOTO BB ';' ELSE GOTO BB 
+  0:   On relop_expression to state 51
+  1:   On arith_expression to state 52
+  2:   On variable to state 53
+  3:   On constant to state 54
+  4:   On typecast_exp to state 55
+  5:   On '(' to state 56
+  6:   On NAME to state 42
+  7:   On '-' to state 43
+  8:   On INTEGER_NUMBER to state 57
+  9:   On FLOAT_NUMBER to state 58
 
 
 State 48:
-28: executable_statement_list -> assignment_statement_list GOTO BB ';'  . 
-  Reduce by 28: executable_statement_list -> assignment_statement_list GOTO BB ';'  . 
+44: assignment_statement -> variable ASSIGN_OP  . relop_expression ';' 
+  0:   On relop_expression to state 59
+  1:   On arith_expression to state 52
+  2:   On variable to state 53
+  3:   On constant to state 54
+  4:   On typecast_exp to state 55
+  5:   On '(' to state 56
+  6:   On NAME to state 42
+  7:   On '-' to state 43
+  8:   On INTEGER_NUMBER to state 57
+  9:   On FLOAT_NUMBER to state 58
 
 
 State 49:
+46: variable -> '-' NAME  . 
+  Reduce by 46: variable -> '-' NAME  . 
+
+
+State 50:
+40: executable_statement_list -> assignment_statement_list GOTO BB ';'  . 
+  Reduce by 40: executable_statement_list -> assignment_statement_list GOTO BB ';'  . 
+
+
+State 51:
 17: if_else_clause -> IF '(' relop_expression  . ')' GOTO BB ';' ELSE GOTO BB 
 18: relop_expression -> relop_expression  . LT relop_expression 
 19: relop_expression -> relop_expression  . LE relop_expression 
@@ -384,128 +419,259 @@ State 49:
 21: relop_expression -> relop_expression  . GE relop_expression 
 22: relop_expression -> relop_expression  . EQ relop_expression 
 23: relop_expression -> relop_expression  . NE relop_expression 
-  0:   On ')' to state 55
-  1:   On LT to state 56
-  2:   On LE to state 57
-  3:   On GT to state 58
-  4:   On GE to state 59
-  5:   On EQ to state 60
-  6:   On NE to state 61
-
-
-State 50:
-24: relop_expression -> variable  . 
-  Reduce by 24: relop_expression -> variable  . 
-
-
-State 51:
-25: relop_expression -> constant  . 
-  Reduce by 25: relop_expression -> constant  . 
+  0:   On ')' to state 60
+  1:   On LT to state 61
+  2:   On LE to state 62
+  3:   On GT to state 63
+  4:   On GE to state 64
+  5:   On EQ to state 65
+  6:   On NE to state 66
 
 
 State 52:
-34: constant -> INTEGER_NUMBER  . 
-  Reduce by 34: constant -> INTEGER_NUMBER  . 
+24: relop_expression -> arith_expression  . 
+  Reduce by 24: relop_expression -> arith_expression  . 
 
 
 State 53:
-35: constant -> FLOAT_NUMBER  . 
-  Reduce by 35: constant -> FLOAT_NUMBER  . 
+32: arith_expression -> variable  . 
+36: arith_expression -> variable  . arithop arith_expression 
+  0:   On arithop to state 67
+  1:   On '+' to state 68
+  2:   On '-' to state 69
+  3:   On '*' to state 70
+  4:   On '/' to state 71
+  Reduce by 32: arith_expression -> variable  . 
 
 
 State 54:
-32: assignment_statement -> variable ASSIGN_OP relop_expression  . ';' 
+33: arith_expression -> constant  . 
+37: arith_expression -> constant  . arithop arith_expression 
+  0:   On arithop to state 72
+  1:   On '+' to state 68
+  2:   On '-' to state 69
+  3:   On '*' to state 70
+  4:   On '/' to state 71
+  Reduce by 33: arith_expression -> constant  . 
+
+
+State 55:
+34: arith_expression -> typecast_exp  . 
+  Reduce by 34: arith_expression -> typecast_exp  . 
+
+
+State 56:
+35: arith_expression -> '('  . arith_expression ')' 
+29: typecast_exp -> '('  . FLOAT ')' relop_expression 
+30: typecast_exp -> '('  . DOUBLE ')' relop_expression 
+31: typecast_exp -> '('  . INTEGER ')' relop_expression 
+  0:   On arith_expression to state 73
+  1:   On FLOAT to state 74
+  2:   On DOUBLE to state 75
+  3:   On INTEGER to state 76
+  4:   On variable to state 53
+  5:   On constant to state 54
+  6:   On typecast_exp to state 55
+  7:   On '(' to state 56
+  8:   On NAME to state 42
+  9:   On '-' to state 43
+  10:   On INTEGER_NUMBER to state 57
+  11:   On FLOAT_NUMBER to state 58
+
+
+State 57:
+47: constant -> INTEGER_NUMBER  . 
+  Reduce by 47: constant -> INTEGER_NUMBER  . 
+
+
+State 58:
+48: constant -> FLOAT_NUMBER  . 
+  Reduce by 48: constant -> FLOAT_NUMBER  . 
+
+
+State 59:
+44: assignment_statement -> variable ASSIGN_OP relop_expression  . ';' 
 18: relop_expression -> relop_expression  . LT relop_expression 
 19: relop_expression -> relop_expression  . LE relop_expression 
 20: relop_expression -> relop_expression  . GT relop_expression 
 21: relop_expression -> relop_expression  . GE relop_expression 
 22: relop_expression -> relop_expression  . EQ relop_expression 
 23: relop_expression -> relop_expression  . NE relop_expression 
-  0:   On ';' to state 62
-  1:   On LT to state 56
-  2:   On LE to state 57
-  3:   On GT to state 58
-  4:   On GE to state 59
-  5:   On EQ to state 60
-  6:   On NE to state 61
-
-
-State 55:
-17: if_else_clause -> IF '(' relop_expression ')'  . GOTO BB ';' ELSE GOTO BB 
-  0:   On GOTO to state 63
-
-
-State 56:
-18: relop_expression -> relop_expression LT  . relop_expression 
-  0:   On relop_expression to state 64
-  1:   On variable to state 50
-  2:   On constant to state 51
-  3:   On NAME to state 42
-  4:   On INTEGER_NUMBER to state 52
-  5:   On FLOAT_NUMBER to state 53
-
-
-State 57:
-19: relop_expression -> relop_expression LE  . relop_expression 
-  0:   On relop_expression to state 65
-  1:   On variable to state 50
-  2:   On constant to state 51
-  3:   On NAME to state 42
-  4:   On INTEGER_NUMBER to state 52
-  5:   On FLOAT_NUMBER to state 53
-
-
-State 58:
-20: relop_expression -> relop_expression GT  . relop_expression 
-  0:   On relop_expression to state 66
-  1:   On variable to state 50
-  2:   On constant to state 51
-  3:   On NAME to state 42
-  4:   On INTEGER_NUMBER to state 52
-  5:   On FLOAT_NUMBER to state 53
-
-
-State 59:
-21: relop_expression -> relop_expression GE  . relop_expression 
-  0:   On relop_expression to state 67
-  1:   On variable to state 50
-  2:   On constant to state 51
-  3:   On NAME to state 42
-  4:   On INTEGER_NUMBER to state 52
-  5:   On FLOAT_NUMBER to state 53
+  0:   On ';' to state 77
+  1:   On LT to state 61
+  2:   On LE to state 62
+  3:   On GT to state 63
+  4:   On GE to state 64
+  5:   On EQ to state 65
+  6:   On NE to state 66
 
 
 State 60:
-22: relop_expression -> relop_expression EQ  . relop_expression 
-  0:   On relop_expression to state 68
-  1:   On variable to state 50
-  2:   On constant to state 51
-  3:   On NAME to state 42
-  4:   On INTEGER_NUMBER to state 52
-  5:   On FLOAT_NUMBER to state 53
+17: if_else_clause -> IF '(' relop_expression ')'  . GOTO BB ';' ELSE GOTO BB 
+  0:   On GOTO to state 78
 
 
 State 61:
-23: relop_expression -> relop_expression NE  . relop_expression 
-  0:   On relop_expression to state 69
-  1:   On variable to state 50
-  2:   On constant to state 51
-  3:   On NAME to state 42
-  4:   On INTEGER_NUMBER to state 52
-  5:   On FLOAT_NUMBER to state 53
+18: relop_expression -> relop_expression LT  . relop_expression 
+  0:   On relop_expression to state 79
+  1:   On arith_expression to state 52
+  2:   On variable to state 53
+  3:   On constant to state 54
+  4:   On typecast_exp to state 55
+  5:   On '(' to state 56
+  6:   On NAME to state 42
+  7:   On '-' to state 43
+  8:   On INTEGER_NUMBER to state 57
+  9:   On FLOAT_NUMBER to state 58
 
 
 State 62:
-32: assignment_statement -> variable ASSIGN_OP relop_expression ';'  . 
-  Reduce by 32: assignment_statement -> variable ASSIGN_OP relop_expression ';'  . 
+19: relop_expression -> relop_expression LE  . relop_expression 
+  0:   On relop_expression to state 80
+  1:   On arith_expression to state 52
+  2:   On variable to state 53
+  3:   On constant to state 54
+  4:   On typecast_exp to state 55
+  5:   On '(' to state 56
+  6:   On NAME to state 42
+  7:   On '-' to state 43
+  8:   On INTEGER_NUMBER to state 57
+  9:   On FLOAT_NUMBER to state 58
 
 
 State 63:
-17: if_else_clause -> IF '(' relop_expression ')' GOTO  . BB ';' ELSE GOTO BB 
-  0:   On BB to state 70
+20: relop_expression -> relop_expression GT  . relop_expression 
+  0:   On relop_expression to state 81
+  1:   On arith_expression to state 52
+  2:   On variable to state 53
+  3:   On constant to state 54
+  4:   On typecast_exp to state 55
+  5:   On '(' to state 56
+  6:   On NAME to state 42
+  7:   On '-' to state 43
+  8:   On INTEGER_NUMBER to state 57
+  9:   On FLOAT_NUMBER to state 58
 
 
 State 64:
+21: relop_expression -> relop_expression GE  . relop_expression 
+  0:   On relop_expression to state 82
+  1:   On arith_expression to state 52
+  2:   On variable to state 53
+  3:   On constant to state 54
+  4:   On typecast_exp to state 55
+  5:   On '(' to state 56
+  6:   On NAME to state 42
+  7:   On '-' to state 43
+  8:   On INTEGER_NUMBER to state 57
+  9:   On FLOAT_NUMBER to state 58
+
+
+State 65:
+22: relop_expression -> relop_expression EQ  . relop_expression 
+  0:   On relop_expression to state 83
+  1:   On arith_expression to state 52
+  2:   On variable to state 53
+  3:   On constant to state 54
+  4:   On typecast_exp to state 55
+  5:   On '(' to state 56
+  6:   On NAME to state 42
+  7:   On '-' to state 43
+  8:   On INTEGER_NUMBER to state 57
+  9:   On FLOAT_NUMBER to state 58
+
+
+State 66:
+23: relop_expression -> relop_expression NE  . relop_expression 
+  0:   On relop_expression to state 84
+  1:   On arith_expression to state 52
+  2:   On variable to state 53
+  3:   On constant to state 54
+  4:   On typecast_exp to state 55
+  5:   On '(' to state 56
+  6:   On NAME to state 42
+  7:   On '-' to state 43
+  8:   On INTEGER_NUMBER to state 57
+  9:   On FLOAT_NUMBER to state 58
+
+
+State 67:
+36: arith_expression -> variable arithop  . arith_expression 
+  0:   On arith_expression to state 85
+  1:   On variable to state 53
+  2:   On constant to state 54
+  3:   On typecast_exp to state 55
+  4:   On '(' to state 56
+  5:   On NAME to state 42
+  6:   On '-' to state 43
+  7:   On INTEGER_NUMBER to state 57
+  8:   On FLOAT_NUMBER to state 58
+
+
+State 68:
+25: arithop -> '+'  . 
+  Reduce by 25: arithop -> '+'  . 
+
+
+State 69:
+26: arithop -> '-'  . 
+  Reduce by 26: arithop -> '-'  . 
+
+
+State 70:
+27: arithop -> '*'  . 
+  Reduce by 27: arithop -> '*'  . 
+
+
+State 71:
+28: arithop -> '/'  . 
+  Reduce by 28: arithop -> '/'  . 
+
+
+State 72:
+37: arith_expression -> constant arithop  . arith_expression 
+  0:   On arith_expression to state 86
+  1:   On variable to state 53
+  2:   On constant to state 54
+  3:   On typecast_exp to state 55
+  4:   On '(' to state 56
+  5:   On NAME to state 42
+  6:   On '-' to state 43
+  7:   On INTEGER_NUMBER to state 57
+  8:   On FLOAT_NUMBER to state 58
+
+
+State 73:
+35: arith_expression -> '(' arith_expression  . ')' 
+  0:   On ')' to state 87
+
+
+State 74:
+29: typecast_exp -> '(' FLOAT  . ')' relop_expression 
+  0:   On ')' to state 88
+
+
+State 75:
+30: typecast_exp -> '(' DOUBLE  . ')' relop_expression 
+  0:   On ')' to state 89
+
+
+State 76:
+31: typecast_exp -> '(' INTEGER  . ')' relop_expression 
+  0:   On ')' to state 90
+
+
+State 77:
+44: assignment_statement -> variable ASSIGN_OP relop_expression ';'  . 
+  Reduce by 44: assignment_statement -> variable ASSIGN_OP relop_expression ';'  . 
+
+
+State 78:
+17: if_else_clause -> IF '(' relop_expression ')' GOTO  . BB ';' ELSE GOTO BB 
+  0:   On BB to state 91
+
+
+State 79:
 18: relop_expression -> relop_expression LT relop_expression  . 
 18: relop_expression -> relop_expression  . LT relop_expression 
 19: relop_expression -> relop_expression  . LE relop_expression 
@@ -513,16 +679,16 @@ State 64:
 21: relop_expression -> relop_expression  . GE relop_expression 
 22: relop_expression -> relop_expression  . EQ relop_expression 
 23: relop_expression -> relop_expression  . NE relop_expression 
-  0 (removed by precedence):   On LT to state 56
-  1 (removed by precedence):   On LE to state 57
-  2 (removed by precedence):   On GT to state 58
-  3 (removed by precedence):   On GE to state 59
-  4 (removed by precedence):   On EQ to state 60
-  5 (removed by precedence):   On NE to state 61
+  0 (removed by precedence):   On LT to state 61
+  1 (removed by precedence):   On LE to state 62
+  2 (removed by precedence):   On GT to state 63
+  3 (removed by precedence):   On GE to state 64
+  4 (removed by precedence):   On EQ to state 65
+  5 (removed by precedence):   On NE to state 66
   Reduce by 18: relop_expression -> relop_expression LT relop_expression  . 
 
 
-State 65:
+State 80:
 19: relop_expression -> relop_expression LE relop_expression  . 
 18: relop_expression -> relop_expression  . LT relop_expression 
 19: relop_expression -> relop_expression  . LE relop_expression 
@@ -530,16 +696,16 @@ State 65:
 21: relop_expression -> relop_expression  . GE relop_expression 
 22: relop_expression -> relop_expression  . EQ relop_expression 
 23: relop_expression -> relop_expression  . NE relop_expression 
-  0 (removed by precedence):   On LT to state 56
-  1 (removed by precedence):   On LE to state 57
-  2 (removed by precedence):   On GT to state 58
-  3 (removed by precedence):   On GE to state 59
-  4 (removed by precedence):   On EQ to state 60
-  5 (removed by precedence):   On NE to state 61
+  0 (removed by precedence):   On LT to state 61
+  1 (removed by precedence):   On LE to state 62
+  2 (removed by precedence):   On GT to state 63
+  3 (removed by precedence):   On GE to state 64
+  4 (removed by precedence):   On EQ to state 65
+  5 (removed by precedence):   On NE to state 66
   Reduce by 19: relop_expression -> relop_expression LE relop_expression  . 
 
 
-State 66:
+State 81:
 20: relop_expression -> relop_expression GT relop_expression  . 
 18: relop_expression -> relop_expression  . LT relop_expression 
 19: relop_expression -> relop_expression  . LE relop_expression 
@@ -547,16 +713,16 @@ State 66:
 21: relop_expression -> relop_expression  . GE relop_expression 
 22: relop_expression -> relop_expression  . EQ relop_expression 
 23: relop_expression -> relop_expression  . NE relop_expression 
-  0 (removed by precedence):   On LT to state 56
-  1 (removed by precedence):   On LE to state 57
-  2 (removed by precedence):   On GT to state 58
-  3 (removed by precedence):   On GE to state 59
-  4 (removed by precedence):   On EQ to state 60
-  5 (removed by precedence):   On NE to state 61
+  0 (removed by precedence):   On LT to state 61
+  1 (removed by precedence):   On LE to state 62
+  2 (removed by precedence):   On GT to state 63
+  3 (removed by precedence):   On GE to state 64
+  4 (removed by precedence):   On EQ to state 65
+  5 (removed by precedence):   On NE to state 66
   Reduce by 20: relop_expression -> relop_expression GT relop_expression  . 
 
 
-State 67:
+State 82:
 21: relop_expression -> relop_expression GE relop_expression  . 
 18: relop_expression -> relop_expression  . LT relop_expression 
 19: relop_expression -> relop_expression  . LE relop_expression 
@@ -564,16 +730,16 @@ State 67:
 21: relop_expression -> relop_expression  . GE relop_expression 
 22: relop_expression -> relop_expression  . EQ relop_expression 
 23: relop_expression -> relop_expression  . NE relop_expression 
-  0 (removed by precedence):   On LT to state 56
-  1 (removed by precedence):   On LE to state 57
-  2 (removed by precedence):   On GT to state 58
-  3 (removed by precedence):   On GE to state 59
-  4 (removed by precedence):   On EQ to state 60
-  5 (removed by precedence):   On NE to state 61
+  0 (removed by precedence):   On LT to state 61
+  1 (removed by precedence):   On LE to state 62
+  2 (removed by precedence):   On GT to state 63
+  3 (removed by precedence):   On GE to state 64
+  4 (removed by precedence):   On EQ to state 65
+  5 (removed by precedence):   On NE to state 66
   Reduce by 21: relop_expression -> relop_expression GE relop_expression  . 
 
 
-State 68:
+State 83:
 22: relop_expression -> relop_expression EQ relop_expression  . 
 18: relop_expression -> relop_expression  . LT relop_expression 
 19: relop_expression -> relop_expression  . LE relop_expression 
@@ -581,16 +747,16 @@ State 68:
 21: relop_expression -> relop_expression  . GE relop_expression 
 22: relop_expression -> relop_expression  . EQ relop_expression 
 23: relop_expression -> relop_expression  . NE relop_expression 
-  0:   On LT to state 56
-  1:   On LE to state 57
-  2:   On GT to state 58
-  3:   On GE to state 59
-  4 (removed by precedence):   On EQ to state 60
-  5 (removed by precedence):   On NE to state 61
+  0:   On LT to state 61
+  1:   On LE to state 62
+  2:   On GT to state 63
+  3:   On GE to state 64
+  4 (removed by precedence):   On EQ to state 65
+  5 (removed by precedence):   On NE to state 66
   Reduce by 22: relop_expression -> relop_expression EQ relop_expression  . 
 
 
-State 69:
+State 84:
 23: relop_expression -> relop_expression NE relop_expression  . 
 18: relop_expression -> relop_expression  . LT relop_expression 
 19: relop_expression -> relop_expression  . LE relop_expression 
@@ -598,36 +764,144 @@ State 69:
 21: relop_expression -> relop_expression  . GE relop_expression 
 22: relop_expression -> relop_expression  . EQ relop_expression 
 23: relop_expression -> relop_expression  . NE relop_expression 
-  0:   On LT to state 56
-  1:   On LE to state 57
-  2:   On GT to state 58
-  3:   On GE to state 59
-  4 (removed by precedence):   On EQ to state 60
-  5 (removed by precedence):   On NE to state 61
+  0:   On LT to state 61
+  1:   On LE to state 62
+  2:   On GT to state 63
+  3:   On GE to state 64
+  4 (removed by precedence):   On EQ to state 65
+  5 (removed by precedence):   On NE to state 66
   Reduce by 23: relop_expression -> relop_expression NE relop_expression  . 
 
 
-State 70:
+State 85:
+36: arith_expression -> variable arithop arith_expression  . 
+  Reduce by 36: arith_expression -> variable arithop arith_expression  . 
+
+
+State 86:
+37: arith_expression -> constant arithop arith_expression  . 
+  Reduce by 37: arith_expression -> constant arithop arith_expression  . 
+
+
+State 87:
+35: arith_expression -> '(' arith_expression ')'  . 
+  Reduce by 35: arith_expression -> '(' arith_expression ')'  . 
+
+
+State 88:
+29: typecast_exp -> '(' FLOAT ')'  . relop_expression 
+  0:   On relop_expression to state 92
+  1:   On arith_expression to state 52
+  2:   On variable to state 53
+  3:   On constant to state 54
+  4:   On typecast_exp to state 55
+  5:   On '(' to state 56
+  6:   On NAME to state 42
+  7:   On '-' to state 43
+  8:   On INTEGER_NUMBER to state 57
+  9:   On FLOAT_NUMBER to state 58
+
+
+State 89:
+30: typecast_exp -> '(' DOUBLE ')'  . relop_expression 
+  0:   On relop_expression to state 93
+  1:   On arith_expression to state 52
+  2:   On variable to state 53
+  3:   On constant to state 54
+  4:   On typecast_exp to state 55
+  5:   On '(' to state 56
+  6:   On NAME to state 42
+  7:   On '-' to state 43
+  8:   On INTEGER_NUMBER to state 57
+  9:   On FLOAT_NUMBER to state 58
+
+
+State 90:
+31: typecast_exp -> '(' INTEGER ')'  . relop_expression 
+  0:   On relop_expression to state 94
+  1:   On arith_expression to state 52
+  2:   On variable to state 53
+  3:   On constant to state 54
+  4:   On typecast_exp to state 55
+  5:   On '(' to state 56
+  6:   On NAME to state 42
+  7:   On '-' to state 43
+  8:   On INTEGER_NUMBER to state 57
+  9:   On FLOAT_NUMBER to state 58
+
+
+State 91:
 17: if_else_clause -> IF '(' relop_expression ')' GOTO BB  . ';' ELSE GOTO BB 
-  0:   On ';' to state 71
+  0:   On ';' to state 95
 
 
-State 71:
+State 92:
+29: typecast_exp -> '(' FLOAT ')' relop_expression  . 
+18: relop_expression -> relop_expression  . LT relop_expression 
+19: relop_expression -> relop_expression  . LE relop_expression 
+20: relop_expression -> relop_expression  . GT relop_expression 
+21: relop_expression -> relop_expression  . GE relop_expression 
+22: relop_expression -> relop_expression  . EQ relop_expression 
+23: relop_expression -> relop_expression  . NE relop_expression 
+  0:   On LT to state 61
+  1:   On LE to state 62
+  2:   On GT to state 63
+  3:   On GE to state 64
+  4:   On EQ to state 65
+  5:   On NE to state 66
+  Reduce by 29: typecast_exp -> '(' FLOAT ')' relop_expression  . 
+
+
+State 93:
+30: typecast_exp -> '(' DOUBLE ')' relop_expression  . 
+18: relop_expression -> relop_expression  . LT relop_expression 
+19: relop_expression -> relop_expression  . LE relop_expression 
+20: relop_expression -> relop_expression  . GT relop_expression 
+21: relop_expression -> relop_expression  . GE relop_expression 
+22: relop_expression -> relop_expression  . EQ relop_expression 
+23: relop_expression -> relop_expression  . NE relop_expression 
+  0:   On LT to state 61
+  1:   On LE to state 62
+  2:   On GT to state 63
+  3:   On GE to state 64
+  4:   On EQ to state 65
+  5:   On NE to state 66
+  Reduce by 30: typecast_exp -> '(' DOUBLE ')' relop_expression  . 
+
+
+State 94:
+31: typecast_exp -> '(' INTEGER ')' relop_expression  . 
+18: relop_expression -> relop_expression  . LT relop_expression 
+19: relop_expression -> relop_expression  . LE relop_expression 
+20: relop_expression -> relop_expression  . GT relop_expression 
+21: relop_expression -> relop_expression  . GE relop_expression 
+22: relop_expression -> relop_expression  . EQ relop_expression 
+23: relop_expression -> relop_expression  . NE relop_expression 
+  0:   On LT to state 61
+  1:   On LE to state 62
+  2:   On GT to state 63
+  3:   On GE to state 64
+  4:   On EQ to state 65
+  5:   On NE to state 66
+  Reduce by 31: typecast_exp -> '(' INTEGER ')' relop_expression  . 
+
+
+State 95:
 17: if_else_clause -> IF '(' relop_expression ')' GOTO BB ';'  . ELSE GOTO BB 
-  0:   On ELSE to state 72
+  0:   On ELSE to state 96
 
 
-State 72:
+State 96:
 17: if_else_clause -> IF '(' relop_expression ')' GOTO BB ';' ELSE  . GOTO BB 
-  0:   On GOTO to state 73
+  0:   On GOTO to state 97
 
 
-State 73:
+State 97:
 17: if_else_clause -> IF '(' relop_expression ')' GOTO BB ';' ELSE GOTO  . BB 
-  0:   On BB to state 74
+  0:   On BB to state 98
 
 
-State 74:
+State 98:
 17: if_else_clause -> IF '(' relop_expression ')' GOTO BB ';' ELSE GOTO BB  . 
   Reduce by 17: if_else_clause -> IF '(' relop_expression ')' GOTO BB ';' ELSE GOTO BB  . 
 

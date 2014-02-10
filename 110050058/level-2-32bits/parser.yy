@@ -53,7 +53,7 @@
 %token <string_value> ELSE
 %token <string_value> GOTO
 %token <string_value> ASSIGN_OP
-%token <string_value> ARITHOP
+//%token <string_value> ARITHOP
 %left <string_value>NE EQ
 %left <string_value> LT LE  GT GE 
 
@@ -351,6 +351,52 @@ relop_expression :
 		*/
 	}
 |
+	arith_expression
+	{
+
+	}
+;
+
+arithop:
+	'+'
+	{
+
+	}
+|
+	'-'
+	{
+
+	}
+|
+	'*'
+	{
+
+	}
+|
+	'/'
+	{
+
+	}
+;
+
+typecast_exp:
+	'(' FLOAT ')' relop_expression
+	{
+
+	}
+|
+	'(' DOUBLE ')' relop_expression
+	{
+
+	}
+|
+	'(' INTEGER ')' relop_expression
+	{
+
+	}
+;
+
+arith_expression:
 	variable
 	{ /*
 		$$ = $1;
@@ -362,10 +408,27 @@ relop_expression :
 		$$=$1;
 		*/
 	}
+|
+	typecast_exp
+	{
 
+	}
+|
+	'(' arith_expression ')'
+	{
+
+	}
+|
+	variable arithop arith_expression
+	{
+
+	}
+|
+	constant arithop arith_expression
+	{
+
+	}
 ;
-
-
 
 
 executable_statement_list:
@@ -455,7 +518,6 @@ assignment_statement:
 		$$->check_ast(line);
 		*/
 	}
-	
 ;
 
 
@@ -481,6 +543,11 @@ variable:
 
 		delete $1;
 		 */
+	}
+|
+	'-' NAME
+	{
+	
 	}
 ;
 
