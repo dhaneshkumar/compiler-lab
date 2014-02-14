@@ -1,0 +1,28 @@
+Roll No- 110050021, Dhanesh Kumar
+Roll No- 110050058, Abhilash Gupta
+
+Changes made in scanner.ll :
+Three new tokens were defined, one for float("FLOAT"), one for double("DOUBLE") and one for the arithmetic operators[-+*/] ("ARITHOP")
+ast.hh, ast.cc :
+
+
+Changes made in parser.yy :
+
+the following types were added :
+
+-> arithop: representing the arithmetic operators
+-> typecast_exp: representing typecasted exressions of the format -"'(' FLOAT ')' relop_expression" OR "'(' FLOAT ')' '(' relop_expression ')'" where FLOAT can be replaced with DOUBLE or INTEGER
+
+-> arith_expression: containing variable/constant/typecast_exp as base definitions as well as the recursive definitions "variable arithop arith_expression" or "constant arithop arith_expression"
+
+-> variable was updated as "NAME" or " '-' NAME"
+
+-> constant was updated as "INTEGER_NUMBER" or "FLOAT_NUMBER"
+
+
+-> relop_expression got a new expansion :
+	"arith_expression"
+
+-> declaration_statement got 2 new expansions :
+	FLOAT NAME ';'
+	DOUBLE NAME ';'

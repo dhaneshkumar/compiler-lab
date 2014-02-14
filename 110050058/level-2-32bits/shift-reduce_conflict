@@ -1,0 +1,86 @@
+the one shift reduce conflict is due to the following expansions:
+
+assignment_statement:
+	
+	variable ASSIGN_OP relop_expression ';'
+	{ /*
+		$$ = new Assignment_Ast($1, $3);
+
+		int line = get_line_number();
+		$$->check_ast(line);
+		*/
+	}
+|
+	variable ASSIGN_OP arith_expression ';'
+	{
+
+	}
+	
+;
+
+arith_expression:
+	relop_expression
+	{
+
+	}
+|
+	arith_expression '-' relop_expression
+	{
+
+	}
+|
+	arith_expression '+' relop_expression
+	{
+
+	}
+|
+	arith_expression '*' relop_expression
+	{
+
+	}
+|
+	arith_expression '/' relop_expression
+	{
+
+	}
+;
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+//c = (float) a + b / (float) a;
+// a = (int) (b + 3.00);
+  // b = (float) ((double) a + 2.30);
+   //a = (int) ((double) b + 4.30);
+ //  b = (float) (a + 5);
+ if(a * b >= a != 0)
+ if(iftmp0 < b * 2.00 != 0)
+ a = -j * a / a - j;
+   if(-j <= a != 0)
+if(iftmp0 < -a != 0)
+a = (int) ((float) f * t + e / (float) c);
+t = (float) a * e / t / (float) f;
+if(b * c / a / b + a != 0)
+ if(b + c <= a != 0)
+ if(iftmp1 > e * d / c != 0)
+  a = (int) ((float) a + b);
+   a = (int) ((float) a + e / f * (float) d);
+   if((float) b <= (float) d + g * h / e != a)
+      if(c / d + b <= a < e - a != f)
+         if(-b <= a)
+c = b + a <= a == b;
+a = b * c / -a + a;
+
+
+UserIfTmp.cs306.cfg
+Arith.cs306.cfg
+ArithFloat.cs306.cfg
+test.cs306.cfg
+Const.cs306.cfg
+IfArith.cs306.cfg
+ArithIntFloat.cs306.cfg
+FloatRelArith.cs306.cfg
+Glob.cs306.cfg
+FloatUnary.cs306.cfg
+IfFloatArith.cs306.cfg
+IfFloatRelArith.cs306.cfg
+IfIntFloat.cs306.cfg
