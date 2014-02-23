@@ -56,8 +56,7 @@
 //%token <string_value> ARITHOP
 %left <string_value>NE EQ
 %left <string_value> LT LE  GT GE 
-%left '+' '-' 
-%left '*' '/' 
+
 
  /*
 %type <symbol_table> declaration_statement_list
@@ -298,11 +297,6 @@ if_else_clause:
 
 
 relop_expression : 
-	atomic
-	{
-
-	}
-|
 	relop_expression LT relop_expression
 	{ /*
 		$$ = new Relational_Expr_Ast($1, $3, $2);
@@ -357,43 +351,76 @@ relop_expression :
 		*/
 	}
 |
+	arith_expression
+	{
 
-	relop_expression '+' relop_expression
+	}
+;
+
+arithop:
+	'+'
+	{
+
+	}
+|
+	'-'
+	{
+
+	}
+|
+	'*'
+	{
+
+	}
+|
+	'/'
+	{
+
+	}
+;
+
+typecast_exp:
+	'(' FLOAT ')' relop_expression
+	{
+
+	}
+|
+	'(' DOUBLE ')' relop_expression
+	{
+
+	}
+|
+	'(' INTEGER ')' relop_expression
+	{
+
+	}
+|
+	'(' FLOAT ')' '(' relop_expression ')'
+	{
+
+	}
+|
+	'(' DOUBLE ')' '(' relop_expression ')'
+	{
+
+	}
+|
+	'(' INTEGER ')' '(' relop_expression ')'
+	{
+
+	}
+;
+
+arith_expression:
+	variable
 	{ /*
-		$$ = new Relational_Expr_Ast($1, $3, $2);
-
-		int line = get_line_number();
-		$$->check_ast(line);
+		$$ = $1;
 		*/
 	}
 |
-
-	relop_expression '-' relop_expression
+	constant
 	{ /*
-		$$ = new Relational_Expr_Ast($1, $3, $2);
-
-		int line = get_line_number();
-		$$->check_ast(line);
-		*/
-	}
-|
-
-	relop_expression '*' relop_expression
-	{ /*
-		$$ = new Relational_Expr_Ast($1, $3, $2);
-
-		int line = get_line_number();
-		$$->check_ast(line);
-		*/
-	}
-|
-
-	relop_expression '/' relop_expression
-	{ /*
-		$$ = new Relational_Expr_Ast($1, $3, $2);
-
-		int line = get_line_number();
-		$$->check_ast(line);
+		$$=$1;
 		*/
 	}
 |
@@ -401,57 +428,22 @@ relop_expression :
 	{
 
 	}
-|	
-	'-' atomic
+|
+	'(' arith_expression ')'
 	{
-	
 	}
-;
+|
 
-
-atomic:
-	variable
+	variable arithop arith_expression
 	{
 
 	}
 |
-	constant
-	{
-
-	}
-|
-	'(' relop_expression ')'
+	arith_expression arithop arith_expression
 	{
 
 	}
 ;
-
-
-dataType :
-	FLOAT
-	{
-
-	}
-|
-	DOUBLE
-	{
-
-	}
-|
-	INTEGER
-	{
-
-	}
-;
-
-
-typecast_exp:
-	'(' dataType ')' atomic
-	{
-
-	}
-;
-
 
 
 executable_statement_list:
@@ -566,6 +558,11 @@ variable:
 
 		delete $1;
 		 */
+	}
+|
+	'-' NAME
+	{
+
 	}
 ;
 
