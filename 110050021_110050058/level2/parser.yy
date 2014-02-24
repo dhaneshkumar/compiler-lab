@@ -403,9 +403,6 @@ relop_expression :
 	}
 |	
 	'-' atomic
-	{
-	
-	}
 ;
 
 
