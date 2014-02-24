@@ -280,6 +280,7 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 }
 
 template class Number_Ast<int>;
+template class Number_Ast<double>;
 
 
 /**********************< RELATIONAL >***************************************************/

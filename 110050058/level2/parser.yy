@@ -30,6 +30,7 @@
 {
 	int integer_value;
 	float float_value;
+	double double_value;
 	std::string * string_value;
 	list<Ast *> * ast_list;
 	Ast * ast;
@@ -46,9 +47,7 @@
 %token <string_value> NAME
 
 
-%token RETURN INTEGER 
-%token <string_value> FLOAT
-%token <string_value> DOUBLE
+%token RETURN dataType
 %token <string_value> IF
 %token <string_value> ELSE
 %token <string_value> GOTO
@@ -68,10 +67,11 @@
 %type <ast_list> assignment_statement_list
 %type <ast> assignment_statement
 %type <ast> relop_expression
-%type <ast> atomic
+//%type <ast> atomic
 %type <ast> if_else_clause
 %type <ast> variable
 %type <ast> constant
+%type <ast> typecast_exp
 
  
 
@@ -211,14 +211,14 @@ declaration_statement:
 |
 	FLOAT NAME ';'
 	{
-		$$ = new Symbol_Table_Entry(*$2, float_data_type);
+		$$ = new Symbol_Table_Entry(*$2, double_data_type);
 
 		delete $2;
 	}
 |
 	DOUBLE NAME ';'
 	{
-		$$ = new Symbol_Table_Entry(*$2, float_data_type);
+		$$ = new Symbol_Table_Entry(*$2, double_data_type);
 
 		delete $2;
 	}
@@ -305,7 +305,7 @@ if_else_clause:
 relop_expression : 
 	atomic
 	{
-
+		$$ = $1;
 	}
 |
 	relop_expression LT relop_expression
@@ -404,12 +404,12 @@ relop_expression :
 |
 	typecast_exp
 	{
-
+		$$ = $1;
 	}
 |	
 	'-' atomic
 	{
-	
+		$$ = $2;
 	}
 ;
 
@@ -417,17 +417,17 @@ relop_expression :
 atomic:
 	variable
 	{
-
+		$$ = $1;
 	}
 |
 	constant
 	{
-
+		$$ = $1;
 	}
 |
 	'(' relop_expression ')'
 	{
-
+		$$ = $2;
 	}
 ;
 
@@ -584,7 +584,7 @@ constant:
 |
 	FLOAT_NUMBER
 	{
-		$$ = new Number_Ast<float>($1, float_data_type);
+		$$ = new Number_Ast<double>($1, double_data_type);
 	}
 
 ;
