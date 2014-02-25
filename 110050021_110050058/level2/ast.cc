@@ -49,6 +49,10 @@ Data_Type Ast::get_data_type()
 	report_internal_error("Should not reach, Ast : get_data_type");
 }
 
+void Ast::set_data_type(string *k){
+	report_internal_error("Should not reach, Ast : set_data_type");
+}
+
 void Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 {
 	report_internal_error("Should not reach, Ast : print_value");
@@ -90,8 +94,8 @@ bool Assignment_Ast::check_ast(int line)
 		node_data_type = lhs->get_data_type();
 		return true;
 	}
-
-	report_error("Assignment statement data type not compatible", line);
+	//cout<<lhs->get_data_type()<<" "<< rhs->get_data_type()<<endl;
+	report_error(" #1 Assignment statement data type not compatible", line);
 }
 
 void Assignment_Ast::print_ast(ostream & file_buffer)
@@ -146,6 +150,26 @@ void Name_Ast::print_ast(ostream & file_buffer)
 	file_buffer << "Name : " << variable_name;
 }
 
+void Name_Ast::set_data_type(string *k)
+{
+	//cout<<*k<<" yahoo1\n";
+	if (*k == "INTEGER")
+	{
+		//cout<<*k<<" yahoo\n";
+		variable_symbol_entry.set_data_type(int_data_type);
+		//cout<<*k<<" yahoo2\n";
+	}
+	else if (*k == "FLOAT")
+	{
+		variable_symbol_entry.set_data_type(float_data_type);
+	}
+	else if (*k == "DOUBLE")
+	{
+		variable_symbol_entry.set_data_type(float_data_type);
+	}
+
+	
+}
 
 void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 {
@@ -237,7 +261,27 @@ Data_Type Number_Ast<DATA_TYPE>::get_data_type()
 template <class DATA_TYPE>
 void Number_Ast<DATA_TYPE>::print_ast(ostream & file_buffer)
 {
-	file_buffer << "Num : " << constant;
+	//if (node_data)
+	file_buffer << "Num : " ;
+	file_buffer<<fixed;
+	file_buffer<< setprecision(2) <<constant;
+}
+
+template <class DATA_TYPE>
+void Number_Ast<DATA_TYPE>::set_data_type(string *k)
+{
+	if (*k == "INTEGER")
+	{
+		node_data_type=int_data_type;
+	}
+	else if (*k == "FLOAT")
+	{
+		node_data_type=float_data_type;
+	}
+	else if (*k == "DOUBLE")
+	{
+		node_data_type=float_data_type;
+	}
 }
 
 template <class DATA_TYPE>
@@ -250,6 +294,13 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 
 		return result;
 	}
+
+/*	else if (node_data_type == float_data_type) {
+		Eval_Result & result = *new Eval_Result_Value_Int();
+		result.set_value(constant);
+
+		return result;
+	}*/
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -273,6 +324,8 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 }
 
 template class Number_Ast<int>;
+//template class Number_Ast<double>;
+template class Number_Ast<float>;
 
 
 /**********************< RELATIONAL >***************************************************/
@@ -297,28 +350,65 @@ Data_Type Relational_Expr_Ast::get_data_type()
 	return node_data_type;
 }
 
+void Relational_Expr_Ast::set_data_type(string *k)
+{
+	if (*k == "INTEGER")
+	{
+		node_data_type=int_data_type;
+	}
+	else if (*k == "FLOAT")
+	{
+		node_data_type=float_data_type;
+	}
+	else if (*k == "DOUBLE")
+	{
+		node_data_type=float_data_type;
+	}
+}
+
 bool Relational_Expr_Ast::check_ast(int line)
 {
-	if (lhs->get_data_type() == rhs->get_data_type())
+	//cout<<"ashdfj\n";
+	if (lhs == NULL) {
+		node_data_type = rhs->get_data_type();
+		return true;
+	}
+	else if (lhs->get_data_type() == rhs->get_data_type())
 	{
 		node_data_type = lhs->get_data_type();
 		return true;
 	}
-
+	//cout<<lhs->get_data_type()<<" "<<ro<<" "<< rhs->get_data_type()<<endl;
 	report_error("Assignment statement data type not compatible", line);
 }
 
 void Relational_Expr_Ast::print_ast(ostream & file_buffer)
 {
-	file_buffer << "\n"<<AST_SPACE << "Condition: "<<ro<<"\n";
+	//cout<<rhs->get_data_type()<<" data type of rhs\n";
+	if (ro == "PLUS" ||ro == "MINUS" || ro == "MULT" ||ro == "DIV" || ro == "UMINUS" ){
+		file_buffer << "\n"<<AST_NODE_SPACE<< "Arith: "<<ro<<"\n";
 
-	file_buffer << AST_NODE_SPACE"LHS (";
-	lhs->print_ast(file_buffer);
-	file_buffer << ")\n";
+	}
+	else{
+		file_buffer << "\n"<<AST_SPACE << "Condition: "<<ro<<"\n";
+	}
 
-	file_buffer << AST_NODE_SPACE << "RHS (";
-	rhs->print_ast(file_buffer);
-	file_buffer << ")";
+	if (lhs== NULL) 
+	{
+		file_buffer << AST_NODE_SPACE"LHS (";
+		rhs->print_ast(file_buffer);
+		file_buffer << ")";
+	}
+	else
+	{
+		file_buffer << AST_NODE_SPACE"LHS (";
+		lhs->print_ast(file_buffer);
+		file_buffer << ")\n";
+	
+		file_buffer << AST_NODE_SPACE << "RHS (";
+		rhs->print_ast(file_buffer);
+		file_buffer << ")";
+	}
 }
 
 
@@ -346,6 +436,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 		{
 			result3.set_value(0);	
 		}
+		node_data_type=int_data_type;
 	}
 	else if (ro == "LT")
 	{
@@ -357,6 +448,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 		{
 			result3.set_value(0);	
 		}
+		node_data_type=int_data_type;
 	}
 	else if (ro == "GE")
 	{
@@ -368,6 +460,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 		{
 			result3.set_value(0);	
 		}
+		node_data_type=int_data_type;
 	}
 	else if (ro == "GT")
 	{
@@ -379,6 +472,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 		{
 			result3.set_value(0);	
 		}
+		node_data_type=int_data_type;
 	}
 	else if (ro == "EQ")
 	{
@@ -390,6 +484,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 		{
 			result3.set_value(0);	
 		}
+		node_data_type=int_data_type;
 	}
 	else if (ro == "NE")
 	{
@@ -401,9 +496,33 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 		{
 			result3.set_value(0);	
 		}
+		node_data_type=int_data_type;
 	}
-
-
+	else if (ro == "PLUS")
+	{
+		result3.set_value(result1.get_value() + result.get_value());
+	}
+	else if (ro == "MINUS")
+	{
+		result3.set_value(result1.get_value() - result.get_value());
+	}
+	else if (ro == "MULT")
+	{
+		result3.set_value(result1.get_value() * result.get_value());
+	}
+	else if (ro == "DIV")
+	{
+		if(result.get_value()==0)
+		{
+			file_buffer << "error : divide by zero";
+			exit (0);
+		}
+		result3.set_value(result1.get_value() / result.get_value());
+	}
+	else if (ro == "UMINUS")
+	{
+		result3.set_value(0 - result.get_value());
+	}
 	// Print the result
 	//print_ast(file_buffer);
 

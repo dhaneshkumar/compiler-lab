@@ -1,0 +1,22 @@
+Roll No- 110050021, Dhanesh Kumar
+Roll No- 110050058, Abhilash Gupta
+
+Changes made in scanner.ll :
+Two new tokens were defined, one for float("FLOAT"), one for double("DOUBLE")
+Assigned priority to all arithmatice operators
+
+Changes made in parser.yy :
+the following types were added :
+
+-> atomic: representing an atomic intity. For e.g> variable, constant and (relop_expression)
+-> dataType : representing float, double and integer datatype
+-> typecast_exp: representing typecasted exressions of the format - '(' dataType ')' atomic
+-> Extended the relop expression by adding more cases
+	: atomic
+	: relop_expression (+-*/) relop_expression
+	: typecast_exp
+	: - atomic
+
+-> declaration_statement got 2 new expansions :
+	FLOAT NAME ';'
+	DOUBLE NAME ';'

@@ -129,6 +129,10 @@ Data_Type Symbol_Table_Entry::get_data_type()
 	return variable_data_type;
 }
 
+void Symbol_Table_Entry::set_data_type(Data_Type a){
+	variable_data_type = a;
+}
+
 string Symbol_Table_Entry::get_variable_name()
 {
 	return variable_name;
