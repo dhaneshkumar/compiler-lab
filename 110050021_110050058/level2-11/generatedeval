@@ -15,7 +15,7 @@ Evaluating Program
          Asgn:
             LHS (Name : b)
             RHS (Name : a)
-         b : 3
+         b : 3.00
 
          Asgn:
             LHS (Name : a)
@@ -27,5 +27,5 @@ Evaluating Program
 
       Local Variables (after evaluating):
          a : 3
-         b : 3
+         b : 3.00
    Global Variables (after evaluating):

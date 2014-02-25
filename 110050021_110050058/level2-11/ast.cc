@@ -153,16 +153,16 @@ void Name_Ast::print_ast(ostream & file_buffer)
 void Name_Ast::set_data_type(string *k)
 {
 	
-	cout<<*k<<" yahoo1\n";
+	
 	if (*k == "INTEGER")
 	{
-		cout<<*k<<" yahooint\n";
+		//cout<<*k<<" yahooint\n";
 		variable_symbol_entry.set_data_type(int_data_type);
 		//cout<<*k<<" yahoo2\n";
 	}
 	else if (*k == "FLOAT")
 	{
-			cout<<*k<<" yahoofloat\n";
+		//	cout<<*k<<" yahoofloat\n";
 		variable_symbol_entry.set_data_type(float_data_type);
 	}
 	else if (*k == "DOUBLE")
@@ -223,7 +223,7 @@ Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env)
 	{
 		//cout<<variable_name<<" "<<node_data_type<<endl;
 		Eval_Result * result = eval_env.get_variable_value(variable_name);
-		//cout<<variable_name<<" "<<node_data_type<<endl;
+		//cout<<variable_symbol_entry.get_data_type()<<" -----------"<<endl;
 		return *result;
 	}
 
@@ -234,7 +234,7 @@ Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env)
 void Name_Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result & result)
 {
 	Eval_Result_Value * i;
-	if (result.get_result_enum() == int_result)
+	if (variable_symbol_entry.get_data_type()== 1)
 	{
 		i = new Eval_Result_Value_Int();
 
@@ -243,7 +243,7 @@ void Name_Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result
 		dd.b=result.get_value().a;
 	 	i->set_value(dd);
 	}
-	else if(result.get_result_enum() == float_result) {
+	else if(variable_symbol_entry.get_data_type() == 2 || variable_symbol_entry.get_data_type() == 3) {
 		i = new Eval_Result_Value_Float();
 
 		dtype dd;
@@ -446,16 +446,16 @@ void Relational_Expr_Ast::print_ast(ostream & file_buffer)
 
 Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-		cout<<"abcsdfa\n";
+		
 	Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
 
 	if (result.is_variable_defined() == false)
 		report_error("Variable should be defined to be on rhs", NOLINE);
-	cout<<"abc1\n";
+	
 
 	if(node_data_type == 1)
 	{
-		cout<<"abc\n";
+		//cout<<"abc\n";
 		Eval_Result & result3 = *new Eval_Result_Value_Int();
 		dtype tr;
 		tr.a=1;
@@ -602,7 +602,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 /////////////////////////////////// FLOAT  ////////////////////////////////////	
 	else if(node_data_type==2 || node_data_type==3)
 	{
-			cout<<"abc2\n";
+			
 		Eval_Result & result3 = *new Eval_Result_Value_Float();
 		dtype tr;
 		tr.a=1;

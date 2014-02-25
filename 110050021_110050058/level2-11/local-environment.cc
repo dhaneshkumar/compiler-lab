@@ -220,10 +220,10 @@ void Local_Environment::print(ostream & file_buffer)
 		
 			else{
 				if  (vi->get_result_enum() == 0) {
-					file_buffer << VAR_SPACE << (*i).first << " : " <<(vi->get_value()).a<<" : "<<vi->get_result_enum()<<"\n";
+					file_buffer << VAR_SPACE << (*i).first << " : " <<(vi->get_value()).a<<"\n";
 				}
 				else if (vi->get_result_enum() == 3) {
-					file_buffer << VAR_SPACE << (*i).first << " : " <<(vi->get_value()).b<<" : "<<vi->get_result_enum()<<"\n";
+					file_buffer << VAR_SPACE << (*i).first << " : " <<(vi->get_value()).b<<"\n";
 				}
 			}
 		}
