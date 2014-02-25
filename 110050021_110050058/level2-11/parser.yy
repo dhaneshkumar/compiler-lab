@@ -476,10 +476,10 @@ dataType :
 typecast_exp:
 	'(' dataType ')' atomic
 	{
-		
-		$4->set_data_type($2);
-		//cout<<*($2)<<" Hahahah "<<$4->get_data_type()<<endl;
 		$$ = $4;
+		$$->set_data_type($2);
+		//cout<<*($2)<<" Hahahah "<<$$->get_data_type()<<endl;
+		
 	}
 ;
 

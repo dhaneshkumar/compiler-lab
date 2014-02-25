@@ -28,15 +28,21 @@ for f in cfgFiles:
     command = "./cfglp64 -ast -d " + f + " > expectedast " 
     os.system(command) 
     
+    command = "./cfglp64 -eval -d " + f + " > expectedeval " 
+    os.system(command)
+    
     command = "./cfglp -tokens -d " + f + " > generated " 
     os.system(command)
     
     command = "./cfglp -ast -d " + f + " > generatedast " 
     os.system(command)
     
+    command = "./cfglp -eval -d " + f + " > generatedeval " 
+    os.system(command)
+    
     os.system("diff -bB expected generated")
     os.system("diff -bB expectedast generatedast")
-   
+    os.system("diff -bB expectedeval generatedeval")
 
 print("\n*****Done with the checking cfg files EXCEPT infi loops!!***\n")
 """

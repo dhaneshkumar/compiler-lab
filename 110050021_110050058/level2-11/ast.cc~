@@ -152,17 +152,15 @@ void Name_Ast::print_ast(ostream & file_buffer)
 
 void Name_Ast::set_data_type(string *k)
 {
-	
-	cout<<*k<<" yahoo1\n";
+	//cout<<*k<<" yahoo1\n";
 	if (*k == "INTEGER")
 	{
-		cout<<*k<<" yahooint\n";
+		//cout<<*k<<" yahoo\n";
 		variable_symbol_entry.set_data_type(int_data_type);
 		//cout<<*k<<" yahoo2\n";
 	}
 	else if (*k == "FLOAT")
 	{
-			cout<<*k<<" yahoofloat\n";
 		variable_symbol_entry.set_data_type(float_data_type);
 	}
 	else if (*k == "DOUBLE")
@@ -178,7 +176,7 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 	Eval_Result_Value * loc_var_val = eval_env.get_variable_value(variable_name);
 	Eval_Result_Value * glob_var_val = interpreter_global_table.get_variable_value(variable_name);
 
-	file_buffer  << AST_SPACE << variable_name << " : ";
+	file_buffer << "\n" << AST_SPACE << variable_name << " : ";
 
 	if (!eval_env.is_variable_defined(variable_name) && !interpreter_global_table.is_variable_defined(variable_name))
 		file_buffer << "undefined";
@@ -221,9 +219,7 @@ Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env)
 {
 	if (eval_env.does_variable_exist(variable_name))
 	{
-		//cout<<variable_name<<" "<<node_data_type<<endl;
 		Eval_Result * result = eval_env.get_variable_value(variable_name);
-		//cout<<variable_name<<" "<<node_data_type<<endl;
 		return *result;
 	}
 
@@ -241,14 +237,6 @@ void Name_Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result
 		dtype dd;
 		dd.a=result.get_value().a;
 		dd.b=result.get_value().a;
-	 	i->set_value(dd);
-	}
-	else if(result.get_result_enum() == float_result) {
-		i = new Eval_Result_Value_Float();
-
-		dtype dd;
-		dd.a=result.get_value().b;
-		dd.b=result.get_value().b;
 	 	i->set_value(dd);
 	}
 
@@ -446,16 +434,14 @@ void Relational_Expr_Ast::print_ast(ostream & file_buffer)
 
 Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-		cout<<"abcsdfa\n";
 	Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
 
 	if (result.is_variable_defined() == false)
 		report_error("Variable should be defined to be on rhs", NOLINE);
-	cout<<"abc1\n";
 
-	if(node_data_type == 1)
+
+	if(rhs->get_data_type()==int_data_type)
 	{
-		cout<<"abc\n";
 		Eval_Result & result3 = *new Eval_Result_Value_Int();
 		dtype tr;
 		tr.a=1;
@@ -473,7 +459,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 				tr.a=0 - result.get_value().a;
 				tr.b=0 - result.get_value().a;
 				result3.set_value(tr);
-				result3.set_result_enum(int_result);
+
 				return result3;
 			}
 		}
@@ -491,13 +477,12 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 				if(result1.get_value().a <= result.get_value().a)
 				{
 					result3.set_value(tr);
-					
 				}
 				else
 				{
 					result3.set_value(fr);	
 				}
-			//	result3.set_result_enum(int_result);
+		
 			}
 			else if (ro == "LT")
 			{
@@ -509,7 +494,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 				{
 					result3.set_value(fr);	
 				}
-			//	result3.set_result_enum(int_result);
+		
 			}
 			else if (ro == "GE")
 			{
@@ -521,7 +506,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 				{
 					result3.set_value(fr);	
 				}
-			//	result3.set_result_enum(int_result);
+		
 			}
 			else if (ro == "GT")
 			{
@@ -533,7 +518,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 				{
 					result3.set_value(fr);	
 				}
-			//	result3.set_result_enum(int_result);
+		
 			}
 			else if (ro == "EQ")
 			{
@@ -545,7 +530,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 				{
 					result3.set_value(fr);	
 				}
-				//result3.set_result_enum(int_result);
+		
 			}
 			else if (ro == "NE")
 			{
@@ -557,15 +542,14 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 				{
 					result3.set_value(fr);	
 				}
-				//result3.set_result_enum(int_result);
+		
 			}
 			else if (ro == "PLUS")
 			{
-				
+				cout<<"abc\n";
 				tr.a=result1.get_value().a + result.get_value().a;
 				tr.b=result1.get_value().a + result.get_value().a;
 				result3.set_value(tr);
-				
 			}
 			else if (ro == "MINUS")
 			{
@@ -590,7 +574,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 				tr.b=result1.get_value().a / result.get_value().a;
 				result3.set_value(tr);
 			}
-			result3.set_result_enum(int_result);
+	
 			return result3;
 		}
 
@@ -600,9 +584,8 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 
 
 /////////////////////////////////// FLOAT  ////////////////////////////////////	
-	else if(node_data_type==2 || node_data_type==3)
+	else 
 	{
-			cout<<"abc2\n";
 		Eval_Result & result3 = *new Eval_Result_Value_Float();
 		dtype tr;
 		tr.a=1;
@@ -617,12 +600,10 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 
 			if (ro == "UMINUS")
 			{
-				tr.a=0 - result.get_value().b;
 				tr.b=0 - result.get_value().b;
 				result3.set_value(tr);
-				result3.set_result_enum(float_result);
+
 				return result3;
-				//result3.set_result_enum(int_result);
 			}
 		}
 		else
@@ -644,7 +625,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 		{
 			result3.set_value(fr);	
 		}
-		result3.set_result_enum(int_result);
+		
 	}
 	else if (ro == "LT")
 	{
@@ -656,7 +637,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 		{
 			result3.set_value(fr);	
 		}
-		result3.set_result_enum(int_result);
+		
 	}
 	else if (ro == "GE")
 	{
@@ -668,7 +649,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 		{
 			result3.set_value(fr);	
 		}
-		result3.set_result_enum(int_result);
+		
 	}
 	else if (ro == "GT")
 	{
@@ -680,7 +661,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 		{
 			result3.set_value(fr);	
 		}
-		result3.set_result_enum(int_result);
+		
 	}
 	else if (ro == "EQ")
 	{
@@ -692,7 +673,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 		{
 			result3.set_value(fr);	
 		}
-		result3.set_result_enum(int_result);
+		
 	}
 	else if (ro == "NE")
 	{
@@ -704,25 +685,22 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 		{
 			result3.set_value(fr);	
 		}
-		result3.set_result_enum(int_result);
+		
 	}
 	else if (ro == "PLUS")
 	{
 		tr.b=result1.get_value().b + result.get_value().b;
 		result3.set_value(tr);
-		result3.set_result_enum(float_result);
 	}
 	else if (ro == "MINUS")
 	{
 		tr.b=result1.get_value().b - result.get_value().b;
 		result3.set_value(tr);
-		result3.set_result_enum(float_result);
 	}
 	else if (ro == "MULT")
 	{
 		tr.b=result1.get_value().b * result.get_value().b;
 		result3.set_value(tr);
-		result3.set_result_enum(float_result);
 	}
 	else if (ro == "DIV")
 	{
@@ -733,9 +711,8 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 		}
 		tr.b=result1.get_value().b / result.get_value().b;
 		result3.set_value(tr);
-		result3.set_result_enum(float_result);
 	}
-	//result3.set_result_enum(float_result);
+	
 	return result3;
 		}
 

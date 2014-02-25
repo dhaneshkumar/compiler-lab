@@ -218,8 +218,14 @@ void Local_Environment::print(ostream & file_buffer)
 			if (vi->is_variable_defined() == false)
 				file_buffer << VAR_SPACE << (*i).first << " : undefined" << "\n";
 		
-			else
-				file_buffer << VAR_SPACE << (*i).first << " : " << (vi->get_value()).b << "\n";
+			else{
+				if  (vi->get_result_enum() == 0) {
+					file_buffer << VAR_SPACE << (*i).first << " : " <<(vi->get_value()).a<<" : "<<vi->get_result_enum()<<"\n";
+				}
+				else if (vi->get_result_enum() == 3) {
+					file_buffer << VAR_SPACE << (*i).first << " : " <<(vi->get_value()).b<<" : "<<vi->get_result_enum()<<"\n";
+				}
+			}
 		}
 	}
 }
