@@ -79,6 +79,7 @@ Eval_Result_Value_Int::~Eval_Result_Value_Int()
 void Eval_Result_Value_Int::set_value(dtype number)
 {
 	value.a = number.a;
+	value.b = number.a;
 	defined = true;
 }
 
@@ -112,7 +113,7 @@ Result_Enum Eval_Result_Value_Int::get_result_enum()
 Eval_Result_Value_Float::Eval_Result_Value_Float()
 {
 	value.a = 0;
-	value.b=0.0;
+	value.b=0;
 	defined = false;
 	result_type = float_result;
 }
@@ -123,6 +124,7 @@ Eval_Result_Value_Float::~Eval_Result_Value_Float()
 void Eval_Result_Value_Float::set_value(dtype number)
 {
 	value.b = number.b;
+	value.a = number.b;
 	defined = true;
 }
 
@@ -167,6 +169,7 @@ Eval_Result_Value_Goto::~Eval_Result_Value_Goto()
 void Eval_Result_Value_Goto::set_value(dtype number)
 {
 	value.a = number.a;
+	value.b = number.a;
 	defined = true;
 }
 
@@ -216,7 +219,7 @@ void Local_Environment::print(ostream & file_buffer)
 				file_buffer << VAR_SPACE << (*i).first << " : undefined" << "\n";
 		
 			else
-				file_buffer << VAR_SPACE << (*i).first << " : " << (vi->get_value()).a << "\n";
+				file_buffer << VAR_SPACE << (*i).first << " : " << (vi->get_value()).b << "\n";
 		}
 	}
 }

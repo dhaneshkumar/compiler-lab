@@ -186,7 +186,7 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 
 		if (loc_var_val->get_result_enum() == int_result)
 
-			file_buffer << loc_var_val->get_value().b << "\n";
+			file_buffer << loc_var_val->get_value().a << "\n";
 		else
 			report_internal_error("Result type can only be int and float");
 	}
@@ -198,7 +198,7 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 			if (glob_var_val == NULL)
 				file_buffer << "0\n";
 			else
-				file_buffer << glob_var_val->get_value() << "\n";
+				file_buffer << glob_var_val->get_value().a << "\n";
 		}
 		else
 			report_internal_error("Result type can only be int and float");
@@ -225,7 +225,11 @@ void Name_Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result
 	if (result.get_result_enum() == int_result)
 	{
 		i = new Eval_Result_Value_Int();
-	 	i->set_value(result.get_value());
+
+		dtype dd;
+		dd.a=result.get_value().a;
+		dd.b=result.get_value().a;
+	 	i->set_value(dd);
 	}
 
 	if (eval_env.does_variable_exist(variable_name))
@@ -428,12 +432,12 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 		report_error("Variable should be defined to be on rhs", NOLINE);
 
 
-	if(rhs->node_data_type==int_data_type)
+	if(rhs->get_data_type()==int_data_type)
 	{
 		Eval_Result & result3 = *new Eval_Result_Value_Int();
 		dtype tr;
 		tr.a=1;
-		tr.b=0;
+		tr.b=1;
 
 		dtype fr;
 		fr.a=0;
@@ -445,6 +449,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 			if (ro == "UMINUS")
 			{
 				tr.a=0 - result.get_value().a;
+				tr.b=0 - result.get_value().a;
 				result3.set_value(tr);
 
 				return result3;
@@ -534,16 +539,19 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 	else if (ro == "PLUS")
 	{
 		tr.a=result1.get_value().a + result.get_value().a;
+		tr.b=result1.get_value().a + result.get_value().a;
 		result3.set_value(tr);
 	}
 	else if (ro == "MINUS")
 	{
 		tr.a=result1.get_value().a - result.get_value().a;
+		tr.b=result1.get_value().a - result.get_value().a;
 		result3.set_value(tr);
 	}
 	else if (ro == "MULT")
 	{
 		tr.a=result1.get_value().a * result.get_value().a;
+		tr.b=result1.get_value().a * result.get_value().a;
 		result3.set_value(tr);
 	}
 	else if (ro == "DIV")
@@ -554,6 +562,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 			exit (0);
 		}
 		tr.a=result1.get_value().a / result.get_value().a;
+		tr.b=result1.get_value().a / result.get_value().a;
 		result3.set_value(tr);
 	}
 	
@@ -570,7 +579,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 	{
 		Eval_Result & result3 = *new Eval_Result_Value_Float();
 		dtype tr;
-		tr.a=0;
+		tr.a=1;
 		tr.b=1;
 
 		dtype fr;
@@ -784,17 +793,24 @@ Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & 
 	
 	Eval_Result & result1 = *new Eval_Result_Value_Goto();
 	print_ast(file_buffer);
-	if(result.get_value()==1)
+	if(result.get_value().a==1)
 	{
 		file_buffer<<AST_SPACE<<"Condition True : Goto (BB "<<g1->get_bbno()<<")\n";
 		
-		result1.set_value(g1->get_bbno());
+		dtype dd;
+		dd.a=g1->get_bbno();
+		dd.b=g1->get_bbno();
+
+		result1.set_value(dd);
 		
 	}
 	else
 	{
 		file_buffer<<AST_SPACE<<"Condition False : Goto (BB "<<g2->get_bbno()<<")\n";
-		result1.set_value(g2->get_bbno());
+		dtype dd;
+		dd.a=g2->get_bbno();
+		dd.b=g2->get_bbno();
+		result1.set_value(dd);
 		
 	}
 	return result1;
