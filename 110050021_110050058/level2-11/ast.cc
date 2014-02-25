@@ -185,8 +185,9 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 	{
 
 		if (loc_var_val->get_result_enum() == int_result)
-
 			file_buffer << loc_var_val->get_value().a << "\n";
+		else if (loc_var_val->get_result_enum() == float_result)
+			file_buffer << loc_var_val->get_value().b << "\n";
 		else
 			report_internal_error("Result type can only be int and float");
 	}
@@ -199,6 +200,13 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 				file_buffer << "0\n";
 			else
 				file_buffer << glob_var_val->get_value().a << "\n";
+		}
+		else if (glob_var_val->get_result_enum() == float_result)
+		{
+			if (glob_var_val == NULL)
+				file_buffer << "0\n";
+			else
+				file_buffer << glob_var_val->get_value().b << "\n";
 		}
 		else
 			report_internal_error("Result type can only be int and float");
