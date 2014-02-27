@@ -56,7 +56,7 @@
 %token <string_value> ELSE
 %token <string_value> GOTO
 %token <string_value> ASSIGN_OP
-//%token <string_value> ARITHOP
+
 %left <string_value>NE EQ
 %left <string_value> LT LE  GT GE 
 %left <string_value> '+' '-' 

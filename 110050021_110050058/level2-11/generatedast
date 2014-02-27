@@ -1,13 +1,2 @@
-Program:
-   Procedure: main
-      Basic_Block 2
-         Asgn:
-            LHS (Name : a)
-            RHS (Num : 3)
-         Asgn:
-            LHS (Name : b)
-            RHS (Name : a)
-         Asgn:
-            LHS (Name : a)
-            RHS (Name : b)
-         Return <NOTHING>
+Syntax error
+test_files/ArithOrder.ecfg : line 8 :: error : Cannot parse the input program

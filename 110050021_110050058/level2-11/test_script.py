@@ -45,7 +45,7 @@ for f in cfgFiles:
     os.system("diff -bB expectedeval generatedeval")
 
 print("\n*****Done with the checking cfg files EXCEPT infi loops!!***\n")
-"""
+
 error_files=[]
 for f in files:
     fileName,fileExt = os.path.splitext( path + f)
@@ -55,9 +55,9 @@ for f in files:
 
 for f in error_files:
     print("Testing file  " + f ); 
-    command = "./cfglp64 -tokens  " + f + " 2> expected " 
+    command = "./cfglp64  -d " + f + " 2> expected " 
     os.system(command) 
-    command = "./cfglp -tokens " + f + " 2> generated " 
+    command = "./cfglp -d " + f + " 2> generated " 
     os.system(command)
     command = "./cfglp64 -ast  " + f + " 2> expectedast " 
     os.system(command) 
@@ -69,11 +69,11 @@ for f in error_files:
     os.system(command)
     #print("diff starts here \n");
     os.system("diff -B expected generated")
-    os.system("diff -B expectedast generatedast")
-    os.system("diff -B expectedeval generatedeval")
+    #os.system("diff -B expectedast generatedast")
+    #os.system("diff -B expectedeval generatedeval")
 
 print("\n*****Done with the checking ecfg files!!***\n")
 
-"""
+
 #print cfgFiles
 

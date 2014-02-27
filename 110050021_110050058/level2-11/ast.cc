@@ -95,7 +95,7 @@ bool Assignment_Ast::check_ast(int line)
 		return true;
 	}
 	//cout<<lhs->get_data_type()<<" "<< rhs->get_data_type()<<endl;
-	report_error(" #1 Assignment statement data type not compatible", line);
+	report_error(" Assignment statement data type not compatible", line);
 }
 
 void Assignment_Ast::print_ast(ostream & file_buffer)
