@@ -52,6 +52,7 @@
 
 %token <string_value> FLOAT
 %token <string_value> DOUBLE
+%token <string_value> VOID
 %token <string_value> IF
 %token <string_value> ELSE
 %token <string_value> GOTO
@@ -62,12 +63,13 @@
 %left <string_value> '+' '-' 
 %left <string_value> '*' '/' 
 
-
+/*
 %type <string_value> dataType 
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement
 %type <basic_block_list> basic_block_list
 %type <basic_block> basic_block
+%type <string_value> returnType
 %type <ast_list> executable_statement_list
 %type <ast_list> assignment_statement_list
 %type <ast> assignment_statement
@@ -77,7 +79,7 @@
 %type <ast> atomic
 %type <ast> constant
 %type <ast> typecast_exp
-
+*/
  
 
 %start program
@@ -86,7 +88,7 @@
 
 program:
 	declaration_statement_list procedure_name
-	{	 
+	{	 //cout<<"abcd\n";
 	/*
 		program_object.set_global_table(*$1);
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
@@ -104,7 +106,7 @@ program:
 	}
 |
 	procedure_name
-	{	
+	{	//cout<<"abcd\n";
 	/* 
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
 	*/	 
@@ -115,6 +117,15 @@ program:
 		program_object.set_procedure_map(*current_procedure);
 	*/	 
 	}
+|
+	program procedure_name
+	{//cout<<"abcd\n";
+
+	}
+	procedure_body
+	{
+
+	}
 ;
 
 procedure_name:
@@ -123,6 +134,11 @@ procedure_name:
 		current_procedure = new Procedure(void_data_type, *$1);
 		 
 	*/}
+|
+	NAME '(' parameter_list ')'
+	{
+
+	}
 ;
 
 procedure_body:
@@ -157,7 +173,8 @@ procedure_body:
 
 declaration_statement_list:
 	declaration_statement
-	{	 /*
+	{	//cout<<"asdfa\n"; 
+		/*
 		int line = get_line_number();
 		program_object.variable_in_proc_map_check($1->get_variable_name(), line);
 
@@ -231,6 +248,65 @@ declaration_statement:
 
 		delete $2;
 		*/
+	}
+|
+	returnType procedure_name ';'
+	{	
+		cout<<"asdf\n"; 
+		/*
+		$$ = new Symbol_Table_Entry(*$2, int_data_type);
+
+		delete $2;
+		 */
+	}
+;
+
+parameter_list:
+	parameters
+	{
+
+	}
+|
+	parameter_list ',' parameters
+	{
+
+	}
+;
+
+parameters:
+	INTEGER NAME 
+	{	 /*
+		$$ = new Symbol_Table_Entry(*$2, int_data_type);
+
+		delete $2;
+		 */
+	}
+|
+	FLOAT NAME 
+	{ /*
+		$$ = new Symbol_Table_Entry(*$2, float_data_type);
+
+		delete $2;
+		*/
+	}
+|
+	DOUBLE NAME 
+	{
+		/*
+		$$ = new Symbol_Table_Entry(*$2, double_data_type);
+
+		delete $2;
+		*/
+	}
+|
+	returnType procedure_name 
+	{	
+		
+		/*
+		$$ = new Symbol_Table_Entry(*$2, int_data_type);
+
+		delete $2;
+		 */
 	}
 ;
 
@@ -317,6 +393,11 @@ relop_expression :
 	{ /*
 		$$ = $1;
 		*/
+	}
+|
+	procedure_name 
+	{
+
 	}
 |
 	relop_expression LT relop_expression
@@ -483,6 +564,29 @@ dataType :
 	}
 ;
 
+returnType :
+	INTEGER
+	{
+		/*$$= $1;*/
+	}
+|
+	FLOAT
+	{
+		/*$$= $1;*/	
+	}
+|
+
+	VOID
+	{
+	/*	$$= $1;*/
+	}
+|
+	DOUBLE
+	{
+	/*	$$= $1;*/
+	}
+	
+;
 
 typecast_exp:
 	'(' dataType ')' atomic
@@ -505,6 +609,22 @@ executable_statement_list:
 	}
 |
 	assignment_statement_list RETURN ';'
+	{	/* 
+		Ast * ret = new Return_Ast();
+
+		return_statement_used_flag = true;					// Current procedure has an occurrence of return statement
+
+		if ($1 != NULL)
+			$$ = $1;
+
+		else
+			$$ = new list<Ast *>;
+
+		$$->push_back(ret);*/
+		 
+	}
+|
+	assignment_statement_list RETURN relop_expression ';'
 	{	/* 
 		Ast * ret = new Return_Ast();
 
@@ -559,6 +679,7 @@ assignment_statement_list:
 		/*$$ = NULL;*/
 		 
 	}
+
 |
 	assignment_statement_list assignment_statement
 	{	 /*
@@ -583,6 +704,11 @@ assignment_statement:
 		int line = get_line_number();
 		$$->check_ast(line);*/
 		
+	}
+|
+	procedure_name  ';'
+	{
+
 	}
 ;
 

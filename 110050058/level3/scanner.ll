@@ -56,6 +56,11 @@ float 		{
 			return Parser::FLOAT;
 		}
 
+void 	{
+			store_token_name("VOID");
+			return Parser::VOID;
+		}
+
 double 		{
 			store_token_name("DOUBLE");
 			return Parser::DOUBLE;
