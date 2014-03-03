@@ -1,4 +1,5 @@
 
+
 /*******************************************************************************************
 
                                 cfglp : A CFG Language Processor
@@ -40,25 +41,29 @@
 	list<Basic_Block *> * basic_block_list;
 	Procedure * procedure;
 };
-%token <integer_value> INTEGER_NUMBER
 
+%token <integer_value> INTEGER_NUMBER
 %token <string_value> BB
 %token <float_value> FLOAT_NUMBER
+
 %token <string_value> NAME
+%token RETURN
+%token <string_value> INTEGER
 
-
-%token RETURN dataType
+%token <string_value> FLOAT
+%token <string_value> DOUBLE
 %token <string_value> IF
 %token <string_value> ELSE
 %token <string_value> GOTO
 %token <string_value> ASSIGN_OP
-%token <string_value> ARITHOP
+
 %left <string_value>NE EQ
 %left <string_value> LT LE  GT GE 
-%left <string_value>'+' '-' 
+%left <string_value> '+' '-' 
 %left <string_value> '*' '/' 
 
- 
+
+%type <string_value> dataType 
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement
 %type <basic_block_list> basic_block_list
@@ -67,9 +72,9 @@
 %type <ast_list> assignment_statement_list
 %type <ast> assignment_statement
 %type <ast> relop_expression
-//%type <ast> atomic
 %type <ast> if_else_clause
 %type <ast> variable
+%type <ast> atomic
 %type <ast> constant
 %type <ast> typecast_exp
 
@@ -211,7 +216,7 @@ declaration_statement:
 |
 	FLOAT NAME ';'
 	{
-		$$ = new Symbol_Table_Entry(*$2, double_data_type);
+		$$ = new Symbol_Table_Entry(*$2, float_data_type);
 
 		delete $2;
 	}
@@ -314,6 +319,9 @@ relop_expression :
 
 		int line = get_line_number();
 		$$->check_ast(line);
+
+		string k="INTEGER";
+		$$->set_data_type(&k);
 		
 	}
 |
@@ -323,7 +331,8 @@ relop_expression :
 
 		int line = get_line_number();
 		$$->check_ast(line);
-		
+		string k="INTEGER";
+		$$->set_data_type(&k);
 	}
 |
 	relop_expression GT relop_expression
@@ -332,7 +341,8 @@ relop_expression :
 
 		int line = get_line_number();
 		$$->check_ast(line);
-		
+		string k="INTEGER";
+		$$->set_data_type(&k);
 	}
 |
 	relop_expression GE relop_expression
@@ -341,7 +351,8 @@ relop_expression :
 
 		int line = get_line_number();
 		$$->check_ast(line);
-		
+		string k="INTEGER";
+		$$->set_data_type(&k);
 	}
 |
 	relop_expression EQ relop_expression
@@ -350,7 +361,8 @@ relop_expression :
 
 		int line = get_line_number();
 		$$->check_ast(line);
-		
+		string k="INTEGER";
+		$$->set_data_type(&k);
 	}
 |
 	relop_expression NE relop_expression
@@ -359,13 +371,16 @@ relop_expression :
 
 		int line = get_line_number();
 		$$->check_ast(line);
+		string k="INTEGER";
+		$$->set_data_type(&k);
 		
 	}
 |
 
 	relop_expression '+' relop_expression
 	{ 
-		$$ = new Relational_Expr_Ast($1, $3, $2);
+		string k = "PLUS";
+		$$ = new Relational_Expr_Ast($1, $3, &k);
 
 		int line = get_line_number();
 		$$->check_ast(line);
@@ -375,7 +390,8 @@ relop_expression :
 
 	relop_expression '-' relop_expression
 	{ 
-		$$ = new Relational_Expr_Ast($1, $3, $2);
+		string k = "MINUS";
+		$$ = new Relational_Expr_Ast($1, $3, &k);
 
 		int line = get_line_number();
 		$$->check_ast(line);
@@ -385,7 +401,8 @@ relop_expression :
 
 	relop_expression '*' relop_expression
 	{ 
-		$$ = new Relational_Expr_Ast($1, $3, $2);
+		string k  = "MULT";
+		$$ = new Relational_Expr_Ast($1, $3, &k);
 
 		int line = get_line_number();
 		$$->check_ast(line);
@@ -394,8 +411,9 @@ relop_expression :
 |
 
 	relop_expression '/' relop_expression
-	{ 
-		$$ = new Relational_Expr_Ast($1, $3, $2);
+	{ 	
+		string k  = "DIV";
+		$$ = new Relational_Expr_Ast($1, $3, &k);
 
 		int line = get_line_number();
 		$$->check_ast(line);
@@ -409,7 +427,12 @@ relop_expression :
 |	
 	'-' atomic
 	{
-		$$ = $2;
+		string k = "UMINUS";
+		//cout<<$2->get_data_type()<<" dfkj\n";
+		$$ = new Relational_Expr_Ast(NULL,$2, &k);
+		//cout<<$2->get_data_type()<<" zbc\n";
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 ;
 
@@ -435,17 +458,17 @@ atomic:
 dataType :
 	FLOAT
 	{
-
+		$$= $1;	
 	}
 |
 	DOUBLE
 	{
-
+		$$= $1;
 	}
 |
 	INTEGER
 	{
-
+		$$= $1;
 	}
 ;
 
@@ -453,7 +476,11 @@ dataType :
 typecast_exp:
 	'(' dataType ')' atomic
 	{
-
+		//cout<<"type casting :"<<endl;
+		$$ = $4;
+		$$->set_data_type($2);
+		//cout<<*($2)<<" Hahahah "<<$$->get_data_type()<<endl;
+		
 	}
 ;
 
@@ -541,7 +568,7 @@ assignment_statement:
 	variable ASSIGN_OP relop_expression ';'
 	{ 
 		$$ = new Assignment_Ast($1, $3);
-
+		//cout<<$3->get_data_type()<<" abc\n";
 		int line = get_line_number();
 		$$->check_ast(line);
 		
@@ -584,8 +611,9 @@ constant:
 |
 	FLOAT_NUMBER
 	{
-		$$ = new Number_Ast<double>($1, double_data_type);
+		$$ = new Number_Ast<float>($1, float_data_type);
 	}
+
 
 ;
 
