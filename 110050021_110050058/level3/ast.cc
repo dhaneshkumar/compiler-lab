@@ -337,21 +337,37 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Return_Ast::Return_Ast()
-{}
+Return_Ast::Return_Ast(Ast *b)
+{
+	a = new Ast();
+	a = b;
+
+}
 
 Return_Ast::~Return_Ast()
-{}
+{
+	delete a;
+}
 
 void Return_Ast::print_ast(ostream & file_buffer)
 {
-	file_buffer << AST_SPACE << "Return <NOTHING>\n";
+	file_buffer << AST_SPACE << "RETURN ";
+	if (a == NULL) 
+		file_buffer<< "<NOTHING> \n";
+	else 
+		a->print_ast(file_buffer);
 }
 
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-	file_buffer << AST_SPACE << "Return <NOTHING>\n";
-	Eval_Result & result = *new Eval_Result_Value_Int();
+	file_buffer << AST_SPACE << "RETURN ";
+	if (a == NULL) {
+		file_buffer << AST_SPACE << "Return <NOTHING>\n";
+		Eval_Result & result = *new Eval_Result_Value_Int();
+		return result;
+	}	
+	else 
+		Eval_Result & result = a->evaluate(eval_env, file_buffer);
 	return result;
 }
 
@@ -846,4 +862,67 @@ Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & 
 		
 	}
 	return result1;
+}
+
+
+/**********************< RELATIONAL >***************************************************/
+
+
+
+Functional_Ast::Functional_Ast(string name1, list<Relational_Expr_Ast> parameter_list1, Data_Type type)
+{
+	name = name1;
+	parameter_list  = new list<Relational_Expr_Ast>();
+	parameter_list =  parameter_list1;	
+	node_data_type = type;
+}
+
+Functional_Ast::~Functional_Ast()
+{
+	delete parameter_list;
+	//delete rhs;
+}
+
+Data_Type Functional_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+bool Functional_Ast::check_ast(int line)
+{
+	
+	//cout<<lhs->get_data_type()<<" "<<ro<<" "<< rhs->get_data_type()<<endl;
+	//report_error("Assignment statement data type not compatible", line);
+}
+
+
+
+void Functional_Ast::print_ast(ostream & file_buffer)
+{
+	//cout<<rhs->get_data_type()<<" data type of rhs\n";
+	
+		file_buffer << "\n"<<AST_NODE_SPACE<< "FN CALL: "<<name<<"(";
+
+		if (parameter_list != NULL) {
+			list<Relational_Expr_Ast> iterator id;	
+
+			for ( id = parameter_list.begin(); id != parameter_list.end(); id++) {
+				rhs->print_ast(file_buffer);
+			}
+		}
+		file_buffer << ")";
+}
+
+Eval_Result & Functional_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+	
+	Procedure p = new Procedure(node_data_type, name);	
+	Eval_Result & result = p->evaluate(file_buffer);
+
+	if (result.is_variable_defined() == false)
+		report_error("Variable should be defined to be on rhs", NOLINE);
+	
+	return result;
+	
+	
 }

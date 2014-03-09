@@ -63,7 +63,7 @@
 %left <string_value> '+' '-' 
 %left <string_value> '*' '/' 
 
-/*
+
 %type <string_value> dataType 
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement
@@ -79,7 +79,7 @@
 %type <ast> atomic
 %type <ast> constant
 %type <ast> typecast_exp
-*/
+
  
 
 %start program
@@ -89,15 +89,19 @@
 program:
 	declaration_statement_list 	procedure_name
 	{	////cout<<"abcd\n";
-	/* 
-		return_statement_used_flag = false;				// No return statement in the current procedure till now
-	*/	 
+	 
+		return_statement_used_flag = false;				// No return statement in the current procedure program_object.set_global_table(*$1);
+		 
 	}
 	procedure_body
-	{
-	/*	 
+	{	 
 		program_object.set_procedure_map(*current_procedure);
-	*/	 
+
+		if ($1)
+			$1->global_list_in_proc_map_check(get_line_number());
+
+		delete $1;
+		 
 	}
 |
 	declaration_statement_list procedure_declarations_list procedure_list
