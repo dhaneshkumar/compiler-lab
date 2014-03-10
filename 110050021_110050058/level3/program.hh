@@ -48,7 +48,8 @@ public:
 
 	void set_procedure_map(Procedure & proc);
 	void set_global_table(Symbol_Table & new_global_table);
-
+	void update_global_table(map<string, Procedure *> procedure_map);
+	void create_procedure_map(map<string, Procedure *> new_procedure_map)
 	Symbol_Table_Entry & get_symbol_table_entry(string variable);
 
 	void print_ast();
@@ -59,6 +60,8 @@ public:
 
 	bool variable_in_symbol_list_check(string variable);
 	void variable_in_proc_map_check(string symbol, int line);
+	
+	bool proc_in_proc_map_check(string s);
 };
 
 #endif

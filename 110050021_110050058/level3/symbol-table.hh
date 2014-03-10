@@ -51,12 +51,14 @@ class Symbol_Table
 	list<Symbol_Table_Entry *> variable_table;
 	Table_Scope scope;
 public:
+	
 	Symbol_Table();
 	~Symbol_Table();
 
 	Table_Scope get_table_scope();
 	void set_table_scope(Table_Scope list_scope);
 
+	//list<Symbol_Table_Entry *> getVariable_table();
 	void push_symbol(Symbol_Table_Entry * variable);
 
 	bool variable_in_symbol_list_check(string variable);

@@ -19,7 +19,7 @@ for f in correct_files:
     cfgFiles.append(path+"/"+f+"s306.cfg"); 
 
 print("Done generating cfg files\n");
-
+"""
 for f in cfgFiles:
     print("Testing file  " + f ); 
     command = "./cfglp64 -tokens -d " + f + " > expected " 
@@ -73,7 +73,7 @@ for f in error_files:
     #os.system("diff -B expectedeval generatedeval")
 
 print("\n*****Done with the checking ecfg files!!***\n")
-
+"""
 
 #print cfgFiles
 

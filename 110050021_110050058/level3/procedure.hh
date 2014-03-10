@@ -52,14 +52,14 @@ public:
 	list<Basic_Block *>* get_basic_block_list();
 	Data_Type get_return_type();
 	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
-
+	void append_symbol(Symbol_Table_Entry * ste)
 	void print_ast(ostream & file_buffer);
 
 	Basic_Block * get_next_bb(Basic_Block & current_bb);
 	Basic_Block & get_start_basic_block();
 
 	Eval_Result & evaluate(ostream & file_buffer);
-
+	
 	bool variable_in_symbol_list_check(string variable);
 };
 

@@ -67,6 +67,11 @@ void Symbol_Table::global_list_in_proc_map_check(int line)
 		program_object.variable_in_proc_map_check(name, line);
 	}
 }
+/*
+list<Symbol_Table_Entry *> Symbol_Table::getVariable_table()
+{
+	return variable_table;
+}*/
 
 bool Symbol_Table::variable_in_symbol_list_check(string variable)
 {

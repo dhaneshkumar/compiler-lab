@@ -40,6 +40,8 @@
 	Basic_Block * basic_block;
 	list<Basic_Block *> * basic_block_list;
 	Procedure * procedure;
+	pair <string, Symbol_Table *> *paired;
+
 };
 
 %token <integer_value> INTEGER_NUMBER
@@ -63,7 +65,7 @@
 %left <string_value> '+' '-' 
 %left <string_value> '*' '/' 
 
-
+%type <paired> procedure_name
 %type <string_value> dataType 
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement
@@ -89,9 +91,22 @@
 program:
 	declaration_statement_list 	procedure_name
 	{	////cout<<"abcd\n";
-	 
+	 	program_object.set_global_table(*$1);
 		return_statement_used_flag = false;				// No return statement in the current procedure program_object.set_global_table(*$1);
-		 
+		
+		int line = get_line_number();
+		string var_name =current_procedure->name;
+		if (program_object.variable_in_symbol_list_check(var_name))
+		{
+			
+			report_error("Variable name cannot be same as procedure name", line);
+		}
+
+		//new map<string, Procedure *>();
+		//[current_procedure->name]= current_procedure;
+
+		current_procedure = new Procedure(void_data_type, $2->first);
+		current_procedure->set_local_list($2->second );
 	}
 	procedure_body
 	{	 
@@ -106,125 +121,220 @@ program:
 |
 	declaration_statement_list procedure_declarations_list procedure_list
 	{
-		
+		//return_statement_used_flag = false;	
+		program_object.set_global_table(*$1);
+		program_object.create_procedure_map(*$2);
+
+		if ($1)
+			$1->global_list_in_proc_map_check(get_line_number());
+
+		delete $1;
+
+
+		//program_object.update_global_table(*$2);
+
 	}
 |
 	procedure_declarations_list procedure_list
 	{
-		
+		//return_statement_used_flag = false;	
+		program_object.create_procedure_map(*$1);
+		//program_object.update_global_table(*$1);
 	}
 |
 	procedure_name
 	{	////cout<<"abcd\n";
-	/* 
+		current_procedure = new Procedure(void_data_type, *$1);
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
-	*/	 
+	
 	}
 	procedure_body
 	{
-	/*	 
+		 
 		program_object.set_procedure_map(*current_procedure);
-	*/	 
+	 
 	}
 ;
 
 procedure_declarations_list:
 	procedure_declarations
 	{
+	
+		/*int line = get_line_number();
+		string var_name =current_procedure->name;
+		if (program_object.variable_in_symbol_list_check(var_name))
+		{
+			
+			report_error("Variable name cannot be same as procedure name", line);
+		}
 
+		$$ = new map<string, Procedure *>();
+		$$[current_procedure->name]= current_procedure;
+		//string s = $1->get_proc_name();*/
 	}
 |
 	procedure_declarations_list procedure_declarations
 	{
+		/*int line = get_line_number();
+		string var_name = current_procedure->name;
+		if (program_object.variable_in_symbol_list_check(var_name))
+		{
+			//line = get_line_number();
+			report_error("Variable name cannot be same as procedure name", line);
+		}
+		
+		if ($1 != NULL)
+		{
+			program_object.variable_in_proc_map_check(current_procedure->name, line);
 
+			$$ = $1;
+		}
+
+		else
+			$$ = new map<string, Procedure *>();
+
+		$$[current_procedure->name]= current_procedure;
+*/
 	}
 ;
+
+procedure_name:
+	NAME '(' ')'
+	{	 
+		//set data type accordingly
+		//current_procedure = new Procedure(void_data_type, *$1);
+
+		Symbol_Table *s =  new Symbol_Table();
+
+		pair *p = new pair<string, Symbol_Table *>();
+		p->first = (*$1);
+		p->second = s;
+		$$ = p;
+	}
+|
+	NAME '(' parameter_list ')'
+	{
+		//
+		//if  (current_procedure->local_symbol_table == NULL) {
+			
+		//current_procedure->set_local_list(&s);
+		Symbol_Table *s =  new Symbol_Table();
+		s= $3;
+		pair *p = new pair<string, Symbol_Table *>();
+		p->first = (*$1);
+		p->second = s;
+		$$ = p;
+
+		
+	}
+;
+
 
 procedure_declarations:
 	dataType procedure_name ';'
 	{
+		//current_procedure = new Procedure(, $2->first);
+		
 
+		////return_statement_used_flag = true;
+		if(*$1 == "FLOAT") {
+			current_procedure = new Procedure(float_data_type, $2->first);
+		}
+
+		else if (*$1 == "DOUBLE") {
+			current_procedure = new Procedure(float_data_type, $2->first);
+		}
+
+		else if (*$1 == "INTEGER"){
+			current_procedure = new Procedure(int_data_type, $2->first);
+		}
+		//current_procedure->local_symbol_table.set_local_list($2);
+		current_procedure->set_local_list($2->second );
+		program_object.set_procedure_map(*current_procedure);
 	}
 |
 	VOID procedure_name ';'
 	{
-
+		current_procedure = new Procedure(void_data_type, $2->first);
+		current_procedure->set_local_list($2->second );
+		program_object.set_procedure_map(*current_procedure);
 	}
 ;
+
 
 procedure_list:
 	procedure_name
 	{	 ////cout<<"abcd\n";
-	/*
-		program_object.set_global_table(*$1);
+	
+		//check if function has been defined already or not $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
-	*/	 
+
+		//to do
+		////to check if the symbol table returned by procedure name os same as current prcedures
+		 
 	}
 	procedure_body
 	{	 
-	/*	program_object.set_procedure_map(*current_procedure);
+		if(!(program_object.proc_in_proc_map_check(current_procedure->name))){
+			program_object.set_procedure_map(*current_procedure);
 
-		if ($1)
-			$1->global_list_in_proc_map_check(get_line_number());
-
-		delete $1;
-	*/	 
+		}
+	 
 	}
 |
 	procedure_list procedure_name
 	{	 ////cout<<"abcd\n";
-	/*
-		program_object.set_global_table(*$1);
+	
+		//program_object.set_global_table(*$1);
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
-	*/	 
+		////to check if the symbol table returned by procedure name os same as current prcedures
+		  
 	}
 	procedure_body
 	{	 
-	/*	program_object.set_procedure_map(*current_procedure);
+		 if(!(program_object.proc_in_proc_map_check(current_procedure->name))){
+			program_object.set_procedure_map(*current_procedure);
 
-		if ($1)
-			$1->global_list_in_proc_map_check(get_line_number());
-
-		delete $1;
-	*/	 
+		}
 	}
 ;
 
 
 
 
-procedure_name:
-	NAME '(' ')'
-	{/*	 
-		current_procedure = new Procedure(void_data_type, *$1);
-		 
-	*/}
-|
-	NAME '(' parameter_list ')'
-	{
-
-	}
-;
 
 procedure_body:
 	'{' declaration_statement_list
-	{/*	 
+	{
+		/*if  (current_procedure->local_symbol_table == NULL) {
+			
+			current_procedure->set_local_list(*$2);
+			delete $2;
+		}
+		else {
+			list<Symbol_Table_Entry *>:: iterator it ;
+			for ( it = $2->variable_table->begin(); it != $2->variable_table->end();it++){
+				current_procedure->append_symbol(it);
+			delete $2;
+			}
+		}
+		/*
 		current_procedure->set_local_list(*$2);
 		delete $2;
-		*/ 
+		*/
 	}
 	basic_block_list '}'
-	{	 /*
+	{	 
 
 		current_procedure->set_basic_block_list(*$4);
 		check_bbno_exist(current_procedure->get_basic_block_list());
 		
 		delete $4;
-		 */
+		 
 	}
 |	
 	'{' basic_block_list '}'
-	{	 /*
+	{	 
 		
 
 		current_procedure->set_basic_block_list(*$2);
@@ -232,14 +342,14 @@ procedure_body:
 		check_bbno_exist(current_procedure->get_basic_block_list());
 
 		delete $2;
-		 */
+		 
 	}
 ;
 
 declaration_statement_list:
 	declaration_statement
 	{	//cout<<"asdfa\n"; 
-		/*
+		
 		int line = get_line_number();
 		program_object.variable_in_proc_map_check($1->get_variable_name(), line);
 
@@ -252,11 +362,11 @@ declaration_statement_list:
 
 		$$ = new Symbol_Table();
 		$$->push_symbol($1);
-		 */
+		 
 	}
 |
 	declaration_statement_list declaration_statement
-	{	 /*
+	{	 
 		// if declaration is local then no need to check in global list
 		// if declaration is global then this list is global list
 
@@ -285,7 +395,7 @@ declaration_statement_list:
 			$$ = new Symbol_Table();
 
 		$$->push_symbol($2);
-		 */
+		 
 	}
 ;
 
@@ -302,36 +412,53 @@ declaration_statement:
 parameter_list:
 	parameters
 	{
-
+		$$ = new Symbol_Table();
+		$$->variable_table->push_symbol($1);
+		
 	}
 |
 	parameter_list ',' parameters
 	{
-
+		if($1 != NULL) {
+			$$ = $1;
+			$$->variable_table->push_symbol($3);
+		
+		}
+		else {
+			$$ = new Symbol_Table();
+			$$->variable_table->push_symbol($3);
+		}
 	}
 ;
 
 
 parameters:
 	dataType NAME 
-	{	 /*
-		$$ = new Symbol_Table_Entry(*$2, int_data_type);
+	{	 
+		// update datatype here
+		if(*$1 == "FLOAT") {
+			$$ = new Symbol_Table_Entry(*$2, float_data_type);
+		}
+
+		else if (*$1 == "DOUBLE") {
+			$$ = new Symbol_Table_Entry(*$2, float_data_type);
+		}
+
+		else if (*$1 == "INTEGER"){
+			$$ = new Symbol_Table_Entry(*$2, int_data_type);
+		}
 
 		delete $2;
-		 */
+		 
 	}
-|
-	dataType procedure_name ';'
-	{
 
-	}
 ;
 
 
 basic_block_list:
 	basic_block_list basic_block
 	{	 
-		/*
+		
 		if (!$2)
 		{
 			int line = get_line_number();
@@ -343,11 +470,11 @@ basic_block_list:
 
 		$$ = $1;
 		$$->push_back($2);
-		 */
+		 
 	}
 |
 	basic_block
-	{	 /*
+	{	 
 		if (!$1)
 		{
 			int line = get_line_number();
@@ -356,14 +483,14 @@ basic_block_list:
 
 		$$ = new list<Basic_Block *>;
 		$$->push_back($1);
-		 */
+		 
 	}
 	
 ;
 
 basic_block:
 	BB ':' executable_statement_list
-	{	/*
+	{	
 		if ((*$1).substr(1,2) != "bb")
 		{
 			int line = get_line_number();
@@ -386,7 +513,7 @@ basic_block:
 
 		delete $3;
 		delete $1;
-		*/	
+		
 	}
 ;
 
@@ -409,12 +536,12 @@ relop_list :
 
 relop_list ',' relop_expression
 	{
-
+		// what to do here?
 	}
 |
 	relop_expression
 	{
-
+		// $$ = $1; ???
 	}
 ;
 
@@ -573,12 +700,12 @@ atomic:
 |   
 	NAME '(' relop_list ')'
 	{
-
+		// $$ = $1; ??? probably
 	}
 |
 	NAME '(' ')'
 	{
-
+		// $$ = $1; ??? probably
 	}
 ;
 
