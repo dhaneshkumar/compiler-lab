@@ -40,7 +40,7 @@
 	Basic_Block * basic_block;
 	list<Basic_Block *> * basic_block_list;
 	Procedure * procedure;
-	pair <string, Symbol_Table *> *paired;
+	pair <string, Symbol_Table *> * paired;
 
 };
 
@@ -71,7 +71,7 @@
 %type <symbol_entry> declaration_statement
 %type <basic_block_list> basic_block_list
 %type <basic_block> basic_block
-%type <string_value> returnType
+//%type <string_value> returnType
 %type <ast_list> executable_statement_list
 %type <ast_list> assignment_statement_list
 %type <ast> assignment_statement
@@ -81,8 +81,11 @@
 %type <ast> atomic
 %type <ast> constant
 %type <ast> typecast_exp
+%type <ast_list> relop_list
+%type <symbol_entry> parameters
+%type <symbol_table> parameter_list
 
- 
+
 
 %start program
 
@@ -95,7 +98,7 @@ program:
 		return_statement_used_flag = false;				// No return statement in the current procedure program_object.set_global_table(*$1);
 		
 		int line = get_line_number();
-		string var_name =current_procedure->name;
+		string var_name =current_procedure->get_proc_name();
 		if (program_object.variable_in_symbol_list_check(var_name))
 		{
 			
@@ -106,7 +109,7 @@ program:
 		//[current_procedure->name]= current_procedure;
 
 		current_procedure = new Procedure(void_data_type, $2->first);
-		current_procedure->set_local_list($2->second );
+		current_procedure->set_local_list(*($2->second) );
 	}
 	procedure_body
 	{	 
@@ -119,11 +122,11 @@ program:
 		 
 	}
 |
-	declaration_statement_list procedure_declarations_list procedure_list
+	declaration_statement_list procedure_declarations_list 
 	{
 		//return_statement_used_flag = false;	
 		program_object.set_global_table(*$1);
-		program_object.create_procedure_map(*$2);
+		///program_object.create_procedure_map(*$2);
 
 		if ($1)
 			$1->global_list_in_proc_map_check(get_line_number());
@@ -134,17 +137,25 @@ program:
 		//program_object.update_global_table(*$2);
 
 	}
+	procedure_list
+	{
+
+	}
 |
-	procedure_declarations_list procedure_list
+	procedure_declarations_list
 	{
 		//return_statement_used_flag = false;	
-		program_object.create_procedure_map(*$1);
+		//program_object.create_procedure_map(*$1);
 		//program_object.update_global_table(*$1);
 	}
+	 procedure_list
+	 {
+
+	 }
 |
 	procedure_name
 	{	////cout<<"abcd\n";
-		current_procedure = new Procedure(void_data_type, *$1);
+		current_procedure = new Procedure(void_data_type, $1->first);
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
 	
 	}
@@ -206,10 +217,11 @@ procedure_name:
 
 		Symbol_Table *s =  new Symbol_Table();
 
-		pair *p = new pair<string, Symbol_Table *>();
-		p->first = (*$1);
-		p->second = s;
-		$$ = p;
+		pair<string, Symbol_Table *> p;
+		//pair *p = new paired();
+		p.first = (*$1);
+		p.second = s;
+		$$ = &p;
 	}
 |
 	NAME '(' parameter_list ')'
@@ -220,10 +232,11 @@ procedure_name:
 		//current_procedure->set_local_list(&s);
 		Symbol_Table *s =  new Symbol_Table();
 		s= $3;
-		pair *p = new pair<string, Symbol_Table *>();
-		p->first = (*$1);
-		p->second = s;
-		$$ = p;
+		pair<string, Symbol_Table *> p;
+		//pair *p = new paired();
+		p.first = (*$1);
+		p.second = s;
+		$$ = &p;
 
 		
 	}
@@ -249,14 +262,27 @@ procedure_declarations:
 			current_procedure = new Procedure(int_data_type, $2->first);
 		}
 		//current_procedure->local_symbol_table.set_local_list($2);
-		current_procedure->set_local_list($2->second );
+		current_procedure->set_local_list(*($2->second) );
+		//todo
+		//check if already eists in global symnbool table or procediure map
+		if(program_object.proc_in_proc_map_check(($2->first))){
+			//program_object.set_procedure_map(*current_procedure);
+			report_error("function already defined in earlier \n", get_line_number());
+
+		}
+		///to do -done
 		program_object.set_procedure_map(*current_procedure);
 	}
 |
 	VOID procedure_name ';'
 	{
 		current_procedure = new Procedure(void_data_type, $2->first);
-		current_procedure->set_local_list($2->second );
+		current_procedure->set_local_list(*($2->second) );
+		if(program_object.proc_in_proc_map_check(($2->first))){
+			//program_object.set_procedure_map(*current_procedure);
+			report_error("function already defined in earlier \n", get_line_number());
+
+		}
 		program_object.set_procedure_map(*current_procedure);
 	}
 ;
@@ -269,16 +295,33 @@ procedure_list:
 		//check if function has been defined already or not $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
 
+		/*if ((*$1)->first == "main") {
+			current_procedure = new Procedure(void_data_type, $1->first);
+			current_procedure->set_local_list($1->second );
+			program_object.set_procedure_map(*current_procedure);
+		}
+		else {
+
+		}*/
+
 		//to do
 		////to check if the symbol table returned by procedure name os same as current prcedures
+		if(!(program_object.proc_in_proc_map_check(($1->first)))){
+			//program_object.set_procedure_map(*current_procedure);
+			report_error("function not defined in earlier \n",get_line_number());
+
+		}
+
+		if($1->second->getVariable_table() != program_object.get_proc_map()[$1->first]->local_symbol_table.getVariable_table()){
+			report_error("function parameters do not match\n",get_line_number());
+			//done
+	}
+
 		 
 	}
 	procedure_body
 	{	 
-		if(!(program_object.proc_in_proc_map_check(current_procedure->name))){
-			program_object.set_procedure_map(*current_procedure);
-
-		}
+		
 	 
 	}
 |
@@ -288,14 +331,21 @@ procedure_list:
 		//program_object.set_global_table(*$1);
 		return_statement_used_flag = false;				// No return statement in the current procedure till now
 		////to check if the symbol table returned by procedure name os same as current prcedures
+		if(!(program_object.proc_in_proc_map_check(($2->first)))){
+			//program_object.set_procedure_map(*current_procedure);
+			report_error("function not defined in earlier \n",get_line_number());
+
+		}
+
+		if($2->second->getVariable_table() != program_object.get_proc_map()[$2->first]->local_symbol_table.getVariable_table()){
+			report_error("function parameters do not match\n",get_line_number());
+			//done
 		  
+		}
 	}
 	procedure_body
 	{	 
-		 if(!(program_object.proc_in_proc_map_check(current_procedure->name))){
-			program_object.set_procedure_map(*current_procedure);
-
-		}
+		
 	}
 ;
 
@@ -306,15 +356,15 @@ procedure_list:
 procedure_body:
 	'{' declaration_statement_list
 	{
-		/*if  (current_procedure->local_symbol_table == NULL) {
+		if  (current_procedure->local_symbol_table.getVariable_table().empty()) {
 			
 			current_procedure->set_local_list(*$2);
 			delete $2;
 		}
 		else {
 			list<Symbol_Table_Entry *>:: iterator it ;
-			for ( it = $2->variable_table->begin(); it != $2->variable_table->end();it++){
-				current_procedure->append_symbol(it);
+			for ( it = $2->variable_table.begin(); it != $2->variable_table.end();it++){
+				current_procedure->append_symbol(*it);
 			delete $2;
 			}
 		}
@@ -401,11 +451,23 @@ declaration_statement_list:
 
 declaration_statement:
 	dataType NAME ';'
-	{	 /*
-		$$ = new Symbol_Table_Entry(*$2, int_data_type);
+	{	 
+
+		if((*$1) == "FLOAT") {
+			$$ = new Symbol_Table_Entry(*$2, float_data_type);
+		}
+
+		else if (*$1 == "DOUBLE") {
+			$$ = new Symbol_Table_Entry(*$2, float_data_type);
+		}
+
+		else if (*$1 == "INTEGER"){
+			$$ = new Symbol_Table_Entry(*$2, int_data_type);
+		}
+		//$$ = new Symbol_Table_Entry(*$2, int_data_type);
 
 		delete $2;
-		 */
+		 
 	}
 ;
 
@@ -413,7 +475,7 @@ parameter_list:
 	parameters
 	{
 		$$ = new Symbol_Table();
-		$$->variable_table->push_symbol($1);
+		$$->push_symbol($1);
 		
 	}
 |
@@ -421,12 +483,12 @@ parameter_list:
 	{
 		if($1 != NULL) {
 			$$ = $1;
-			$$->variable_table->push_symbol($3);
+			$$->push_symbol($3);
 		
 		}
 		else {
 			$$ = new Symbol_Table();
-			$$->variable_table->push_symbol($3);
+			$$->push_symbol($3);
 		}
 	}
 ;
@@ -520,7 +582,7 @@ basic_block:
 
 if_else_clause:
 	IF '(' relop_expression ')' GOTO BB ';' ELSE GOTO BB 
-	{ /*
+	{ 
 		Goto_Ast  *ab = new  Goto_Ast(atoi(((*$6).substr(4,((*$6).length()-5))).c_str()));
 		Goto_Ast  *ab1 = new  Goto_Ast(atoi(((*$10).substr(4,((*$10).length()-5))).c_str()));
 
@@ -528,7 +590,7 @@ if_else_clause:
 		store_goto( ab1->get_bbno());
 		
 		$$ = new Conditional_Ast($3, ab, ab1);
-		*/
+		
 	}
 ;
 
@@ -536,25 +598,35 @@ relop_list :
 
 relop_list ',' relop_expression
 	{
-		// what to do here?
+		if($1 == NULL)
+		{
+			$$ = new list <Ast*>();
+		}
+		else
+		{
+			$$=$1;
+		}
+
+		$$->push_back($3);
 	}
 |
 	relop_expression
 	{
-		// $$ = $1; ???
+		$$ = new list <Ast*>();
+		$$->push_back($1);
 	}
 ;
 
 relop_expression : 
 	atomic
-	{ /*
+	{ 
 		$$ = $1;
-		*/
+		
 	}
 |
 	
 	relop_expression LT relop_expression
-	{ /*
+	{ 
 		$$ = new Relational_Expr_Ast($1, $3, $2);
 
 		int line = get_line_number();
@@ -562,122 +634,122 @@ relop_expression :
 
 		string k="INTEGER";
 		$$->set_data_type(&k);
-		*/
+		
 	}
 |
 	relop_expression LE relop_expression
-	{ /*
+	{ 
 		$$ = new Relational_Expr_Ast($1, $3, $2);
 
 		int line = get_line_number();
 		$$->check_ast(line);
 		string k="INTEGER";
 		$$->set_data_type(&k);
-		*/
+		
 	}
 |
 	relop_expression GT relop_expression
-	{ /*
+	{ 
 		$$ = new Relational_Expr_Ast($1, $3, $2);
 
 		int line = get_line_number();
 		$$->check_ast(line);
 		string k="INTEGER";
 		$$->set_data_type(&k);
-		*/
+		
 	}
 |
 	relop_expression GE relop_expression
-	{ /*
+	{ 
 		$$ = new Relational_Expr_Ast($1, $3, $2);
 
 		int line = get_line_number();
 		$$->check_ast(line);
 		string k="INTEGER";
 		$$->set_data_type(&k);
-		*/
+		
 	}
 |
 	relop_expression EQ relop_expression
-	{ /*
+	{ 
 		$$ = new Relational_Expr_Ast($1, $3, $2);
 
 		int line = get_line_number();
 		$$->check_ast(line);
 		string k="INTEGER";
 		$$->set_data_type(&k);
-		*/
+		
 	}
 |
 	relop_expression NE relop_expression
-	{ /*
+	{ 
 		$$ = new Relational_Expr_Ast($1, $3, $2);
 
 		int line = get_line_number();
 		$$->check_ast(line);
 		string k="INTEGER";
 		$$->set_data_type(&k);
-		*/
+		
 	}
 |
 
 	relop_expression '+' relop_expression
 	{ 
-/*		string k = "PLUS";
+		string k = "PLUS";
 		$$ = new Relational_Expr_Ast($1, $3, &k);
 
 		int line = get_line_number();
 		$$->check_ast(line);
-		*/
+		
 	}
 |
 
 	relop_expression '-' relop_expression
-	{ /*
+	{ 
 		string k = "MINUS";
 		$$ = new Relational_Expr_Ast($1, $3, &k);
 
 		int line = get_line_number();
 		$$->check_ast(line);
-		*/
+		
 	}
 |
 
 	relop_expression '*' relop_expression
-	{ /*
+	{ 
 		string k  = "MULT";
 		$$ = new Relational_Expr_Ast($1, $3, &k);
 
 		int line = get_line_number();
 		$$->check_ast(line);
-		*/
+		
 	}
 |
 
 	relop_expression '/' relop_expression
-	{ 	/*
+	{ 	
 		string k  = "DIV";
 		$$ = new Relational_Expr_Ast($1, $3, &k);
 
 		int line = get_line_number();
 		$$->check_ast(line);
-		*/
+		
 	}
 |
 	typecast_exp
-	{ /*
+	{ 
 		$$ = $1;
-		*/
+		
 	}
 |	
 	'-' atomic
 	{
-		/*string k = "UMINUS";
+		string k = "UMINUS";
 		////cout<<$2->get_data_type()<<" dfkj\n";
 		$$ = new Relational_Expr_Ast(NULL,$2, &k);
 		////cout<<$2->get_data_type()<<" zbc\n";
 		int line = get_line_number();
-		$$->check_ast(line);*/
+		$$->check_ast(line);
 	}
 ;
 
@@ -685,27 +757,31 @@ relop_expression :
 atomic:
 	variable
 	{
-		/*$$ = $1;*/
+		$$ = $1;
 	}
 |
 	constant
 	{
-	/*	$$ = $1;*/
+		$$ = $1;
 	}
 |
 	'(' relop_expression ')'
 	{
-		/*$$ = $2;*/
+		$$ = $2;
 	}
 |   
 	NAME '(' relop_list ')'
 	{
-		// $$ = $1; ??? probably
+
+		Functional_Ast* fn = new Functional_Ast(*$1, *$3, program_object.get_proc_map()[*$1]->get_return_type());
+		$$ = fn;
 	}
 |
 	NAME '(' ')'
 	{
-		// $$ = $1; ??? probably
+		list<Ast*> l1;
+		Functional_Ast* fn = new Functional_Ast(*$1, l1, program_object.get_proc_map()[*$1]->get_return_type());
+		$$ = fn;
 	}
 ;
 
@@ -713,17 +789,17 @@ atomic:
 dataType :
 	FLOAT
 	{
-		/*$$= $1;*/	
+		$$= $1;	
 	}
 |
 	DOUBLE
 	{
-	/*	$$= $1;*/
+		$$= $1;
 	}
 |
 	INTEGER
 	{
-		/*$$= $1;*/
+		$$= $1;
 	}
 ;
 
@@ -732,10 +808,10 @@ dataType :
 typecast_exp:
 	'(' dataType ')' atomic
 	{
-		/*////cout<<"type casting :"<<endl;
+		////cout<<"type casting :"<<endl;
 		$$ = $4;
 		$$->set_data_type($2);
-		////cout<<*($2)<<" Hahahah "<<$$->get_data_type()<<endl;*/
+		////cout<<*($2)<<" Hahahah "<<$$->get_data_type()<<endl;
 		
 	}
 ;
@@ -745,26 +821,32 @@ typecast_exp:
 executable_statement_list:
 	assignment_statement_list
 	{	 
-		/*$$ = $1;*/
+		$$ = $1;
 		 
 	}
 |
 	assignment_statement_list NAME '(' relop_list ')' ';' executable_statement_list
 	{	 
-		/*$$ = $1;*/
-		 
+		$$ = $1;
+		Functional_Ast* fn = new Functional_Ast(*$2, *$4, program_object.get_proc_map()[*$2]->get_return_type());
+		$$->push_back(fn);
+		$$->merge(*$7);
 	}
 |
 	
 	assignment_statement_list NAME '(' ')' ';' executable_statement_list
 	{	 
-		/*$$ = $1;*/
+		$$ = $1;
+		list<Ast*> l1;
+		Functional_Ast* fn = new Functional_Ast(*$2, l1, program_object.get_proc_map()[*$2]->get_return_type());
+		$$->push_back(fn);
+		$$->merge(*$6);
 		 
 	}
 |
 	assignment_statement_list RETURN ';'
-	{	/* 
-		Ast * ret = new Return_Ast();
+	{	 
+		Ast * ret = new Return_Ast(NULL);
 
 		return_statement_used_flag = true;					// Current procedure has an occurrence of return statement
 
@@ -774,13 +856,14 @@ executable_statement_list:
 		else
 			$$ = new list<Ast *>;
 
-		$$->push_back(ret);*/
+		$$->push_back(ret);
 		 
 	}
 |
 	assignment_statement_list RETURN relop_expression ';'
-	{	/* 
-		Ast * ret = new Return_Ast();
+	{	 
+	
+		Ast * ret = new Return_Ast( $3);
 
 		return_statement_used_flag = true;					// Current procedure has an occurrence of return statement
 
@@ -790,13 +873,13 @@ executable_statement_list:
 		else
 			$$ = new list<Ast *>;
 
-		$$->push_back(ret);*/
+		$$->push_back(ret);
 		 
 	}
 
 | 	
 	assignment_statement_list GOTO BB ';'
-	{ /*
+	{ 
 		Ast * ret = new Goto_Ast( atoi(((*$3).substr(4,((*$3).length()-5))).c_str()));
 		Goto_Ast * ret1 = new Goto_Ast( atoi(((*$3).substr(4,((*$3).length()-5))).c_str()));
 
@@ -809,19 +892,19 @@ executable_statement_list:
 			$$ = new list<Ast *>;
 
 		$$->push_back(ret);
-		*/
+		
 	}
 
 |
 	assignment_statement_list if_else_clause ';'
 	{ 
-		/*if ($1 == NULL)
+		if ($1 == NULL)
 			$$ = new list<Ast *>;
 
 		else
 			$$ = $1;
 
-		$$->push_back($2);*/
+		$$->push_back($2);
 		
 	}
 
@@ -830,20 +913,20 @@ executable_statement_list:
 
 assignment_statement_list:
 	{	 
-		/*$$ = NULL;*/
+		$$ = NULL;
 		 
 	}
 
 |
 	assignment_statement_list assignment_statement
-	{	 /*
+	{	 
 		if ($1 == NULL)
 			$$ = new list<Ast *>;
 
 		else
 			$$ = $1;
 
-		$$->push_back($2);*/
+		$$->push_back($2);
 		 
 	}
 
@@ -852,11 +935,11 @@ assignment_statement_list:
 assignment_statement:
 	
 	variable ASSIGN_OP relop_expression ';'
-	{ /*
+	{ 
 		$$ = new Assignment_Ast($1, $3);
 		////cout<<$3->get_data_type()<<" abc\n";
 		int line = get_line_number();
-		$$->check_ast(line);*/
+		$$->check_ast(line);
 		
 	}
 ;
@@ -865,7 +948,7 @@ assignment_statement:
 
 variable:
 	NAME
-	{	/* 
+	{	 
 		Symbol_Table_Entry var_table_entry;
 
 		if (current_procedure->variable_in_symbol_list_check(*$1))
@@ -883,21 +966,21 @@ variable:
 		$$ = new Name_Ast(*$1, var_table_entry);
 
 		delete $1;
-		 */
+		 
 	}
 ;
 
 constant:
 	INTEGER_NUMBER
 	{	 
-		/*$$ = new Number_Ast<int>($1, int_data_type);*/
+		$$ = new Number_Ast<int>($1, int_data_type);
 		 
 	}
 	
 |
 	FLOAT_NUMBER
 	{
-		/*$$ = new Number_Ast<float>($1, float_data_type);*/
+		$$ = new Number_Ast<float>($1, float_data_type);
 	}
 
 

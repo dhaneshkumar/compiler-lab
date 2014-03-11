@@ -71,7 +71,7 @@ void Procedure::set_local_list(Symbol_Table & new_list)
 }
 
 void Procedure::append_symbol(Symbol_Table_Entry * ste){
-	local_symbol_table.push_symbol(Symbol_Table_Entry * ste);
+	local_symbol_table.push_symbol( ste);
 }
 
 Data_Type Procedure::get_return_type()

@@ -29,6 +29,7 @@ using namespace std;
 #include"user-options.hh"
 #include"error-display.hh"
 #include"local-environment.hh"
+//#include"procedure.hh"
 
 #include"symbol-table.hh"
 #include"ast.hh"
@@ -339,7 +340,7 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 
 Return_Ast::Return_Ast(Ast *b)
 {
-	a = new Ast();
+	//a = new Ast();
 	a = b;
 
 }
@@ -366,9 +367,10 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 		Eval_Result & result = *new Eval_Result_Value_Int();
 		return result;
 	}	
-	else 
+	else {
 		Eval_Result & result = a->evaluate(eval_env, file_buffer);
-	return result;
+		return result;
+	}
 }
 
 template class Number_Ast<int>;
@@ -869,17 +871,17 @@ Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & 
 
 
 
-Functional_Ast::Functional_Ast(string name1, list<Relational_Expr_Ast> parameter_list1, Data_Type type)
+Functional_Ast::Functional_Ast(string name1, list<Ast*> parameter_list1, Data_Type type)
 {
 	name = name1;
-	parameter_list  = new list<Relational_Expr_Ast>();
+	//parameter_list  = new list<Ast*>();
 	parameter_list =  parameter_list1;	
 	node_data_type = type;
 }
 
 Functional_Ast::~Functional_Ast()
 {
-	delete parameter_list;
+	//delete parameter_list;
 	//delete rhs;
 }
 
@@ -903,11 +905,11 @@ void Functional_Ast::print_ast(ostream & file_buffer)
 	
 		file_buffer << "\n"<<AST_NODE_SPACE<< "FN CALL: "<<name<<"(";
 
-		if (parameter_list != NULL) {
-			list<Relational_Expr_Ast> iterator id;	
+		if (!(parameter_list.empty())) {
+			list<Ast*>::iterator id;	
 
 			for ( id = parameter_list.begin(); id != parameter_list.end(); id++) {
-				rhs->print_ast(file_buffer);
+				(*id)->print_ast(file_buffer);
 			}
 		}
 		file_buffer << ")";
@@ -915,8 +917,8 @@ void Functional_Ast::print_ast(ostream & file_buffer)
 
 Eval_Result & Functional_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-	
-	Procedure p = new Procedure(node_data_type, name);	
+	/*
+	Procedure * p = new Procedure(node_data_type, name);	
 	Eval_Result & result = p->evaluate(file_buffer);
 
 	if (result.is_variable_defined() == false)
@@ -924,5 +926,5 @@ Eval_Result & Functional_Ast::evaluate(Local_Environment & eval_env, ostream & f
 	
 	return result;
 	
-	
+	*/
 }

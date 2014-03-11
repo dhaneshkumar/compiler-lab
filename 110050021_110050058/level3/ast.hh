@@ -181,12 +181,12 @@ public:
 class Functional_Ast:public Ast
 {
 	string name;
-	list<Relational_Expr_Ast> parameter_list;
+	list<Ast*> parameter_list;
 
 
 
 public:
-	Functional_Ast(string name1, list<Relational_Expr_Ast> parameter_list1, Data_Type type);
+	Functional_Ast(string name1, list<Ast*> parameter_list1, Data_Type type);
 	~Functional_Ast();
 
 	Data_Type get_data_type();

@@ -59,19 +59,19 @@ void Program::set_global_table(Symbol_Table & new_global_table)
 	global_symbol_table.set_table_scope(global);
 }
 
-void Program::update_global_table(map<string, Procedure *> procedure_map)
+/*void Program::update_global_table(map<string, Procedure *> procedure_map)
 {
 	map<string, Procedure *>::iterator it; 
 
 	for(it= procedure_map.begin();it!= procedure_map.end();it++)
 	{
 		Symbol_Table_Entry s;
-		s.variable_name = (*it)->first;
-		s.variable_data_type=(*it)->first.return_type;
+		s.get_variable_name() = (*it).first;
+		s.get_data_type()=(*it).second.return_type;
 		
 		global_symbol_table.push_symbol(s);
 	}
-}
+}*/
 
 
 void Program::set_procedure_map(Procedure & proc)
@@ -96,6 +96,10 @@ Symbol_Table_Entry & Program::get_symbol_table_entry(string variable_name)
 
 bool Program::proc_in_proc_map_check(string s){
 	return procedure_map.count(s);
+}
+
+map<string, Procedure *> Program::get_proc_map(){
+	return procedure_map;
 }
 
 void Program::variable_in_proc_map_check(string variable, int line)
