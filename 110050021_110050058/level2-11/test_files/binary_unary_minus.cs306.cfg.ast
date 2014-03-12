@@ -1,0 +1,19 @@
+Program:
+   Procedure: main
+
+      Basic_Block 2
+         Asgn:
+            LHS (Name : i1)
+            RHS (Num : 1)
+         Asgn:
+            LHS (Name : i2)
+            RHS (Num : 2)
+         Asgn:
+            LHS (Name : i1)
+            RHS (
+            Arith: MINUS
+               LHS (
+            Arith: UMINUS
+               LHS (Name : i1))
+               RHS (Name : i2))
+         Return <NOTHING>

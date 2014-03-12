@@ -129,14 +129,26 @@ void Program::print_ast()
 
 	ast_buffer << "Program:\n";
 
+
+	
+	//ast_buffer<<"here\n";
 	Procedure * main = get_main_procedure(ast_buffer);
 	if (main == NULL)
 		report_error("No main function found in the program", NOLINE);
-
 	else
 	{
-		main->print_ast(ast_buffer);
+		
+		map<string, Procedure *>::iterator itr;
+
+		for(itr= procedure_map.begin(); itr != procedure_map.end(); itr++)
+		{
+			//ast_buffer<<"in else\n";
+			itr->second->print_ast(ast_buffer);
+			//ast_buffer<<"done\n";
+		}
 	}
+
+
 }
 
 Eval_Result & Program::evaluate()

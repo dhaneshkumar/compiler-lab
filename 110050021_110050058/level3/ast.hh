@@ -190,7 +190,7 @@ public:
 	~Functional_Ast();
 
 	Data_Type get_data_type();
-	//void set_data_type(string *k);
+	void set_data_type(string *k);
 	bool check_ast(int line);
 
 	void print_ast(ostream & file_buffer);

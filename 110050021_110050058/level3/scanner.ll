@@ -28,7 +28,10 @@
 
 int		{
 			store_token_name("INTEGER");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string("INTEGER");
 			return Parser::INTEGER; 
+			
 		}
 
 return		{ 
@@ -53,16 +56,22 @@ goto		{
 
 float 		{
 			store_token_name("FLOAT");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string("FLOAT");
 			return Parser::FLOAT;
 		}
 
 void 	{
 			store_token_name("VOID");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string("VOID");
 			return Parser::VOID;
 		}
 
 double 		{
 			store_token_name("DOUBLE");
+			ParserBase::STYPE__ * val = getSval();
+			val->string_value = new std::string("DOUBLE");
 			return Parser::DOUBLE;
 		}
 		

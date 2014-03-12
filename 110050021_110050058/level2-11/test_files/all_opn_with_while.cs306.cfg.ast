@@ -1,0 +1,55 @@
+Program:
+   Procedure: main
+
+      Basic_Block 2
+         Asgn:
+            LHS (Name : i)
+            RHS (Num : 1)
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 5)
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 6)
+         Asgn:
+            LHS (Name : d)
+            RHS (Num : 7)
+      Basic_Block 3
+         Asgn:
+            LHS (Name : i)
+            RHS (
+            Arith: PLUS
+               LHS (Name : i)
+               RHS (Num : 1))
+         Asgn:
+            LHS (Name : d)
+            RHS (
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Name : b))
+         Asgn:
+            LHS (Name : d)
+            RHS (
+            Arith: MINUS
+               LHS (Name : a)
+               RHS (Name : b))
+         Asgn:
+            LHS (Name : d)
+            RHS (
+            Arith: DIV
+               LHS (Name : a)
+               RHS (Name : b))
+         Asgn:
+            LHS (Name : d)
+            RHS (
+            Arith: MULT
+               LHS (Name : a)
+               RHS (Name : b))
+         If_Else statement:
+            Condition: LE
+               LHS (Name : i)
+               RHS (Num : 5)
+            True Successor: 3
+            False Successor: 4
+      Basic_Block 4
+         Return <NOTHING>

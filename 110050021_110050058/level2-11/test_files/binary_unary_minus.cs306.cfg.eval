@@ -1,0 +1,40 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure main
+      Local Variables (before evaluating):
+         i1 : undefined
+         i2 : undefined
+
+
+      Basic Block: 2
+
+         Asgn:
+            LHS (Name : i1)
+            RHS (Num : 1)
+         i1 : 1
+
+
+         Asgn:
+            LHS (Name : i2)
+            RHS (Num : 2)
+         i2 : 2
+
+
+         Asgn:
+            LHS (Name : i1)
+            RHS (
+            Arith: MINUS
+               LHS (
+            Arith: UMINUS
+               LHS (Name : i1))
+               RHS (Name : i2))
+         i1 : -3
+
+
+         Return <NOTHING>
+
+
+      Local Variables (after evaluating):
+         i1 : -3
+         i2 : 2
+   Global Variables (after evaluating):

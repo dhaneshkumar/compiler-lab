@@ -3,7 +3,7 @@ path = "test_files"
 files=[]
 for f in os.listdir(path):
     files.append(f) 
-"""
+
 correct_files=[]
 for f in files:
     fileName,fileExt = os.path.splitext( path + f)
@@ -27,9 +27,18 @@ for f in cfgFiles:
     command = "./cfglp -tokens -d " + f + " > generated " 
     os.system(command)
     os.system("diff -bB expected generated")
-  
+
+    print("Testing file  " + f ); 
+    command = "./cfglp64 -eval -d " + f + " > expectedeval " 
+    os.system(command) 
+    command = "./cfglp -eval -d " + f + " > generatedeval " 
+    os.system(command)
+    os.system("diff -bB expectedeval generatedeval")
+"""
 print("\n*****Done with the checking cfg files EXCEPT infi loops!!***\n")
+
 #print("\n*****Done with the checking cfg files EXCEPT infi loops!!***\n")"""
+"""
 error_files=[]
 for f in files:
     fileName,fileExt = os.path.splitext( path + f)
@@ -49,4 +58,4 @@ print("\n*****Done with the checking ecfg files!!***\n")
 
 
 #print cfgFiles
-
+"""

@@ -1,0 +1,149 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure main
+      Local Variables (before evaluating):
+         a : undefined
+         b : undefined
+         c : undefined
+         d : undefined
+         e : undefined
+         f : undefined
+         f1 : undefined
+         g : undefined
+         h : undefined
+         i1 : undefined
+         i2 : undefined
+
+
+      Basic Block: 2
+
+         Asgn:
+            LHS (Name : f1)
+            RHS (Num : 10.30)
+         f1 : 10.30
+
+
+         Asgn:
+            LHS (Name : i1)
+            RHS (Num : 10)
+         i1 : 10
+
+
+         Asgn:
+            LHS (Name : i2)
+            RHS (Num : 11)
+         i2 : 11
+
+
+         Asgn:
+            LHS (Name : a)
+            RHS (
+            Condition: LT
+               LHS (
+            Condition: LT
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (Name : i2))
+         a : 1
+
+
+         Asgn:
+            LHS (Name : b)
+            RHS (
+            Condition: LE
+               LHS (
+            Condition: LE
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (Name : i2))
+         b : 1
+
+
+         Asgn:
+            LHS (Name : c)
+            RHS (
+            Condition: GT
+               LHS (
+            Condition: GT
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (Name : i2))
+         c : 0
+
+
+         Asgn:
+            LHS (Name : d)
+            RHS (
+            Condition: GE
+               LHS (
+            Condition: GE
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (Name : i2))
+         d : 0
+
+
+         Asgn:
+            LHS (Name : e)
+            RHS (
+            Arith: PLUS
+               LHS (
+            Arith: PLUS
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (Name : i2))
+         e : 31.30
+
+
+         Asgn:
+            LHS (Name : f)
+            RHS (
+            Arith: MINUS
+               LHS (
+            Arith: MINUS
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (Name : i2))
+         f : -11.30
+
+
+         Asgn:
+            LHS (Name : g)
+            RHS (
+            Arith: DIV
+               LHS (
+            Arith: DIV
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (Name : i2))
+         g : 0.09
+
+
+         Asgn:
+            LHS (Name : h)
+            RHS (
+            Arith: MULT
+               LHS (
+            Arith: MULT
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (Name : i2))
+         h : 1133.00
+
+
+         Return <NOTHING>
+
+
+      Local Variables (after evaluating):
+         a : 1
+         b : 1
+         c : 0
+         d : 0
+         e : 31.30
+         f : -11.30
+         f1 : 10.30
+         g : 0.09
+         h : 1133.00
+         i1 : 10
+         i2 : 11
+   Global Variables (after evaluating):

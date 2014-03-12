@@ -436,7 +436,7 @@ void Relational_Expr_Ast::print_ast(ostream & file_buffer)
 {
 	//cout<<rhs->get_data_type()<<" data type of rhs\n";
 	if (ro == "PLUS" ||ro == "MINUS" || ro == "MULT" ||ro == "DIV" || ro == "UMINUS" ){
-		file_buffer << "\n"<<AST_NODE_SPACE<< "Arith: "<<ro<<"\n";
+		file_buffer << "\n"<<AST_SPACE<< "Arith: "<<ro<<"\n";
 
 	}
 	else{
@@ -890,6 +890,22 @@ Data_Type Functional_Ast::get_data_type()
 	return node_data_type;
 }
 
+void Functional_Ast::set_data_type(string *k)
+{
+	if (*k == "INTEGER")
+	{
+		node_data_type=int_data_type;
+	}
+	else if (*k == "FLOAT")
+	{
+		node_data_type=float_data_type;
+	}
+	else if (*k == "DOUBLE")
+	{
+		node_data_type=float_data_type;
+	}
+}
+
 bool Functional_Ast::check_ast(int line)
 {
 	
@@ -903,16 +919,19 @@ void Functional_Ast::print_ast(ostream & file_buffer)
 {
 	//cout<<rhs->get_data_type()<<" data type of rhs\n";
 	
-		file_buffer << "\n"<<AST_NODE_SPACE<< "FN CALL: "<<name<<"(";
+		file_buffer << "\n"<<AST_SPACE<< "FN CALL: "<<name<<"(";
 
 		if (!(parameter_list.empty())) {
 			list<Ast*>::iterator id;	
-
+			//file_buffer <<"\n"<<AST_NODE_SPACE;
 			for ( id = parameter_list.begin(); id != parameter_list.end(); id++) {
+				file_buffer <<"\n"<<AST_NODE_SPACE;
 				(*id)->print_ast(file_buffer);
+				
 			}
 		}
 		file_buffer << ")";
+		//file_buffer<< "\n";
 }
 
 Eval_Result & Functional_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
