@@ -127,7 +127,7 @@ void Program::print_ast()
 	command_options.create_ast_buffer();
 	ostream & ast_buffer = command_options.get_ast_buffer();
 
-	ast_buffer << "Program:\n";
+	ast_buffer << "Program:";
 
 
 	
@@ -165,7 +165,7 @@ Eval_Result & Program::evaluate()
 	file_buffer << GLOB_SPACE << "Global Variables (before evaluating):\n";
 	interpreter_global_table.print(file_buffer);
 
-	Eval_Result & result = main->evaluate(file_buffer);
+	Eval_Result & result = main->evaluate(file_buffer, NULL);
 
 	file_buffer << GLOB_SPACE << "Global Variables (after evaluating):\n";
 	interpreter_global_table.print(file_buffer);

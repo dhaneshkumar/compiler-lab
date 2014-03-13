@@ -25,6 +25,7 @@
 #define AST_HH
 
 #include<string>
+#include "program.hh"          
 #include <iomanip>
 
 #define AST_SPACE "         "
@@ -34,6 +35,8 @@
 using namespace std;
 
 
+
+class Program;
 class Ast;
 
 

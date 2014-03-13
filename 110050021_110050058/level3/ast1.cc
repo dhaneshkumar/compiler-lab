@@ -155,7 +155,7 @@ void Name_Ast::print_ast(ostream & file_buffer)
 
 void Name_Ast::set_data_type(string *k)
 {
-	
+	//cout<<"name "<<na<<"data type "<<*k<<endl;
 	
 	if (*k == "INTEGER")
 	{
@@ -175,6 +175,8 @@ void Name_Ast::set_data_type(string *k)
 
 	
 }
+
+
 
 void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 {
@@ -318,7 +320,7 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 	{
 		dtype cons;
 		cons.a=constant;
-		cons.b=0;
+		cons.b=0.00;
 		Eval_Result & result = *new Eval_Result_Value_Int();
 		result.set_value(cons);
 
@@ -474,11 +476,8 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 {
 	
 	////cout<< "relop evaluate calling "<<endl;
-	Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
-
-	if (result.is_variable_defined() == false)
-		report_error("Variable should be defined to be on rel-lhs ", NOLINE);
 	
+	cout<<node_data_type<<" node_data_type"<<endl;
 
 	if(node_data_type == 1)
 	{
@@ -486,19 +485,23 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 		Eval_Result & result3 = *new Eval_Result_Value_Int();
 		dtype tr;
 		tr.a=1;
-		tr.b=1;
+		tr.b=1.00;
 
 		dtype fr;
 		fr.a=0;
-		fr.b=0;
+		fr.b=0.00;
 
-		if(==NULL)
+		if(lhs==NULL)
 		{
 
 			if (ro == "UMINUS")
 			{
+				Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
+
+				if (result.is_variable_defined() == false)
+					report_error("Variable should be defined to be on rel-lhs ", NOLINE);
 				tr.a=0 - result.get_value().a;
-				tr.b=0 - result.get_value().a;
+				tr.b=0.00 - result.get_value().a;
 				result3.set_value(tr);
 				result3.set_result_enum(int_result);
 				return result3;
@@ -510,10 +513,14 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 			Eval_Result & result1 = lhs->evaluate(eval_env, file_buffer);
 
 			if (result1.is_variable_defined() == false)
-				report_error("Variable should be defined to be on lhs", NOLINE);
+				report_error("Variable should be defined to be on lhs1", NOLINE);
 
 			//lhs->set_value_of_evaluation(eval_env, result);
-	
+			Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
+
+			if (result.is_variable_defined() == false)
+				report_error("Variable should be defined to be on rel-lhs ", NOLINE);
+
 			if (ro == "LE"){
 				if(result1.get_value().a <= result.get_value().a)
 				{
@@ -608,6 +615,8 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 			}
 			else if (ro == "DIV")
 			{
+				//cout<<"a :"<<result1.get_value().a<<endl;
+				//cout<<"a :"<<result.get_value().a<<endl;
 				if(result.get_value().a==0)
 				{
 					file_buffer << "error : divide by zero";
@@ -616,6 +625,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 				tr.a=result1.get_value().a / result.get_value().a;
 				tr.b=result1.get_value().a / result.get_value().a;
 				result3.set_value(tr);
+				//cout<<"a :"<<result3.get_value().a<<endl;
 			}
 			result3.set_result_enum(int_result);
 			return result3;
@@ -637,15 +647,19 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 
 		dtype fr;
 		fr.a=0;
-		fr.b=0;
+		fr.b=0.00;
 
 		if(lhs==NULL)
 		{
 
 			if (ro == "UMINUS")
-			{
+			{	
+				Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
+
+				if (result.is_variable_defined() == false)
+					report_error("Variable should be defined to be on rel-lhs ", NOLINE);
 				tr.a=0 - result.get_value().b;
-				tr.b=0 - result.get_value().b;
+				tr.b=0.00 - result.get_value().b;
 				result3.set_value(tr);
 				result3.set_result_enum(float_result);
 				return result3;
@@ -657,8 +671,13 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 
 			Eval_Result & result1 = lhs->evaluate(eval_env, file_buffer);
 
-	if (result1.is_variable_defined() == false)
-		report_error("Variable should be defined to be on lhs", NOLINE);
+			if (result1.is_variable_defined() == false)
+				report_error("Variable should be defined to be on lhs2", NOLINE);
+
+			Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
+
+			if (result.is_variable_defined() == false)
+				report_error("Variable should be defined to be on rel-lhs ", NOLINE);
 
 	//lhs->set_value_of_evaluation(eval_env, result);
 	
@@ -754,6 +773,8 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 	}
 	else if (ro == "DIV")
 	{
+
+
 		if(result.get_value().b==0)
 		{
 			file_buffer << "error : divide by zero";
@@ -811,7 +832,7 @@ Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 	Eval_Result & result = *new Eval_Result_Value_Goto();
 	dtype d;
 	d.a=bbno;
-	d.b=0;
+	d.b=0.00;
 
 	result.set_value(d);
 	return result;
@@ -836,7 +857,7 @@ Conditional_Ast::~Conditional_Ast()
 void Conditional_Ast::print_ast(ostream & file_buffer){
 	file_buffer <<"\n"<<AST_SPACE<<"If_Else statement:\n";
 
-	r1->print_ast(file_buffer);
+	r1->print_ast(file_buffer);		
 	file_buffer<<"\n"<<AST_NODE_SPACE<<"True Successor: "<<g1->get_bbno()<<"\n";
 	file_buffer<<AST_NODE_SPACE<<"False Successor: "<<g2->get_bbno()<<"\n";
 }
@@ -845,14 +866,22 @@ Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & 
 {
 
 
+	Eval_Result & result1 = *new Eval_Result_Value_Goto();
+	
+	file_buffer <<"\n"<<AST_SPACE<<"If_Else statement:\n";
+
+
 	Eval_Result & result = r1->evaluate(eval_env, file_buffer);
+
+	file_buffer<<"\n"<<AST_NODE_SPACE<<"True Successor: "<<g1->get_bbno()<<"\n";
+	file_buffer<<AST_NODE_SPACE<<"False Successor: "<<g2->get_bbno()<<"\n";
+
 
 	if (result.is_variable_defined() == false)
 		report_error("Variable should be defined to be on con-rhs", NOLINE);
 
 	
-	Eval_Result & result1 = *new Eval_Result_Value_Goto();
-	print_ast(file_buffer);
+
 	if(result.get_value().a==1)
 	{
 		file_buffer<<AST_SPACE<<"Condition True : Goto (BB "<<g1->get_bbno()<<")\n";

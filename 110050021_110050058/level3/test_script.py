@@ -21,20 +21,26 @@ for f in correct_files:
 print("Done generating cfg files\n");
 
 for f in cfgFiles:
-    print("Testing file  " + f ); 
-    command = "./cfglp64 -tokens -d " + f + " > expected " 
-    os.system(command) 
-    command = "./cfglp -tokens -d " + f + " > generated " 
-    os.system(command)
-    os.system("diff -bB expected generated")
+    # print("Testing file  " + f ); 
+    # command = "./cfglp64 -tokens -d " + f + " > expected " 
+    # os.system(command) 
+    # command = "./cfglp -tokens -d " + f + " > generated " 
+    # os.system(command)
+    # os.system("diff -bB expected generated")
+    
+    # print("Testing file  " + f ); 
+    # command = "./cfglp64 -ast -d " + f + " > expectedeval " 
+    # os.system(command) 
+    # command = "./cfglp -ast -d " + f + " > generatedeval " 
+    # os.system(command)
+    # os.system("diff -bB expectedeval generatedeval")
 
     print("Testing file  " + f ); 
-    command = "./cfglp64 -eval -d " + f + " > expectedeval " 
+    command = "./cfglp64 -eval -d " + f + " > expectedev " 
     os.system(command) 
-    command = "./cfglp -eval -d " + f + " > generatedeval " 
+    command = "./cfglp -eval -d " + f + " > generatedev " 
     os.system(command)
-    os.system("diff -bB expectedeval generatedeval")
-"""
+    os.system("diff -bB expectedev generatedev")
 print("\n*****Done with the checking cfg files EXCEPT infi loops!!***\n")
 
 #print("\n*****Done with the checking cfg files EXCEPT infi loops!!***\n")"""

@@ -27,11 +27,13 @@
 #include<string>
 #include<map>
 #include<list>
+#include"procedure.hh"
 
 #define GLOB_SPACE "   "
 
 using namespace std;
 
+class Procedure;
 class Program;
 
 extern Program program_object;

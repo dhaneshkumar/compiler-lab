@@ -27,12 +27,13 @@
 #include<string>
 #include<map>
 #include<list>
-
+#include"basic-block.hh"
 #define PROC_SPACE "   "
 #define LOC_VAR_SPACE "      "
 
 using namespace std;
 
+class Basic_Block;
 class Procedure;
 
 class Procedure
@@ -59,7 +60,7 @@ public:
 	Basic_Block * get_next_bb(Basic_Block & current_bb);
 	Basic_Block & get_start_basic_block();
 
-	Eval_Result & evaluate(ostream & file_buffer);
+	Eval_Result & evaluate(ostream & file_buffer, list<Eval_Result_Value*> *a);
 	
 	bool variable_in_symbol_list_check(string variable);
 };

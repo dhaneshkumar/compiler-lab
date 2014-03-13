@@ -91,7 +91,7 @@ Symbol_Table_Entry & Procedure::get_symbol_table_entry(string variable_name)
 
 void Procedure::print_ast(ostream & file_buffer)
 {
-	file_buffer << "\n"<<PROC_SPACE << "Procedure: " << name  << "\n";
+	file_buffer << "\n"<<PROC_SPACE << "Procedure: " << name  << "\n\n";
 
 	list<Basic_Block *>::iterator i;
 	for(i = basic_block_list.begin(); i != basic_block_list.end(); i++)
@@ -125,14 +125,36 @@ Basic_Block * Procedure::get_next_bb(Basic_Block & current_bb)
 	return NULL;
 }
 
-Eval_Result & Procedure::evaluate(ostream & file_buffer)
+Eval_Result & Procedure::evaluate(ostream & file_buffer, list<Eval_Result_Value*> *a)
 {
 	Local_Environment & eval_env = *new Local_Environment();
 	local_symbol_table.create(eval_env);
 	
+	if (a) {
+
+		list<Symbol_Table_Entry *>  & table = local_symbol_table.getVariable_table();
+		
+		list<Symbol_Table_Entry *>::iterator it;
+		it=table.begin();
+
+
+		//cout<<a->size()<<endl;
+		//cout<<local_symbol_table.getVariable_table().size()<<endl;
+
+		list<Eval_Result_Value*>::iterator itr;
+		for(itr=a->begin(); itr !=a->end();itr++)
+		{
+			
+			eval_env.put_variable_value( *(*itr), (*it)->get_variable_name());
+			it++;
+			
+		}
+	}
+
+
 	Eval_Result * result = NULL;
 
-	file_buffer << PROC_SPACE << "Evaluating Procedure Function:<< "<< name << " >>\n";
+	file_buffer << PROC_SPACE << "Evaluating Procedure << "<< name << " >>\n";
 	file_buffer << LOC_VAR_SPACE << "Local Variables (before evaluating):\n";
 	eval_env.print(file_buffer);
 	file_buffer << "\n";
@@ -182,9 +204,19 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 
 	file_buffer << "\n\n";
 	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating) Function: << "<< name << " >>\n";
-	
-	
 	eval_env.print(file_buffer);
+
+		
+
+
+	if (result->get_result_enum() == 0)
+		{
+			file_buffer<<LOC_VAR_SPACE<<"return : "<<result->get_value().a<<endl;
+		}
+	else if(result->get_result_enum() == 3){
+		file_buffer<<LOC_VAR_SPACE<<"return : "<<result->get_value().b<<endl;	
+	}
+	//cout<<result->get_result_enum()<<endl;
 
 	return *result;
 }
