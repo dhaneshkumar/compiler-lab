@@ -25,6 +25,7 @@
 #define AST_HH
 
 #include<string>
+#include "program.hh"          
 #include <iomanip>
 
 #define AST_SPACE "         "
@@ -34,6 +35,8 @@
 using namespace std;
 
 
+
+class Program;
 class Ast;
 
 
@@ -133,9 +136,9 @@ public:
 
 class Return_Ast:public Ast
 {
-
+	Ast *a;
 public:
-	Return_Ast();
+	Return_Ast( Ast *b);
 	~Return_Ast();
 
 	void print_ast(ostream & file_buffer);
@@ -175,6 +178,28 @@ public:
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 
+
+/**************************************************************************************/
+//functional AST
+class Functional_Ast:public Ast
+{
+	string name;
+	list<Ast*> parameter_list;
+
+
+
+public:
+	Functional_Ast(string name1, list<Ast*> parameter_list1, Data_Type type);
+	~Functional_Ast();
+
+	Data_Type get_data_type();
+	void set_data_type(string *k);
+	bool check_ast(int line);
+
+	void print_ast(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+};
 
 
 #endif

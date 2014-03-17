@@ -27,11 +27,12 @@
 #include<string>
 #include<map>
 #include<list>
-
+#include"ast.hh"
 #define BB_SPACE "      "
 
 using namespace std;
 
+class Ast;
 class Basic_Block;
 
 class Basic_Block

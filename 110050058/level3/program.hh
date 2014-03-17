@@ -27,11 +27,13 @@
 #include<string>
 #include<map>
 #include<list>
+#include"procedure.hh"
 
 #define GLOB_SPACE "   "
 
 using namespace std;
 
+class Procedure;
 class Program;
 
 extern Program program_object;
@@ -48,9 +50,10 @@ public:
 
 	void set_procedure_map(Procedure & proc);
 	void set_global_table(Symbol_Table & new_global_table);
-
+	//void update_global_table(map<string, Procedure *> procedure_map);
+	void create_procedure_map(map<string, Procedure *> new_procedure_map);
 	Symbol_Table_Entry & get_symbol_table_entry(string variable);
-
+	map<string, Procedure *> get_proc_map();
 	void print_ast();
 
 	Procedure * get_main_procedure(ostream & file_buffer);
@@ -59,6 +62,8 @@ public:
 
 	bool variable_in_symbol_list_check(string variable);
 	void variable_in_proc_map_check(string symbol, int line);
+	
+	bool proc_in_proc_map_check(string s);
 };
 
 #endif

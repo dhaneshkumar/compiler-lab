@@ -29,9 +29,11 @@ using namespace std;
 #include"user-options.hh"
 #include"error-display.hh"
 #include"local-environment.hh"
+//#include"procedure.hh"
 
 #include"symbol-table.hh"
 #include"ast.hh"
+
 
 Ast::Ast()
 {}
@@ -94,13 +96,13 @@ bool Assignment_Ast::check_ast(int line)
 		node_data_type = lhs->get_data_type();
 		return true;
 	}
-	//cout<<lhs->get_data_type()<<" "<< rhs->get_data_type()<<endl;
+	//////cout<<lhs->get_data_type()<<" "<< rhs->get_data_type()<<endl;
 	report_error(" Assignment statement data type not compatible", line);
 }
 
 void Assignment_Ast::print_ast(ostream & file_buffer)
 {
-	file_buffer << AST_SPACE << "Asgn:\n";
+	file_buffer <<endl<<AST_SPACE << "Asgn:\n";
 
 	file_buffer << AST_NODE_SPACE"LHS (";
 	lhs->print_ast(file_buffer);
@@ -112,12 +114,13 @@ void Assignment_Ast::print_ast(ostream & file_buffer)
 }
 
 
+
 Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
 	Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
 
 	if (result.is_variable_defined() == false)
-		report_error("Variable should be defined to be on rhs", NOLINE);
+		report_error("Variable should be defined to be on asg-rhs", NOLINE);
 
 	lhs->set_value_of_evaluation(eval_env, result);
 
@@ -152,17 +155,17 @@ void Name_Ast::print_ast(ostream & file_buffer)
 
 void Name_Ast::set_data_type(string *k)
 {
-	
+	////cout<<"name "<<na<<"data type "<<*k<<endl;
 	
 	if (*k == "INTEGER")
 	{
-		//cout<<*k<<" yahooint\n";
+		//////cout<<*k<<" yahooint\n";
 		variable_symbol_entry.set_data_type(int_data_type);
-		//cout<<*k<<" yahoo2\n";
+		//////cout<<*k<<" yahoo2\n";
 	}
 	else if (*k == "FLOAT")
 	{
-		//	cout<<*k<<" yahoofloat\n";
+		//	////cout<<*k<<" yahoofloat\n";
 		variable_symbol_entry.set_data_type(float_data_type);
 	}
 	else if (*k == "DOUBLE")
@@ -172,6 +175,8 @@ void Name_Ast::set_data_type(string *k)
 
 	
 }
+
+
 
 void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 {
@@ -220,10 +225,39 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env)
 {
 	if (eval_env.does_variable_exist(variable_name))
-	{
-		//cout<<variable_name<<" "<<node_data_type<<endl;
+	{	dtype tr;
+		tr.a=0;
+		tr.b=0.00;
+		Eval_Result * result1;
+		if (node_data_type == int_data_type){
+			Eval_Result * result = eval_env.get_variable_value(variable_name);
+			if (result->get_result_enum()== int_result){
+				Eval_Result * result1 = new Eval_Result_Value_Int();
+				tr.a = result->get_value().a;
+				result1->set_value(tr);
+			}
+			else if (result->get_result_enum()== float_result){
+				Eval_Result * result1 = new Eval_Result_Value_Float();
+				tr.a = result->get_value().b;
+				result1->set_value(tr);
+			}
+		}
+		else if (node_data_type == float_data_type || node_data_type == double_data_type){
+			Eval_Result * result = eval_env.get_variable_value(variable_name);
+			if (result->get_result_enum()== int_result){
+				Eval_Result * result1 = new Eval_Result_Value_Int();
+				tr.b = result->get_value().a;
+				result1->set_value(tr);
+			}
+			else if (result->get_result_enum()== float_result){
+				Eval_Result * result1 = new Eval_Result_Value_Float();
+				tr.b = result->get_value().b;
+				result1->set_value(tr);
+			}
+		}
+		//////cout<<variable_name<<" "<<node_data_type<<endl;
 		Eval_Result * result = eval_env.get_variable_value(variable_name);
-		//cout<<variable_symbol_entry.get_data_type()<<" -----------"<<endl;
+		//////cout<<variable_symbol_entry.get_data_type()<<" -----------"<<endl;
 		return *result;
 	}
 
@@ -315,7 +349,7 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 	{
 		dtype cons;
 		cons.a=constant;
-		cons.b=0;
+		cons.b=0.00;
 		Eval_Result & result = *new Eval_Result_Value_Int();
 		result.set_value(cons);
 
@@ -337,22 +371,45 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Return_Ast::Return_Ast()
-{}
+Return_Ast::Return_Ast(Ast *b)
+{
+	//a = new Ast();
+	a = b;
+
+}
 
 Return_Ast::~Return_Ast()
-{}
+{
+	delete a;
+}
 
 void Return_Ast::print_ast(ostream & file_buffer)
 {
-	file_buffer << AST_SPACE << "Return <NOTHING>\n";
+	file_buffer << "\n"<<AST_SPACE << "RETURN ";
+	if (a == NULL) 
+		file_buffer<< "<NOTHING> \n";
+	else {
+		a->print_ast(file_buffer);
+		file_buffer<<endl;
+	}
 }
 
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-	file_buffer << AST_SPACE << "Return <NOTHING>\n";
-	Eval_Result & result = *new Eval_Result_Value_Int();
-	return result;
+	
+	if (a == NULL) {
+		file_buffer << AST_SPACE << "RETURN <NOTHING>\n";
+		Eval_Result & result = *new Eval_Result_Value_Int();
+		result.set_result_enum(void_result);
+		return result;
+	}	
+	else {
+		//file_buffer << AST_SPACE << "RETURN ";
+
+		print_ast(file_buffer);
+		Eval_Result & result = a->evaluate(eval_env, file_buffer);
+		return result;
+	}
 }
 
 template class Number_Ast<int>;
@@ -400,7 +457,7 @@ void Relational_Expr_Ast::set_data_type(string *k)
 
 bool Relational_Expr_Ast::check_ast(int line)
 {
-	//cout<<"ashdfj\n";
+	//////cout<<"ashdfj\n";
 	if (lhs == NULL) {
 		node_data_type = rhs->get_data_type();
 		return true;
@@ -410,15 +467,15 @@ bool Relational_Expr_Ast::check_ast(int line)
 		node_data_type = lhs->get_data_type();
 		return true;
 	}
-	//cout<<lhs->get_data_type()<<" "<<ro<<" "<< rhs->get_data_type()<<endl;
+	//////cout<<lhs->get_data_type()<<" "<<ro<<" "<< rhs->get_data_type()<<endl;
 	report_error("Assignment statement data type not compatible", line);
 }
 
 void Relational_Expr_Ast::print_ast(ostream & file_buffer)
 {
-	//cout<<rhs->get_data_type()<<" data type of rhs\n";
+	//////cout<<rhs->get_data_type()<<" data type of rhs\n";
 	if (ro == "PLUS" ||ro == "MINUS" || ro == "MULT" ||ro == "DIV" || ro == "UMINUS" ){
-		file_buffer << "\n"<<AST_NODE_SPACE<< "Arith: "<<ro<<"\n";
+		file_buffer << "\n"<<AST_SPACE<< "Arith: "<<ro<<"\n";
 
 	}
 	else{
@@ -446,32 +503,34 @@ void Relational_Expr_Ast::print_ast(ostream & file_buffer)
 
 Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-		
-	Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
-
-	if (result.is_variable_defined() == false)
-		report_error("Variable should be defined to be on rhs", NOLINE);
 	
+	//////cout<< "relop evaluate calling "<<endl;
+	
+	//cout<<node_data_type<<" node_data_type"<<endl;
 
 	if(node_data_type == 1)
 	{
-		//cout<<"abc\n";
+		//////cout<<"abc\n";
 		Eval_Result & result3 = *new Eval_Result_Value_Int();
 		dtype tr;
 		tr.a=1;
-		tr.b=1;
+		tr.b=1.00;
 
 		dtype fr;
 		fr.a=0;
-		fr.b=0;
+		fr.b=0.00;
 
 		if(lhs==NULL)
 		{
 
 			if (ro == "UMINUS")
 			{
+				Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
+
+				if (result.is_variable_defined() == false)
+					report_error("Variable should be defined to be on rel-lhs ", NOLINE);
 				tr.a=0 - result.get_value().a;
-				tr.b=0 - result.get_value().a;
+				tr.b=0.00 - result.get_value().a;
 				result3.set_value(tr);
 				result3.set_result_enum(int_result);
 				return result3;
@@ -483,10 +542,14 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 			Eval_Result & result1 = lhs->evaluate(eval_env, file_buffer);
 
 			if (result1.is_variable_defined() == false)
-				report_error("Variable should be defined to be on lhs", NOLINE);
+				report_error("Variable should be defined to be on lhs1", NOLINE);
 
 			//lhs->set_value_of_evaluation(eval_env, result);
-	
+			Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
+
+			if (result.is_variable_defined() == false)
+				report_error("Variable should be defined to be on rel-lhs ", NOLINE);
+
 			if (ro == "LE"){
 				if(result1.get_value().a <= result.get_value().a)
 				{
@@ -561,7 +624,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 			}
 			else if (ro == "PLUS")
 			{
-				
+				////cout<<"+++++++"<<endl;
 				tr.a=result1.get_value().a + result.get_value().a;
 				tr.b=result1.get_value().a + result.get_value().a;
 				result3.set_value(tr);
@@ -581,6 +644,8 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 			}
 			else if (ro == "DIV")
 			{
+				////cout<<"a :"<<result1.get_value().a<<endl;
+				////cout<<"a :"<<result.get_value().a<<endl;
 				if(result.get_value().a==0)
 				{
 					file_buffer << "error : divide by zero";
@@ -589,6 +654,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 				tr.a=result1.get_value().a / result.get_value().a;
 				tr.b=result1.get_value().a / result.get_value().a;
 				result3.set_value(tr);
+				////cout<<"a :"<<result3.get_value().a<<endl;
 			}
 			result3.set_result_enum(int_result);
 			return result3;
@@ -610,15 +676,19 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 
 		dtype fr;
 		fr.a=0;
-		fr.b=0;
+		fr.b=0.00;
 
 		if(lhs==NULL)
 		{
 
 			if (ro == "UMINUS")
-			{
+			{	
+				Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
+
+				if (result.is_variable_defined() == false)
+					report_error("Variable should be defined to be on rel-lhs ", NOLINE);
 				tr.a=0 - result.get_value().b;
-				tr.b=0 - result.get_value().b;
+				tr.b=0.00 - result.get_value().b;
 				result3.set_value(tr);
 				result3.set_result_enum(float_result);
 				return result3;
@@ -630,8 +700,13 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 
 			Eval_Result & result1 = lhs->evaluate(eval_env, file_buffer);
 
-	if (result1.is_variable_defined() == false)
-		report_error("Variable should be defined to be on lhs", NOLINE);
+			if (result1.is_variable_defined() == false)
+				report_error("Variable should be defined to be on lhs2", NOLINE);
+
+			Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
+
+			if (result.is_variable_defined() == false)
+				report_error("Variable should be defined to be on rel-lhs ", NOLINE);
 
 	//lhs->set_value_of_evaluation(eval_env, result);
 	
@@ -708,6 +783,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 	}
 	else if (ro == "PLUS")
 	{
+		////cout<<"+++++++float"<<endl;
 		tr.b=result1.get_value().b + result.get_value().b;
 		result3.set_value(tr);
 		result3.set_result_enum(float_result);
@@ -726,6 +802,8 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 	}
 	else if (ro == "DIV")
 	{
+
+
 		if(result.get_value().b==0)
 		{
 			file_buffer << "error : divide by zero";
@@ -783,7 +861,7 @@ Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 	Eval_Result & result = *new Eval_Result_Value_Goto();
 	dtype d;
 	d.a=bbno;
-	d.b=0;
+	d.b=0.00;
 
 	result.set_value(d);
 	return result;
@@ -808,7 +886,7 @@ Conditional_Ast::~Conditional_Ast()
 void Conditional_Ast::print_ast(ostream & file_buffer){
 	file_buffer <<"\n"<<AST_SPACE<<"If_Else statement:\n";
 
-	r1->print_ast(file_buffer);
+	r1->print_ast(file_buffer);		
 	file_buffer<<"\n"<<AST_NODE_SPACE<<"True Successor: "<<g1->get_bbno()<<"\n";
 	file_buffer<<AST_NODE_SPACE<<"False Successor: "<<g2->get_bbno()<<"\n";
 }
@@ -817,14 +895,22 @@ Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & 
 {
 
 
+	Eval_Result & result1 = *new Eval_Result_Value_Goto();
+	
+	file_buffer <<"\n"<<AST_SPACE<<"If_Else statement:\n";
+
+
 	Eval_Result & result = r1->evaluate(eval_env, file_buffer);
 
+	file_buffer<<"\n"<<AST_NODE_SPACE<<"True Successor: "<<g1->get_bbno()<<"\n";
+	file_buffer<<AST_NODE_SPACE<<"False Successor: "<<g2->get_bbno()<<"\n";
+
+
 	if (result.is_variable_defined() == false)
-		report_error("Variable should be defined to be on rhs", NOLINE);
+		report_error("Variable should be defined to be on con-rhs", NOLINE);
 
 	
-	Eval_Result & result1 = *new Eval_Result_Value_Goto();
-	print_ast(file_buffer);
+
 	if(result.get_value().a==1)
 	{
 		file_buffer<<AST_SPACE<<"Condition True : Goto (BB "<<g1->get_bbno()<<")\n";
@@ -846,4 +932,118 @@ Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & 
 		
 	}
 	return result1;
+}
+
+
+/**********************< FUNCTIONAL >***************************************************/
+
+
+
+Functional_Ast::Functional_Ast(string name1, list<Ast*> parameter_list1, Data_Type type)
+{
+	name = name1;
+	//parameter_list  = new list<Ast*>();
+	parameter_list =  parameter_list1;	
+	node_data_type = type;
+}
+
+Functional_Ast::~Functional_Ast()
+{
+	//delete parameter_list;
+	//delete rhs;
+}
+
+Data_Type Functional_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+void Functional_Ast::set_data_type(string *k)
+{
+	if (*k == "INTEGER")
+	{
+		node_data_type=int_data_type;
+	}
+	else if (*k == "FLOAT")
+	{
+		node_data_type=float_data_type;
+	}
+	else if (*k == "DOUBLE")
+	{
+		node_data_type=float_data_type;
+	}
+}
+
+bool Functional_Ast::check_ast(int line)
+{
+	
+	//////cout<<rhs->get_data_type()<<" "<<ro<<" "<< rhs->get_data_type()<<endl;
+	//report_error("Assignment statement data type not compatible", line);
+}
+
+
+
+void Functional_Ast::print_ast(ostream & file_buffer)
+{
+	//////cout<<rhs->get_data_type()<<" data type of rhs\n";
+	
+		file_buffer << "\n"<<AST_SPACE<< "FN CALL: "<<name<<"(";
+
+		if (!(parameter_list.empty())) {
+			list<Ast*>::iterator id;	
+			//file_buffer <<"\n"<<AST_NODE_SPACE;
+			for ( id = parameter_list.begin(); id != parameter_list.end(); id++) {
+				file_buffer <<"\n"<<AST_NODE_SPACE;
+				(*id)->print_ast(file_buffer);
+				
+			}
+		}
+		file_buffer << ")";
+		//file_buffer<< "\n";
+}
+
+Eval_Result & Functional_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+	
+	list<Eval_Result_Value*> *aa = new list<Eval_Result_Value*>();
+	list<Ast*>::iterator itr;
+	
+	for(itr=parameter_list.begin(); itr!=parameter_list.end();itr++)
+	{
+			Eval_Result & result1= (*itr)->evaluate(eval_env, file_buffer);
+			
+			Eval_Result_Value * i;
+			if (result1.get_result_enum() == int_result)
+			{
+				i = new Eval_Result_Value_Int();
+				dtype dd;
+				dd.a=result1.get_value().a;
+				dd.b=result1.get_value().a;
+				i->set_value(dd);
+				aa->push_back(i);
+			}
+
+			else if (result1.get_result_enum() == float_result)
+			{
+				i = new Eval_Result_Value_Float();
+			 	dtype dd;
+				dd.b=result1.get_value().b;
+				dd.a=result1.get_value().b;
+				i->set_value(dd);
+				aa->push_back(i);
+			}
+	}
+
+
+
+
+
+	//Procedure * p = new Procedure(node_data_type, name);	
+	Eval_Result & result = program_object.get_proc_map()[name]->evaluate(file_buffer, aa);
+
+
+
+	return result;
+	
+	
 }

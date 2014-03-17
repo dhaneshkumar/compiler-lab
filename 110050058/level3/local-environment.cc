@@ -68,7 +68,7 @@ dtype Eval_Result_Value::get_value()
 Eval_Result_Value_Int::Eval_Result_Value_Int()
 {
 	value.a = 0;
-	value.b = 0;
+	value.b = 0.00;
 	defined = false;
 	result_type = int_result;
 }
@@ -79,7 +79,7 @@ Eval_Result_Value_Int::~Eval_Result_Value_Int()
 void Eval_Result_Value_Int::set_value(dtype number)
 {
 	value.a = number.a;
-	value.b = number.a;
+	value.b = number.b;
 	defined = true;
 }
 
@@ -113,7 +113,7 @@ Result_Enum Eval_Result_Value_Int::get_result_enum()
 Eval_Result_Value_Float::Eval_Result_Value_Float()
 {
 	value.a = 0;
-	value.b=0;
+	value.b=0.00;
 	defined = false;
 	result_type = float_result;
 }
@@ -124,7 +124,7 @@ Eval_Result_Value_Float::~Eval_Result_Value_Float()
 void Eval_Result_Value_Float::set_value(dtype number)
 {
 	value.b = number.b;
-	value.a = number.b;
+	value.a = number.a;
 	defined = true;
 }
 
@@ -256,4 +256,9 @@ bool Local_Environment::does_variable_exist(string name)
 		return false;
 	else
 		return true;
+}
+
+map<string, Eval_Result_Value *>* Local_Environment::get_variable_table()
+{
+	return &variable_table;
 }

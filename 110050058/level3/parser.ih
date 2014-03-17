@@ -125,10 +125,16 @@ void Parser::check_bbno_exist(list<Basic_Block *> * bb_list)
         char buff[50];
         int cx= snprintf ( buff, 50, "bb %d doesn't exist", gt[j]);
         string s= buff;
+       
         report_error(s, -2);
         break;
         }
         }
+  }
+ 
+  for(int j=0;j<1000 ; j++)
+  {
+    gt[j]=0;
   }
 }
 

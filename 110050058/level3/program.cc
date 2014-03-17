@@ -59,10 +59,29 @@ void Program::set_global_table(Symbol_Table & new_global_table)
 	global_symbol_table.set_table_scope(global);
 }
 
+/*void Program::update_global_table(map<string, Procedure *> procedure_map)
+{
+	map<string, Procedure *>::iterator it; 
+
+	for(it= procedure_map.begin();it!= procedure_map.end();it++)
+	{
+		Symbol_Table_Entry s;
+		s.get_variable_name() = (*it).first;
+		s.get_data_type()=(*it).second.return_type;
+		
+		global_symbol_table.push_symbol(s);
+	}
+}*/
+
 
 void Program::set_procedure_map(Procedure & proc)
 {	
 	procedure_map[proc.get_proc_name()] = &proc;
+}
+
+void Program::create_procedure_map(map<string, Procedure *> new_procedure_map)
+{
+	procedure_map = new_procedure_map;
 }
 
 bool Program::variable_in_symbol_list_check(string variable)
@@ -75,11 +94,20 @@ Symbol_Table_Entry & Program::get_symbol_table_entry(string variable_name)
 	return global_symbol_table.get_symbol_table_entry(variable_name);
 }
 
+bool Program::proc_in_proc_map_check(string s){
+	return procedure_map.count(s);
+}
+
+map<string, Procedure *> Program::get_proc_map(){
+	return procedure_map;
+}
+
 void Program::variable_in_proc_map_check(string variable, int line)
 {
 	if(procedure_map[variable] != NULL)
 		report_error("Variable name cannot be same as procedure name", line);
 }
+
 
 Procedure * Program::get_main_procedure(ostream & file_buffer)
 {
@@ -99,16 +127,28 @@ void Program::print_ast()
 	command_options.create_ast_buffer();
 	ostream & ast_buffer = command_options.get_ast_buffer();
 
-	ast_buffer << "Program:\n";
+	ast_buffer << "Program:";
 
+
+	
+	//ast_buffer<<"here\n";
 	Procedure * main = get_main_procedure(ast_buffer);
 	if (main == NULL)
 		report_error("No main function found in the program", NOLINE);
-
 	else
 	{
-		main->print_ast(ast_buffer);
+		
+		map<string, Procedure *>::iterator itr;
+
+		for(itr= procedure_map.begin(); itr != procedure_map.end(); itr++)
+		{
+			//ast_buffer<<"in else\n";
+			itr->second->print_ast(ast_buffer);
+			//ast_buffer<<"done\n";
+		}
 	}
+
+
 }
 
 Eval_Result & Program::evaluate()
@@ -125,7 +165,7 @@ Eval_Result & Program::evaluate()
 	file_buffer << GLOB_SPACE << "Global Variables (before evaluating):\n";
 	interpreter_global_table.print(file_buffer);
 
-	Eval_Result & result = main->evaluate(file_buffer);
+	Eval_Result & result = main->evaluate(file_buffer, NULL);
 
 	file_buffer << GLOB_SPACE << "Global Variables (after evaluating):\n";
 	interpreter_global_table.print(file_buffer);
