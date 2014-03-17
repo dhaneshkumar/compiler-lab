@@ -322,6 +322,8 @@ basic_block:
 if_else_clause:
 	IF '(' relop_expression ')' GOTO BBNUM ';' ELSE GOTO BBNUM 
 	{/*
+	if (NOT_ONLY_PARSE)
+	{
 		Goto_Ast  *ab = new  Goto_Ast(atoi(((*$6).substr(4,((*$6).length()-5))).c_str()));
 		Goto_Ast  *ab1 = new  Goto_Ast(atoi(((*$10).substr(4,((*$10).length()-5))).c_str()));
 
@@ -329,7 +331,7 @@ if_else_clause:
 		store_goto( ab1->get_bbno());
 		
 		$$ = new Conditional_Ast($3, ab, ab1);
-		
+	}
 	*/}
 ;
 
@@ -364,6 +366,8 @@ executable_statement_list:
 | 	
 	assignment_statement_list GOTO BBNUM ';'
 	{/* 
+	if (NOT_ONLY_PARSE)
+	{
 		Ast * ret = new Goto_Ast( atoi(((*$3).substr(4,((*$3).length()-5))).c_str()));
 		Goto_Ast * ret1 = new Goto_Ast( atoi(((*$3).substr(4,((*$3).length()-5))).c_str()));
 
@@ -377,11 +381,15 @@ executable_statement_list:
 
 		$$->push_back(ret);
 		
+	}
+		
 	*/}
 
 |
 	assignment_statement_list if_else_clause ';'
 	{/* 
+	if (NOT_ONLY_PARSE)
+	{
 		if ($1 == NULL)
 			$$ = new list<Ast *>;
 
@@ -390,6 +398,7 @@ executable_statement_list:
 
 		$$->push_back($2);
 		
+	}		
 	*/}
 ;
 
@@ -427,14 +436,22 @@ assignment_statement_list:
 relop_expression : 
 	relop_expression LT relop_expression
 	{/*
+	if (NOT_ONLY_PARSE)
+	{
 		$$ = new Relational_Expr_Ast($1, $3, $2);
 
 		int line = get_line_number();
 		$$->check_ast(line);
+	}
+		
 	*/}
 |
 	relop_expression LE relop_expression
 	{/*
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = NULL;
+	}
 		$$ = new Relational_Expr_Ast($1, $3, $2);
 
 		int line = get_line_number();
@@ -444,44 +461,68 @@ relop_expression :
 |
 	relop_expression GT relop_expression
 	{/*
+	if (NOT_ONLY_PARSE)
+	{
 		$$ = new Relational_Expr_Ast($1, $3, $2);
 
 		int line = get_line_number();
 		$$->check_ast(line);
+	}
+		
 	*/}
 |
 	relop_expression GE relop_expression
 	{/*
+	if (NOT_ONLY_PARSE)
+	{
 		$$ = new Relational_Expr_Ast($1, $3, $2);
 
 		int line = get_line_number();
 		$$->check_ast(line);
+	}
+		
 	*/}
 |
 	relop_expression EQ relop_expression
 	{/*
+	if (NOT_ONLY_PARSE)
+	{
 		$$ = new Relational_Expr_Ast($1, $3, $2);
 
 		int line = get_line_number();
 		$$->check_ast(line);
+	}
+		
 	*/}
 |
 	relop_expression NE relop_expression
 	{/*
+	if (NOT_ONLY_PARSE)
+	{
 		$$ = new Relational_Expr_Ast($1, $3, $2);
 
 		int line = get_line_number();
 		$$->check_ast(line);
+	}
+		
 	*/}
 |
 	variable
 	{/*
+	if (NOT_ONLY_PARSE)
+	{
 		$$ = $1;
+	}
+		
 	*/}
 |
 	constant
 	{/*
+	if (NOT_ONLY_PARSE)
+	{
 		$$=$1;
+	}
+		
 	*/}
 
 ;

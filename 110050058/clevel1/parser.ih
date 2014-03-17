@@ -87,4 +87,56 @@ inline void Parser::bb_strictly_increasing_order_check(list<Basic_Block *> * bb_
 
 ///////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////
+
+int count=0;
+int gt[1000];
+
+
+void Parser::check_bbno_exist(list<Basic_Block *> * bb_list)
+{
+  //cout<<"000"<<endl;
+  list<Basic_Block *>::iterator i;
+
+  for(int j=0;j<1000 ; j++)
+  {
+   // cout<<111<<endl;
+
+   if(gt[j]!=0){
+    int flag=0;
+  for(i = bb_list->begin(); i != bb_list->end(); i++)
+  {
+    //cout<<(*i)->get_bb_number()<< " "<<gt[j]<<endl;
+    if ((*i)->get_bb_number() == gt[j])
+    {
+      //cout<<222<<endl;
+      flag=1;
+      break;
+      
+    }
+  }
+
+  if(flag==0){
+
+        //cout<<333<<endl;
+        char buff[50];
+        int cx= snprintf ( buff, 50, "bb %d doesn't exist", gt[j]);
+        string s= buff;
+        report_error(s, -2);
+        break;
+        }
+        }
+  }
+}
+
+
+
+void Parser::store_goto(int bbno)
+{
+//cout<<bbno<<endl;
+    gt[count++]=bbno;   
+}
+
+
+
 #endif
