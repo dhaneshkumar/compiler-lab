@@ -1,5 +1,5 @@
 
-/*********************************************************************************************
+/********************************************************************************************
 
                                 cfglp : A CFG Language Processor
                                 --------------------------------
@@ -19,7 +19,7 @@
            tools are  available at http://www.cse.iitb.ac.in/~uday/cfglp
 
 
-***********************************************************************************************/
+**********************************************************************************************/
 
 %scanner ../scanner.h
 %scanner-token-function d_scanner.lex()
@@ -50,7 +50,7 @@
 %left <string_value>NE EQ
 %left <string_value> LT LE  GT GE 
 
-/*
+
 %type <symbol_table> optional_variable_declaration_list
 %type <symbol_table> variable_declaration_list
 %type <symbol_entry> variable_declaration
@@ -64,14 +64,14 @@
 %type <ast> if_else_clause
 %type <ast> variable
 %type <ast> constant
-*/
+
 %start program
 
 %%
 
 program:
 	optional_declaration_list procedure_definition
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
@@ -79,20 +79,20 @@ program:
 		program_object.set_procedure_map(current_procedure, get_line_number());
 		program_object.global_list_in_proc_map_check();
 	}
-	*/}
+	}
 ;
 
 optional_declaration_list:
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		Symbol_Table * global_table = new Symbol_Table();
 		program_object.set_global_table(*global_table);
 	}
-	*/}
+	}
 |
 	variable_declaration_list
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		Symbol_Table * global_table = $1;
@@ -101,12 +101,12 @@ optional_declaration_list:
 
 		program_object.set_global_table(*global_table);
 	}
-	*/}
+	}
 ;
 
 procedure_definition:
 	NAME '(' ')'
-	{/*
+	{
 		if (NOT_ONLY_PARSE)
 		{
 			CHECK_INVARIANT(($1 != NULL), "Procedure name cannot be null");
@@ -115,10 +115,10 @@ procedure_definition:
 
 			current_procedure = new Procedure(void_data_type, proc_name, get_line_number());
 		}
-	*/}
+	}
 
 	'{' optional_variable_declaration_list
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 
@@ -131,10 +131,10 @@ procedure_definition:
 
 		current_procedure->set_local_list(*local_table);
 	}
-	*/}
+	}
 
 	basic_block_list '}'
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		list<Basic_Block *> * bb_list = $8;
@@ -144,31 +144,31 @@ procedure_definition:
 
 		current_procedure->set_basic_block_list(*bb_list);
 	}
-	*/}
+	}
 ;
 
 optional_variable_declaration_list:
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		$$ = NULL;
 	}
-	*/}
+	}
 |
 	variable_declaration_list
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($1 != NULL), "Declaration statement list cannot be null here");
 
 		$$ = $1;
 	}
-	*/}
+	}
 ;
 
 variable_declaration_list:
 	variable_declaration
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		Symbol_Table_Entry * decl_stmt = $1;
@@ -190,10 +190,10 @@ variable_declaration_list:
 
 		$$ = decl_list;
 	}
-	*/}
+	}
 |
 	variable_declaration_list variable_declaration
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		// if declaration is local then no need to check in global list
@@ -220,12 +220,12 @@ variable_declaration_list:
 		decl_list->push_symbol(decl_stmt);
 		$$ = decl_list;
 	}
-	*/}
+	}
 ;
 
 variable_declaration:
 	declaration ';'
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		pair<Data_Type, string> * decl_stmt = $1;
@@ -240,12 +240,12 @@ variable_declaration:
 		$$ = decl_entry;
 
 	}
-	*/}
+	}
 ;
 
 declaration:
 	INTEGER NAME
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT(($2 != NULL), "Name cannot be null");
@@ -257,12 +257,12 @@ declaration:
 
 		$$ = declar;
 	}
-	*/}
+	}
 ;
 
 basic_block_list:
 	basic_block_list basic_block
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		list<Basic_Block *> * bb_list = $1;
@@ -276,10 +276,10 @@ basic_block_list:
 		bb_list->push_back($2);
 		$$ = bb_list;
 	}
-	*/}
+	}
 |
 	basic_block
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		Basic_Block * bb = $1;
@@ -291,12 +291,12 @@ basic_block_list:
 
 		$$ = bb_list;
 	}
-	*/}
+	}
 ;
 
 basic_block:
 	BBNUM ':' executable_statement_list
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		int bb_number = $1;
@@ -316,36 +316,38 @@ basic_block:
 
 		$$ = bb;
 	}
-	*/}
+	}
 ;
 
 if_else_clause:
 	IF '(' relop_expression ')' GOTO BBNUM ';' ELSE GOTO BBNUM 
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
-		Goto_Ast  *ab = new  Goto_Ast(atoi(((*$6).substr(4,((*$6).length()-5))).c_str()));
-		Goto_Ast  *ab1 = new  Goto_Ast(atoi(((*$10).substr(4,((*$10).length()-5))).c_str()));
+		//int x = ($6);
+		Goto_Ast  *ab = new  Goto_Ast($6, get_line_number());
+		Goto_Ast  *ab1 = new  Goto_Ast($10, get_line_number());
+
 
 		store_goto( ab->get_bbno());
 		store_goto( ab1->get_bbno());
 		
-		$$ = new Conditional_Ast($3, ab, ab1);
+		$$ = new Conditional_Ast($3, ab, ab1, get_line_number());
 	}
-	*/}
+	}
 ;
 
 executable_statement_list:
 	assignment_statement_list
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		$$ = $1;
 	}
-	*/}
+	}
 |
 	assignment_statement_list RETURN ';'
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		list<Ast *> * assign_list = $1;
@@ -362,14 +364,14 @@ executable_statement_list:
 
 		$$ = exe_list;
 	}
-	*/}
+	}
 | 	
 	assignment_statement_list GOTO BBNUM ';'
-	{/* 
+	{ 
 	if (NOT_ONLY_PARSE)
 	{
-		Ast * ret = new Goto_Ast( atoi(((*$3).substr(4,((*$3).length()-5))).c_str()));
-		Goto_Ast * ret1 = new Goto_Ast( atoi(((*$3).substr(4,((*$3).length()-5))).c_str()));
+		Ast * ret = new Goto_Ast($3, get_line_number());
+		Goto_Ast * ret1 = new Goto_Ast( $3, get_line_number());
 
 		store_goto( ret1->get_bbno());
 
@@ -383,11 +385,11 @@ executable_statement_list:
 		
 	}
 		
-	*/}
+	}
 
 |
 	assignment_statement_list if_else_clause ';'
-	{/* 
+	{ 
 	if (NOT_ONLY_PARSE)
 	{
 		if ($1 == NULL)
@@ -399,19 +401,19 @@ executable_statement_list:
 		$$->push_back($2);
 		
 	}		
-	*/}
+	}
 ;
 
 assignment_statement_list:
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		$$ = NULL;
 	}
-	*/}
+	}
 |
 	assignment_statement_list assignment_statement
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		list<Ast *> * assign_list = $1;
@@ -430,107 +432,117 @@ assignment_statement_list:
 
 		$$ = assign_list_new;
 	}
-	*/}
+	}
 ;
 
 relop_expression : 
 	relop_expression LT relop_expression
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
-		$$ = new Relational_Expr_Ast($1, $3, $2);
 
 		int line = get_line_number();
-		$$->check_ast(line);
+		$$ = new Relational_Expr_Ast($1, $3, $2, line);
+
+		
+		//	$$->check_ast(line);
+		$$->check_ast();
 	}
 		
-	*/}
+	}
 |
 	relop_expression LE relop_expression
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
-		$$ = NULL;
-	}
-		$$ = new Relational_Expr_Ast($1, $3, $2);
-
 		int line = get_line_number();
-		$$->check_ast(line);
+		$$ = new Relational_Expr_Ast($1, $3, $2, line);
 
-	*/}
+		
+		//$$->check_ast();
+		$$->check_ast();
+	}
+		
+	}
 |
 	relop_expression GT relop_expression
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
-		$$ = new Relational_Expr_Ast($1, $3, $2);
-
 		int line = get_line_number();
-		$$->check_ast(line);
+		$$ = new Relational_Expr_Ast($1, $3, $2, line);
+
+		
+		//$$->check_ast(line);
+		$$->check_ast();
 	}
 		
-	*/}
+	}
 |
 	relop_expression GE relop_expression
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
-		$$ = new Relational_Expr_Ast($1, $3, $2);
-
 		int line = get_line_number();
-		$$->check_ast(line);
+		$$ = new Relational_Expr_Ast($1, $3, $2, line);
+
+		
+		//$$->check_ast(line);
+		$$->check_ast();
 	}
 		
-	*/}
+	}
 |
 	relop_expression EQ relop_expression
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
-		$$ = new Relational_Expr_Ast($1, $3, $2);
-
 		int line = get_line_number();
-		$$->check_ast(line);
+		$$ = new Relational_Expr_Ast($1, $3, $2, line);
+
+		
+		$$->check_ast();
 	}
 		
-	*/}
+	}
 |
 	relop_expression NE relop_expression
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
-		$$ = new Relational_Expr_Ast($1, $3, $2);
-
 		int line = get_line_number();
-		$$->check_ast(line);
+		$$ = new Relational_Expr_Ast($1, $3, $2,line);
+
+		
+		$$->check_ast();
 	}
 		
-	*/}
+	}
 |
 	variable
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		$$ = $1;
 	}
 		
-	*/}
+	}
 |
 	constant
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		$$=$1;
 	}
 		
-	*/}
+	}
 
 ;
 
 
 assignment_statement:
 	variable ASSIGN relop_expression ';'
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		CHECK_INVARIANT((($1 != NULL) && ($3 != NULL)), "lhs/rhs cannot be null");
@@ -544,13 +556,13 @@ assignment_statement:
 
 		$$ = assign;
 	}
-	*/}
+	}
 
 ;
 
 variable:
 	NAME
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		Symbol_Table_Entry * var_table_entry;
@@ -572,12 +584,12 @@ variable:
 
 		$$ = name_ast;
 	}
-	*/}
+	}
 ;
 
 constant:
 	INTEGER_NUMBER
-	{/*
+	{
 	if (NOT_ONLY_PARSE)
 	{
 		int num = $1;
@@ -586,5 +598,5 @@ constant:
 
 		$$ = num_ast;
 	}
-	*/}
+	}
 ;

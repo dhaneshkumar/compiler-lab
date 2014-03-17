@@ -119,12 +119,12 @@ void Parser::check_bbno_exist(list<Basic_Block *> * bb_list)
   if(flag==0){
 
         //cout<<333<<endl;
-        char buff[50];
+        /*char buff[50];
         int cx= snprintf ( buff, 50, "bb %d doesn't exist", gt[j]);
         string s= buff;
         report_error(s, -2);
-        break;
-        }
+        break;*/
+  }
         }
   }
 }

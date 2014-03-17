@@ -74,6 +74,7 @@ goto		{
 					return Parser::NAME; 
 				}
 
+
 "<bb "[[:digit:]]+">"	{
 				store_token_name("BASIC BLOCK");
 
@@ -85,6 +86,7 @@ goto		{
 
 				return Parser::BBNUM;
 			}
+
 
 "="	{
 		store_token_name("ASSIGN_OP");

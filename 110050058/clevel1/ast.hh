@@ -158,14 +158,16 @@ class Relational_Expr_Ast:public Ast
 	string ro;
 
 public:
-	Relational_Expr_Ast(Ast * temp_lhs, Ast * temp_rhs, string* temp_opr);
+	Relational_Expr_Ast(Ast * temp_lhs, Ast * temp_rhs, string* temp_opr, int line);
 	~Relational_Expr_Ast();
 
 	Data_Type get_data_type();
-	bool check_ast(int line);
+	bool check_ast();
 
-	void print_ast(ostream & file_buffer);
+	void print(ostream & file_buffer);
+	// void print_ast(ostream & file_buffer);
 
+	
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 
 	Code_For_Ast & compile();
@@ -176,11 +178,12 @@ class Goto_Ast:public Ast
 {
 	int bbno;
 public:
-	Goto_Ast(int temp_bb);
+	Goto_Ast(int temp_bb,int line);
 	int get_bbno();
 	~Goto_Ast();
-	void print_ast(ostream & file_buffer);
+	// void print_ast(ostream & file_buffer);
 
+	void print(ostream & file_buffer);
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 
 	Code_For_Ast & compile();
@@ -198,11 +201,11 @@ class Conditional_Ast:public Ast
 	Goto_Ast* g2;
 
 public:
-	Conditional_Ast(Ast* r1,Goto_Ast* g1,Goto_Ast* g2);
+	Conditional_Ast(Ast* r1,Goto_Ast* g1,Goto_Ast* g2, int line);
 	~Conditional_Ast();
 
-	void print_ast(ostream & file_buffer);
-
+	// void print_ast(ostream & file_buffer);
+	void print(ostream & file_buffer);
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 
 	Code_For_Ast & compile();

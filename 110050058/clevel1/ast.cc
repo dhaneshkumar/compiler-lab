@@ -518,11 +518,12 @@ template class Number_Ast<int>;
 
 
 
-Relational_Expr_Ast::Relational_Expr_Ast(Ast * temp_lhs, Ast * temp_rhs, string* temp_opr)
+Relational_Expr_Ast::Relational_Expr_Ast(Ast * temp_lhs, Ast * temp_rhs, string* temp_opr, int line)
 {
 	lhs = temp_lhs;
 	rhs = temp_rhs;	
 	ro = *temp_opr;
+	lineno = line;
 }
 
 Relational_Expr_Ast::~Relational_Expr_Ast()
@@ -536,27 +537,30 @@ Data_Type Relational_Expr_Ast::get_data_type()
 	return node_data_type;
 }
 
-bool Relational_Expr_Ast::check_ast(int line)
+bool Relational_Expr_Ast::check_ast()
 {
-	if (lhs->get_data_type() == rhs->get_data_type())
+	/*if (lhs->get_data_type() == rhs->get_data_type())
 	{
 		node_data_type = lhs->get_data_type();
 		return true;
-	}
+	}*/
+	CHECK_INVARIANT((lhs->get_data_type() == rhs->get_data_type()),"Assignment statement data type not compatible")
 
-	report_error("Assignment statement data type not compatible", line);
+	node_data_type = lhs->get_data_type();
+	return true;
+	//report_error("Assignment statement data type not compatible", line);
 }
 
-void Relational_Expr_Ast::print_ast(ostream & file_buffer)
+void Relational_Expr_Ast::print(ostream & file_buffer)
 {
 	file_buffer << "\n"<<AST_SPACE << "Condition: "<<ro<<"\n";
 
 	file_buffer << AST_NODE_SPACE"LHS (";
-	lhs->print_ast(file_buffer);
+	//lhs->print_ast(file_buffer);
 	file_buffer << ")\n";
 
 	file_buffer << AST_NODE_SPACE << "RHS (";
-	rhs->print_ast(file_buffer);
+	//rhs->print_ast(file_buffer);
 	file_buffer << ")";
 }
 
@@ -566,23 +570,27 @@ Code_For_Ast & Relational_Expr_Ast::compile()
 	return ret_code;
 }
 
+Code_For_Ast & Relational_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra){
+
+}
+
 Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
 	Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
 
-	if (result.is_variable_defined() == false)
+	/*if (result.is_variable_defined() == false)
 		report_error("Variable should be defined to be on rhs", NOLINE);
 
-
+*/
 	Eval_Result & result1 = lhs->evaluate(eval_env, file_buffer);
 
-	if (result1.is_variable_defined() == false)
+	/*if (result1.is_variable_defined() == false)
 		report_error("Variable should be defined to be on lhs", NOLINE);
-
+*/
 	//lhs->set_value_of_evaluation(eval_env, result);
 	Eval_Result & result3 = *new Eval_Result_Value_Int();
 	if (ro == "LE"){
-		if(result1.get_value() <= result.get_value())
+		if(result1.get_int_value() <= result.get_int_value())
 		{
 			result3.set_value(1);
 		}
@@ -593,7 +601,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 	}
 	else if (ro == "LT")
 	{
-		if(result1.get_value() < result.get_value())
+		if(result1.get_int_value() < result.get_int_value())
 		{
 			result3.set_value(1);
 		}
@@ -604,7 +612,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 	}
 	else if (ro == "GE")
 	{
-		if(result1.get_value() >= result.get_value())
+		if(result1.get_int_value() >= result.get_int_value())
 		{
 			result3.set_value(1);
 		}
@@ -615,7 +623,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 	}
 	else if (ro == "GT")
 	{
-		if(result1.get_value() > result.get_value())
+		if(result1.get_int_value() > result.get_int_value())
 		{
 			result3.set_value(1);
 		}
@@ -626,7 +634,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 	}
 	else if (ro == "EQ")
 	{
-		if(result1.get_value() == result.get_value())
+		if(result1.get_int_value() == result.get_int_value())
 		{
 			result3.set_value(1);
 		}
@@ -637,7 +645,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 	}
 	else if (ro == "NE")
 	{
-		if(result1.get_value() != result.get_value())
+		if(result1.get_int_value() != result.get_int_value())
 		{
 			result3.set_value(1);
 		}
@@ -657,14 +665,13 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 }
 
 
-
-
 /**********************************< GOTO >********************************************/
 
 
-Goto_Ast::Goto_Ast(int temp_bb)
+Goto_Ast::Goto_Ast(int temp_bb, int line)
 {
 	bbno = temp_bb;
+	lineno = line;
 }
 
 
@@ -676,7 +683,7 @@ int Goto_Ast::get_bbno(){
 	return bbno;
 }
 
-void Goto_Ast::print_ast(ostream & file_buffer){
+void Goto_Ast::print(ostream & file_buffer){
 	file_buffer << AST_SPACE << "Goto statement:\n";
 
 	file_buffer << AST_NODE_SPACE"Successor: "<<bbno<<"\n";
@@ -697,13 +704,23 @@ Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 	return result;
 }
 
+Code_For_Ast & Goto_Ast::compile()
+{
+	Code_For_Ast & ret_code = *new Code_For_Ast();
+	return ret_code;
+}
+
+Code_For_Ast & Goto_Ast::compile_and_optimize_ast(Lra_Outcome & lra){
+	
+}
 /*********************************< IF-Else >********************************************/
 
-Conditional_Ast::Conditional_Ast(Ast* nr1,Goto_Ast* ng1,Goto_Ast* ng2)
+Conditional_Ast::Conditional_Ast(Ast* nr1,Goto_Ast* ng1,Goto_Ast* ng2, int line)
 {
 	r1=nr1;
 	g1=ng1;
 	g2=ng2;
+	line  = lineno;
 }
 
 Conditional_Ast::~Conditional_Ast()
@@ -713,10 +730,10 @@ Conditional_Ast::~Conditional_Ast()
 	delete g2;
 }
 
-void Conditional_Ast::print_ast(ostream & file_buffer){
+void Conditional_Ast::print(ostream & file_buffer){
 	file_buffer <<"\n"<<AST_SPACE<<"If_Else statement:\n";
 
-	r1->print_ast(file_buffer);
+	//r1->print_ast(file_buffer);
 	file_buffer<<"\n"<<AST_NODE_SPACE<<"True Successor: "<<g1->get_bbno()<<"\n";
 	file_buffer<<AST_NODE_SPACE<<"False Successor: "<<g2->get_bbno()<<"\n";
 }
@@ -727,13 +744,14 @@ Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & 
 
 	Eval_Result & result = r1->evaluate(eval_env, file_buffer);
 
-	if (result.is_variable_defined() == false)
-		report_error("Variable should be defined to be on rhs", NOLINE);
+	//if (result.is_variable_defined() == false)
+		//report_error("Variable should be defined to be on rhs", NOLINE);
+	CHECK_INVARIANT(result.is_variable_defined(),"Variable should be defined to be on rhs");
 
 	
 	Eval_Result & result1 = *new Eval_Result_Value_Goto();
-	print_ast(file_buffer);
-	if(result.get_value()==1)
+	//print_ast(file_buffer);
+	if(result.get_int_value()==1)
 	{
 		file_buffer<<AST_SPACE<<"Condition True : Goto (BB "<<g1->get_bbno()<<")\n";
 		
@@ -747,4 +765,14 @@ Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & 
 		
 	}
 	return result1;
+}
+
+Code_For_Ast & Conditional_Ast::compile()
+{
+	Code_For_Ast & ret_code = *new Code_For_Ast();
+	return ret_code;
+}
+
+Code_For_Ast & Conditional_Ast::compile_and_optimize_ast(Lra_Outcome & lra){
+	
 }
