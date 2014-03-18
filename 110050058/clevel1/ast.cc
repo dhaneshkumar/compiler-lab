@@ -523,7 +523,9 @@ Relational_Expr_Ast::Relational_Expr_Ast(Ast * temp_lhs, Ast * temp_rhs, string*
 	lhs = temp_lhs;
 	rhs = temp_rhs;	
 	ro = *temp_opr;
+	node_data_type = void_data_type;
 	lineno = line;
+	ast_num_child = binary_arity;
 }
 
 Relational_Expr_Ast::~Relational_Expr_Ast()
@@ -556,11 +558,11 @@ void Relational_Expr_Ast::print(ostream & file_buffer)
 	file_buffer << "\n"<<AST_SPACE << "Condition: "<<ro<<"\n";
 
 	file_buffer << AST_NODE_SPACE"LHS (";
-	//lhs->print_ast(file_buffer);
+	lhs->print(file_buffer);
 	file_buffer << ")\n";
 
 	file_buffer << AST_NODE_SPACE << "RHS (";
-	//rhs->print_ast(file_buffer);
+	rhs->print(file_buffer);
 	file_buffer << ")";
 }
 
@@ -578,15 +580,13 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 {
 	Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
 
-	/*if (result.is_variable_defined() == false)
-		report_error("Variable should be defined to be on rhs", NOLINE);
+	CHECK_INVARIANT((result.is_variable_defined()) , "Variable should be defined to be on rhs");
 
-*/
+
 	Eval_Result & result1 = lhs->evaluate(eval_env, file_buffer);
 
-	/*if (result1.is_variable_defined() == false)
-		report_error("Variable should be defined to be on lhs", NOLINE);
-*/
+	CHECK_INVARIANT((result1.is_variable_defined()) ,"Variable should be defined to be on lhs");
+
 	//lhs->set_value_of_evaluation(eval_env, result);
 	Eval_Result & result3 = *new Eval_Result_Value_Int();
 	if (ro == "LE"){
@@ -672,6 +672,8 @@ Goto_Ast::Goto_Ast(int temp_bb, int line)
 {
 	bbno = temp_bb;
 	lineno = line;
+	ast_num_child = unary_arity;
+
 }
 
 
@@ -720,6 +722,7 @@ Conditional_Ast::Conditional_Ast(Ast* nr1,Goto_Ast* ng1,Goto_Ast* ng2, int line)
 	r1=nr1;
 	g1=ng1;
 	g2=ng2;
+	ast_num_child = binary_arity;
 	line  = lineno;
 }
 
@@ -733,7 +736,7 @@ Conditional_Ast::~Conditional_Ast()
 void Conditional_Ast::print(ostream & file_buffer){
 	file_buffer <<"\n"<<AST_SPACE<<"If_Else statement:\n";
 
-	//r1->print_ast(file_buffer);
+	r1->print(file_buffer);
 	file_buffer<<"\n"<<AST_NODE_SPACE<<"True Successor: "<<g1->get_bbno()<<"\n";
 	file_buffer<<AST_NODE_SPACE<<"False Successor: "<<g2->get_bbno()<<"\n";
 }
@@ -744,13 +747,12 @@ Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & 
 
 	Eval_Result & result = r1->evaluate(eval_env, file_buffer);
 
-	//if (result.is_variable_defined() == false)
-		//report_error("Variable should be defined to be on rhs", NOLINE);
-	CHECK_INVARIANT(result.is_variable_defined(),"Variable should be defined to be on rhs");
+	CHECK_INVARIANT(result.is_variable_defined(), "Variable should be defined to be on rhs");
+	
 
 	
 	Eval_Result & result1 = *new Eval_Result_Value_Goto();
-	//print_ast(file_buffer);
+	print(file_buffer);
 	if(result.get_int_value()==1)
 	{
 		file_buffer<<AST_SPACE<<"Condition True : Goto (BB "<<g1->get_bbno()<<")\n";

@@ -22,21 +22,25 @@ print("Done generating cfg files\n");
 
 for f in cfgFiles:
     print("Testing file  " + f ); 
-    command = "./cfglp -tokens -d " + f + " > expected " 
+    command = "./cfglp -tokens -d -eval " + f + " > expected " 
     os.system(command) 
+ 
+    command = "./cfglp32 -tokens -d -eval " + f + " > generated " 
+    os.system(command)
+    os.system("diff -bB expected generated")
+
 """
     command = "./cfglp64 -ast -d " + f + " > expectedast " 
     os.system(command) 
     command = "./cfglp64 -eval -d " + f + " > expectedeval " 
-    os.system(command) 
-    command = "./cfglp -tokens -d " + f + " > generated " 
     os.system(command)
-    command = "./cfglp -ast -d " + f + " > generatedast " 
+"""
+"""    command = "./cfglp -ast -d " + f + " > generatedast " 
     os.system(command)
     command = "./cfglp -eval -d " + f + " > generatedeval " 
-    os.system(command) 
-    os.system("diff -bB expected generated")
-    os.system("diff -bB expectedast generatedast")
+    os.system(command)""" 
+    
+"""    os.system("diff -bB expectedast generatedast")
     os.system("diff -bB expectedeval generatedeval")
 
 print("\n*****Done with the checking cfg files EXCEPT infi loops!!***\n")
