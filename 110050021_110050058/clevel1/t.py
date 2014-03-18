@@ -22,12 +22,12 @@ print("Done generating cfg files\n");
 
 for f in cfgFiles:
     print("Testing file  " + f ); 
-    command = "./cfglp -tokens " + f
+    command = "./cfglp -tokens -eval " + f
     os.system(command)
     icfile = f+".toks";
     os.system("cp " + icfile + "  t2.txt");
 
-    command = "./cfglp64 -tokens " + f
+    command = "./cfglp64 -tokens -eval " + f
     os.system(command)
     os.system("cp " + icfile + "  t1.txt");
 
