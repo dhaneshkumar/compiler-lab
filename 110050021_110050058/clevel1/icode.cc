@@ -339,17 +339,7 @@ void Compute_IC_Stmt::print_icode(ostream & file_buffer)
 			file_buffer << "\n";
 
 			break;
-/*
-	case i_r_r_op_o1: 
-			file_buffer << " " << operation_name << ":\t";
-			result->print_ics_opd(file_buffer);
-			file_buffer << " <- ";
-			opd1->print_ics_opd(file_buffer);
-			file_buffer << " , ";
-			opd2->print_ics_opd(file_buffer);
-			file_buffer << "\n";
 
-			break; */
 
 	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
 				"Intermediate code format not supported");
@@ -441,16 +431,7 @@ void Control_Flow_IC_Stmt::print_icode(ostream & file_buffer)
 			file_buffer << "\n";
 
 			break;
-	// case i_r_r_op_o1: 
-	// 		file_buffer << " " << operation_name << ":\t";
-	// 		result->print_ics_opd(file_buffer);
-	// 		file_buffer << " <- ";
-	// 		opd1->print_ics_opd(file_buffer);
-	// 		file_buffer << " , ";
-	// 		opd2->print_ics_opd(file_buffer);
-	// 		file_buffer << "\n";
-
-	// 		break; 
+	
 
 	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
 				"Intermediate code format not supported");

@@ -200,6 +200,7 @@ Code_For_Ast & Assignment_Ast::compile()
 	return *assign_stmt;
 }
 
+
 Code_For_Ast & Assignment_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
 	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
@@ -587,6 +588,7 @@ Code_For_Ast & Relational_Expr_Ast::compile()
 	Code_For_Ast & load_stmt1 = rhs->compile();
 
 	Register_Descriptor * load_register1 = load_stmt1.get_reg();
+
 	Ics_Opd * rhs_register = new Register_Addr_Opd(load_register1);
 
 	Code_For_Ast  & load_stmt2 = lhs->compile();
@@ -610,7 +612,7 @@ Code_For_Ast & Relational_Expr_Ast::compile()
 	if (load_stmt2.get_icode_list().empty() == false)
 		ic_list.splice(ic_list.end(), load_stmt2.get_icode_list());
 
-	cout<<ro<< " hahaha \n";
+	//cout<<ro<< " hahaha \n";
 	if (ro == "LE"){
 		Icode_Stmt *a = new Compute_IC_Stmt(set_less_equal, lhs_register, rhs_register, load_register);
 		ic_list.push_back(a);

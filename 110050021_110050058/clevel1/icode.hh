@@ -268,7 +268,7 @@ public:
 };
 
 
-/*
+
 class Control_Flow_IC_Stmt: public Icode_Stmt
 { 
 	Ics_Opd * opd1; 
@@ -286,15 +286,15 @@ public:
 	Ics_Opd * get_opd1();
 	void set_opd1(Ics_Opd * io);
 
-	Ics_Opd * get_opd2();
-	void set_opd2(Ics_Opd * io);
+	/*Ics_Opd * get_opd2();
+	void set_opd2(Ics_Opd * io);*/
 
 	Ics_Opd * get_result();
 	void set_result(Ics_Opd * io);
 
 	void print_icode(ostream & file_buffer);
 	void print_assembly(ostream & file_buffer);
-};*/
+};
 
 
 

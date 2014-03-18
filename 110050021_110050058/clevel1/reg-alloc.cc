@@ -56,10 +56,13 @@ Register_Use_Category Register_Descriptor::get_use_category() 	{ return reg_use;
 Spim_Register Register_Descriptor::get_register()             	{ return reg_id; }
 string Register_Descriptor::get_name()				{ return reg_name; }
 bool Register_Descriptor::is_symbol_list_empty()         	{ return lra_symbol_list.empty(); }
+bool Register_Descriptor::get_used_for_expr_result()	{ return used_for_expr_result; }
+void Register_Descriptor::reset_use_for_expr_result() 	{ used_for_expr_result=false; }
+void Register_Descriptor::set_use_for_expr_result() 	{ used_for_expr_result=true; }
 
 bool Register_Descriptor::is_free()     
 { 
-	if ((reg_use == gp_data) && (lra_symbol_list.empty())) 
+	if ((reg_use == gp_data) && (lra_symbol_list.empty()) && (!(used_for_expr_result))) 
 		return true;
 	else 
 		return false;
@@ -329,7 +332,10 @@ Register_Descriptor * Machine_Description::get_new_register()
 		reg_desc = i->second;
 
 		if (reg_desc->is_free())
+		{
+			reg_desc->set_use_for_expr_result();
 			return reg_desc;
+		}
 	}
 
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
