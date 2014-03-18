@@ -285,7 +285,7 @@ void Machine_Description::initialize_instruction_table()
 	spim_instruction_table[set_grt_equal] = new Instruction_Descriptor(set_grt_equal, "sle", "sle", "", i_r_o1_op_o2, a_op_o1_o2_r);
 	spim_instruction_table[set_equal] = new Instruction_Descriptor(set_equal, "seq", "seq", "", i_r_o1_op_o2, a_op_o1_o2_r);
 	spim_instruction_table[set_not_equal] = new Instruction_Descriptor(set_not_equal, "sne", "sne", "", i_r_o1_op_o2, a_op_o1_o2_r);
-	
+
 }
 
 void Machine_Description::validate_init_local_register_mapping()

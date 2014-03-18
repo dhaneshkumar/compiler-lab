@@ -268,7 +268,7 @@ public:
 };
 
 
-
+/*
 class Control_Flow_IC_Stmt: public Icode_Stmt
 { 
 	Ics_Opd * opd1; 
@@ -294,7 +294,9 @@ public:
 
 	void print_icode(ostream & file_buffer);
 	void print_assembly(ostream & file_buffer);
-};
+};*/
+
+
 
 //////////////////////// Intermediate code for Ast statements ////////////////////////
 

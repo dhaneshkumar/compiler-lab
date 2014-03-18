@@ -442,6 +442,7 @@ relop_expression :
 	if (NOT_ONLY_PARSE)
 	{
 		$$ = $2;
+		$$->check_ast();
 	}
 		
 	}
