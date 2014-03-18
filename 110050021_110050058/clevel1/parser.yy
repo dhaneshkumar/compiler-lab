@@ -436,6 +436,16 @@ assignment_statement_list:
 ;
 
 relop_expression : 
+
+	 '(' relop_expression ')'
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = $2;
+	}
+		
+	}
+|
 	relop_expression LT relop_expression
 	{
 	if (NOT_ONLY_PARSE)
