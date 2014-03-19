@@ -282,10 +282,11 @@ void Machine_Description::initialize_instruction_table()
 	spim_instruction_table[load] = new Instruction_Descriptor(load, "load", "lw", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[imm_load] = new Instruction_Descriptor(imm_load, "iLoad", "li", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[set_grt_than] = new Instruction_Descriptor(set_grt_than, "sgt", "sgt", "", i_r_o1_op_o2, a_op_o1_o2_r);
-	spim_instruction_table[br_not_equal] = new Instruction_Descriptor(br_not_equal, "bne", "bne", "", i_br, a_br);
+	spim_instruction_table[br_not_equal] = new Instruction_Descriptor(br_not_equal, "bne", "bne", "", i_op_o1_o2_o3, a_op_o1_o2_o3);
+	spim_instruction_table[jump] = new Instruction_Descriptor(jump, "j", "j", "", i_op_o1, a_op_o1);
 	spim_instruction_table[set_grt_equal] = new Instruction_Descriptor(set_grt_equal, "sge", "sge", "", i_r_o1_op_o2, a_op_o1_o2_r);
 	spim_instruction_table[set_less_than] = new Instruction_Descriptor(set_less_than, "slt", "slt", "", i_r_o1_op_o2, a_op_o1_o2_r);
-	spim_instruction_table[set_grt_equal] = new Instruction_Descriptor(set_grt_equal, "sle", "sle", "", i_r_o1_op_o2, a_op_o1_o2_r);
+	spim_instruction_table[set_less_equal] = new Instruction_Descriptor(set_less_equal, "sle", "sle", "", i_r_o1_op_o2, a_op_o1_o2_r);
 	spim_instruction_table[set_equal] = new Instruction_Descriptor(set_equal, "seq", "seq", "", i_r_o1_op_o2, a_op_o1_o2_r);
 	spim_instruction_table[set_not_equal] = new Instruction_Descriptor(set_not_equal, "sne", "sne", "", i_r_o1_op_o2, a_op_o1_o2_r);
 
@@ -340,4 +341,9 @@ Register_Descriptor * Machine_Description::get_new_register()
 
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
 			"Error in get_new_reg or register requirements of input program cannot be met");
+}
+
+Register_Descriptor * Machine_Description::get_zero_register()
+{
+	return spim_register_table[zero];
 }

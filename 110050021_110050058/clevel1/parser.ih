@@ -100,16 +100,16 @@ void Parser::check_bbno_exist(list<Basic_Block *> * bb_list)
 
   for(int j=0;j<1000 ; j++)
   {
-   // cout<<111<<endl;
+    //cout<<111<<endl;
 
    if(gt[j]!=0){
     int flag=0;
   for(i = bb_list->begin(); i != bb_list->end(); i++)
   {
-    //cout<<(*i)->get_bb_number()<< " "<<gt[j]<<endl;
+    ////cout<<(*i)->get_bb_number()<< " "<<gt[j]<<endl;
     if ((*i)->get_bb_number() == gt[j])
     {
-      //cout<<222<<endl;
+      ////cout<<222<<endl;
       flag=1;
       break;
       
@@ -119,11 +119,13 @@ void Parser::check_bbno_exist(list<Basic_Block *> * bb_list)
   if(flag==0){
 
         //cout<<333<<endl;
-        /*char buff[50];
+        char buff[50];
         int cx= snprintf ( buff, 50, "bb %d doesn't exist", gt[j]);
         string s= buff;
-        report_error(s, -2);
-        break;*/
+        //report_error(s, -2);
+        CHECK_INVARIANT(0,s);
+         //cout<<33344<<endl;
+        break;
   }
         }
   }
