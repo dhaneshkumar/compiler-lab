@@ -56,10 +56,13 @@ Register_Use_Category Register_Descriptor::get_use_category() 	{ return reg_use;
 Spim_Register Register_Descriptor::get_register()             	{ return reg_id; }
 string Register_Descriptor::get_name()				{ return reg_name; }
 bool Register_Descriptor::is_symbol_list_empty()         	{ return lra_symbol_list.empty(); }
+bool Register_Descriptor::get_used_for_expr_result()	{ return used_for_expr_result; }
+void Register_Descriptor::reset_use_for_expr_result() 	{ used_for_expr_result=false; }
+void Register_Descriptor::set_use_for_expr_result() 	{ used_for_expr_result=true; }
 
 bool Register_Descriptor::is_free()     
 { 
-	if ((reg_use == gp_data) && (lra_symbol_list.empty())) 
+	if ((reg_use == gp_data) && (lra_symbol_list.empty()) && (!(used_for_expr_result))) 
 		return true;
 	else 
 		return false;
@@ -279,12 +282,14 @@ void Machine_Description::initialize_instruction_table()
 	spim_instruction_table[load] = new Instruction_Descriptor(load, "load", "lw", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[imm_load] = new Instruction_Descriptor(imm_load, "iLoad", "li", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[set_grt_than] = new Instruction_Descriptor(set_grt_than, "sgt", "sgt", "", i_r_o1_op_o2, a_op_o1_o2_r);
-	spim_instruction_table[br_not_equal] = new Instruction_Descriptor(br_not_equal, "bne", "bne", "", i_br, a_br);
+	spim_instruction_table[br_not_equal] = new Instruction_Descriptor(br_not_equal, "bne", "bne", "", i_op_o1_o2_o3, a_op_o1_o2_o3);
+	spim_instruction_table[jump] = new Instruction_Descriptor(jump, "j", "j", "", i_op_o1, a_op_o1);
 	spim_instruction_table[set_grt_equal] = new Instruction_Descriptor(set_grt_equal, "sge", "sge", "", i_r_o1_op_o2, a_op_o1_o2_r);
 	spim_instruction_table[set_less_than] = new Instruction_Descriptor(set_less_than, "slt", "slt", "", i_r_o1_op_o2, a_op_o1_o2_r);
-	spim_instruction_table[set_grt_equal] = new Instruction_Descriptor(set_grt_equal, "sle", "sle", "", i_r_o1_op_o2, a_op_o1_o2_r);
+	spim_instruction_table[set_less_equal] = new Instruction_Descriptor(set_less_equal, "sle", "sle", "", i_r_o1_op_o2, a_op_o1_o2_r);
 	spim_instruction_table[set_equal] = new Instruction_Descriptor(set_equal, "seq", "seq", "", i_r_o1_op_o2, a_op_o1_o2_r);
 	spim_instruction_table[set_not_equal] = new Instruction_Descriptor(set_not_equal, "sne", "sne", "", i_r_o1_op_o2, a_op_o1_o2_r);
+
 }
 
 void Machine_Description::validate_init_local_register_mapping()
@@ -328,9 +333,17 @@ Register_Descriptor * Machine_Description::get_new_register()
 		reg_desc = i->second;
 
 		if (reg_desc->is_free())
+		{
+			reg_desc->set_use_for_expr_result();
 			return reg_desc;
+		}
 	}
 
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, 
 			"Error in get_new_reg or register requirements of input program cannot be met");
+}
+
+Register_Descriptor * Machine_Description::get_zero_register()
+{
+	return spim_register_table[zero];
 }

@@ -130,6 +130,7 @@ procedure_definition:
 			local_table = new Symbol_Table();
 
 		current_procedure->set_local_list(*local_table);
+		
 	}
 	}
 
@@ -143,6 +144,8 @@ procedure_definition:
 		CHECK_INVARIANT((bb_list != NULL), "Basic block list cannot be null");
 
 		current_procedure->set_basic_block_list(*bb_list);
+		check_bbno_exist(current_procedure->get_basic_block_list());
+		
 	}
 	}
 ;
@@ -436,6 +439,17 @@ assignment_statement_list:
 ;
 
 relop_expression : 
+
+	 '(' relop_expression ')'
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = $2;
+		$$->check_ast();
+	}
+		
+	}
+|
 	relop_expression LT relop_expression
 	{
 	if (NOT_ONLY_PARSE)

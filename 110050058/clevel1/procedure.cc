@@ -39,6 +39,7 @@ using namespace std;
 #include"procedure.hh"
 #include"program.hh"
 
+
 Procedure::Procedure(Data_Type proc_return_type, string proc_name, int line)
 {
 	return_type = proc_return_type;
@@ -112,6 +113,11 @@ Basic_Block & Procedure::get_start_basic_block()
 	return **i;
 }
 
+list<Basic_Block *>* Procedure::get_basic_block_list()
+{
+	return &basic_block_list;
+}
+
 Basic_Block * Procedure::get_next_bb(Basic_Block & current_bb)
 {
 	bool flag = false;
@@ -164,10 +170,13 @@ void Procedure::compile()
 	local_symbol_table.set_size(4);
 	local_symbol_table.assign_offsets();
 
+	//check_bbno_exist(&basic_block_list);
 	// compile the program by visiting each basic block
 	list<Basic_Block *>::iterator i;
 	for(i = basic_block_list.begin(); i != basic_block_list.end(); i++)
 		(*i)->compile();
+
+	
 }
 
 void Procedure::print_icode(ostream & file_buffer)

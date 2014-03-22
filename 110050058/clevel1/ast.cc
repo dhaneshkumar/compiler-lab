@@ -183,6 +183,7 @@ Code_For_Ast & Assignment_Ast::compile()
 
 	Code_For_Ast store_stmt = lhs->create_store_stmt(load_register);
 
+
 	// Store the statement in ic_list
 
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
@@ -197,8 +198,11 @@ Code_For_Ast & Assignment_Ast::compile()
 	if (ic_list.empty() == false)
 		assign_stmt = new Code_For_Ast(ic_list, load_register);
 
+	load_register->reset_use_for_expr_result();
+
 	return *assign_stmt;
 }
+
 
 Code_For_Ast & Assignment_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
@@ -523,7 +527,7 @@ Relational_Expr_Ast::Relational_Expr_Ast(Ast * temp_lhs, Ast * temp_rhs, string*
 	lhs = temp_lhs;
 	rhs = temp_rhs;	
 	ro = *temp_opr;
-	node_data_type = void_data_type;
+	node_data_type = int_data_type;
 	lineno = line;
 	ast_num_child = binary_arity;
 }
@@ -568,8 +572,93 @@ void Relational_Expr_Ast::print(ostream & file_buffer)
 
 Code_For_Ast & Relational_Expr_Ast::compile()
 {
-	Code_For_Ast & ret_code = *new Code_For_Ast();
-	return ret_code;
+	/* 
+		An relational expression x op y where y is a variable is 
+		compiled as a combination of load and store statements:
+		(load) R1 <- y 
+		(load) R2 <- x
+		op: result <- R2, R1
+		If y is a constant, the statement is compiled as:
+		(imm_Load) R1 <- y 
+		(load) R2 <- x
+		op: result <- R2, R1
+		where imm_Load denotes the load immediate operation.
+	*/
+
+	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
+	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
+
+	Code_For_Ast  & load_stmt2 = lhs->compile();
+	Register_Descriptor * load_register2 = load_stmt2.get_reg();
+	Ics_Opd * lhs_register = new Register_Addr_Opd(load_register2);
+
+	Code_For_Ast & load_stmt1 = rhs->compile();
+
+	Register_Descriptor * load_register1 = load_stmt1.get_reg();
+
+	Ics_Opd * rhs_register = new Register_Addr_Opd(load_register1);
+
+	Register_Descriptor * result_register = machine_dscr_object.get_new_register();
+	CHECK_INVARIANT((result_register != NULL), "Result register cannot be null");
+	Ics_Opd * load_register = new Register_Addr_Opd(result_register);
+
+	// Store the statement in ic_list
+
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+	if (load_stmt1.get_icode_list().empty() == false)
+		ic_list = load_stmt2.get_icode_list();
+
+	/*if (load_stmt2.get_icode_list().empty() == false)
+		ic_list = load_stmt.get_icode_list();
+*/
+	if (load_stmt2.get_icode_list().empty() == false)
+		ic_list.splice(ic_list.end(), load_stmt1.get_icode_list());
+
+	//cout<<ro<< " hahaha \n";
+	if (ro == "LE"){
+		Icode_Stmt *a = new Compute_IC_Stmt(set_less_equal, lhs_register, rhs_register, load_register);
+		ic_list.push_back(a);
+	}
+	else if (ro == "LT")
+	{
+		Icode_Stmt *a = new Compute_IC_Stmt(set_less_than, lhs_register, rhs_register, load_register);	
+		ic_list.push_back(a);
+	}
+	else if (ro == "GE")
+	{
+		Icode_Stmt *a = new Compute_IC_Stmt(set_grt_equal, lhs_register, rhs_register, load_register);
+		ic_list.push_back(a);
+	}
+	else if (ro == "GT")
+	{
+		Icode_Stmt *a = new Compute_IC_Stmt(set_grt_than, lhs_register, rhs_register, load_register);
+		ic_list.push_back(a);
+	}
+	else if (ro == "EQ")
+	{
+		Icode_Stmt *a = new Compute_IC_Stmt(set_equal, lhs_register, rhs_register, load_register);
+		ic_list.push_back(a);
+	}
+	else if (ro == "NE")
+	{
+		Icode_Stmt *a = new Compute_IC_Stmt(set_not_equal, lhs_register, rhs_register, load_register);
+		ic_list.push_back(a);
+	}
+
+	
+	
+
+	Code_For_Ast * assign_stmt;
+	if (ic_list.empty() == false){
+		//cout<<"ic_list is empty ;: "<<ro<<endl;
+		assign_stmt = new Code_For_Ast(ic_list, result_register);
+	}
+	load_register1->reset_use_for_expr_result();
+	load_register2->reset_use_for_expr_result();
+	//result_register->reset_use_for_expr_result();
+	return *assign_stmt;
+	
 }
 
 Code_For_Ast & Relational_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra){
@@ -708,8 +797,25 @@ Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 
 Code_For_Ast & Goto_Ast::compile()
 {
-	Code_For_Ast & ret_code = *new Code_For_Ast();
-	return ret_code;
+	Register_Descriptor * result_register = machine_dscr_object.get_new_register();
+	CHECK_INVARIANT((result_register != NULL), "Result register cannot be null");
+	Ics_Opd * load_register = new Const_Opd<int>(bbno);
+
+	//Code_For_Ast & ret_code = *new Code_For_Ast(); 
+	Icode_Stmt * load_stmt = new Control_Flow_IC_Stmt(jump, load_register);
+
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+	ic_list.push_back(load_stmt);
+
+	result_register->reset_use_for_expr_result();
+
+	Code_For_Ast & num_code = *new Code_For_Ast(ic_list, result_register);
+
+	return num_code;
+
+
+
+	//return ret_code;
 }
 
 Code_For_Ast & Goto_Ast::compile_and_optimize_ast(Lra_Outcome & lra){
@@ -771,8 +877,45 @@ Eval_Result & Conditional_Ast::evaluate(Local_Environment & eval_env, ostream & 
 
 Code_For_Ast & Conditional_Ast::compile()
 {
-	Code_For_Ast & ret_code = *new Code_For_Ast();
-	return ret_code;
+
+	//CHECK_INVARIANT(( != NULL), "Lhs cannot be null");
+	//Ics_Opd * rhs_register = new Register_Addr_Opd(load_register1);
+
+	/*Register_Descriptor * result_register = machine_dscr_object.get_new_register();
+	CHECK_INVARIANT((result_register != NULL), "Result register cannot be null");*/
+
+	CHECK_INVARIANT((r1 != NULL), "condition cannot be null");
+	Code_For_Ast & load_stmt1 = r1->compile();
+	
+	Register_Descriptor * load_register = load_stmt1.get_reg();
+	Ics_Opd * rhs_register = new Register_Addr_Opd(load_register);
+
+	Ics_Opd * load_register1 = new Const_Opd<int>(g1->get_bbno());
+	Ics_Opd * zero_register = new Register_Addr_Opd(machine_dscr_object.get_zero_register());
+	Ics_Opd * load_register2 = new Const_Opd<int>(g2->get_bbno());
+	//Code_For_Ast & ret_code = *new Code_For_Ast(); 
+	Icode_Stmt * load_stmt = new Control_Flow_IC_Stmt(br_not_equal, rhs_register, zero_register , load_register1);
+
+	Icode_Stmt * jump_stmt = new Control_Flow_IC_Stmt(jump, load_register2);
+
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+	if (load_stmt1.get_icode_list().empty() == false)
+		ic_list = load_stmt1.get_icode_list();
+	ic_list.push_back(load_stmt);
+	ic_list.push_back(jump_stmt);
+
+
+
+	load_register->reset_use_for_expr_result();
+	//_register->reset_use_for_expr_result();
+
+	Code_For_Ast & num_code = *new Code_For_Ast(ic_list, load_register);
+
+	return num_code;
+
+
+	
 }
 
 Code_For_Ast & Conditional_Ast::compile_and_optimize_ast(Lra_Outcome & lra){

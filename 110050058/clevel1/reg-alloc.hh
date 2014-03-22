@@ -95,6 +95,8 @@ class Register_Descriptor
 
     bool get_used_for_expr_result();
     void reset_use_for_expr_result();
+    void set_use_for_expr_result() ;
+
 
     bool is_free();
 };
@@ -245,6 +247,7 @@ public:
 	void clear_local_register_mappings();
 
 	Register_Descriptor * get_new_register();
+  Register_Descriptor * get_zero_register();
 };
 
 extern Machine_Description machine_dscr_object;

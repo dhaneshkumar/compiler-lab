@@ -58,6 +58,7 @@ public:
 
 	Basic_Block * get_next_bb(Basic_Block & current_bb);
 	Basic_Block & get_start_basic_block();
+	list<Basic_Block *>* get_basic_block_list();
 
 	Eval_Result & evaluate(ostream & file_buffer);
 
