@@ -1,0 +1,11 @@
+Roll No- 110050021, Dhanesh Kumar
+Roll No- 110050058, Abhilash Gupta
+
+Changes made in ast.cc
+Defined compile_optimise_ast function for conditional ast, goto ast and relational expression ast which used already used registers containing the same data instead of loading it from the stack. The compile_optimise_ast of relational_exprexxion_ast has two conditions -> mc_2m and r2m according to what the rhs is.
+
+Assignment_Ast's compile_and_optimise_ast has been updated to cater to relational expressions on the rhs of the assignment ast.
+
+Changes made in Icode.cc
+
+Also to print spim codes, print_assembly functions of Move_IC_Stmt was updated and print_assembly functions of Compute_IC_Stmt and Control_Flow_IC_Stmt was defined.
