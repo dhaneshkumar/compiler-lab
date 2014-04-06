@@ -1,0 +1,112 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure main
+      Local Variables (before evaluating):
+         a : undefined
+         b : undefined
+         c : undefined
+         g : undefined
+
+
+      Basic Block: 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 1.00)
+         a : 1.00
+
+
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 2.00)
+         b : 2.00
+
+
+         Asgn:
+            LHS (Name : c)
+            RHS (Num : 3.00)
+         c : 3.00
+
+
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: GE
+               LHS (Name : a)
+               RHS (Name : b))
+               RHS (Num : 0)
+            True Successor: 3
+            False Successor: 5
+         Condition False : Goto (BB 5)
+
+      Basic Block: 5
+
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: GE
+               LHS (Name : b)
+               RHS (Name : a))
+               RHS (Num : 0)
+            True Successor: 6
+            False Successor: 8
+         Condition True : Goto (BB 6)
+
+      Basic Block: 6
+
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: GE
+               LHS (Name : b)
+               RHS (Name : c))
+               RHS (Num : 0)
+            True Successor: 7
+            False Successor: 8
+         Condition False : Goto (BB 8)
+
+      Basic Block: 8
+
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: GE
+               LHS (Name : c)
+               RHS (Name : a))
+               RHS (Num : 0)
+            True Successor: 9
+            False Successor: 11
+         Condition True : Goto (BB 9)
+
+      Basic Block: 9
+
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: GE
+               LHS (Name : c)
+               RHS (Name : b))
+               RHS (Num : 0)
+            True Successor: 10
+            False Successor: 11
+         Condition True : Goto (BB 10)
+
+      Basic Block: 10
+
+         Asgn:
+            LHS (Name : g)
+            RHS (Name : c)
+         g : 3.00
+
+
+      Basic Block: 11
+
+         Return <NOTHING>
+
+
+      Local Variables (after evaluating):
+         a : 1.00
+         b : 2.00
+         c : 3.00
+         g : 3.00
+   Global Variables (after evaluating):

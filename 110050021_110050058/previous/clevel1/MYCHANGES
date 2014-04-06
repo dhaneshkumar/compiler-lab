@@ -1,0 +1,18 @@
+Roll No- 110050021, Dhanesh Kumar
+Roll No- 110050058, Abhilash Gupta
+
+Changes made in icode.hh & icode.cc :
+Define two new classes 
+1.> compute_IC_Stmt : It defines ic statements for relop expression and functions related to it
+2.> Control_Flow_IC_Stmt : It defines ic statement for conditional expression and goto expression and functions related to it
+
+
+Changes made in reg-alloc.cc
+In spim_instruction_table added new instructions : 
+sgt, bne, slt, sge, sle, jump, sne.
+
+Changes made in ast.cc
+Define compile function for conditional ast, goto ast and relational expression ast.
+
+and some partial modification in parser.yy 
+

@@ -1,0 +1,65 @@
+Roll No- 110050021, Dhanesh Kumar
+Roll No- 110050058, Abhilash Gupta
+submisssion of lab 4a, level 3a.
+
+Changes made in scanner.ll :
+a new token "VOID" has been defined to cater to void functions.
+',' was added to metachar
+
+
+Changes made in parser.yy :
+ the following rules were updated :
+
+program: (to cater to function declarations)
+	declaration_statement_list 	procedure_name
+	declaration_statement_list procedure_declarations_list procedure_list
+	procedure_declarations_list procedure_list
+	procedure_name procedure_body
+	
+executable_statement_list:
+	assignment_statement_list
+	assignment_statement_list NAME '(' relop_list ')' ';' executable_statement_list
+	assignment_statement_list NAME '(' ')' ';' executable_statement_list
+	assignment_statement_list RETURN ';'
+	assignment_statement_list RETURN relop_expression ';'
+	assignment_statement_list GOTO BB ';'
+	assignment_statement_list if_else_clause ';'
+	
+atomic:
+	variable
+	constant
+	'(' relop_expression ')'
+	NAME '(' relop_list ')'
+	NAME '(' ')'
+
+	
+the following rules were added :
+
+procedure_declarations_list:
+	procedure_declarations
+	procedure_declarations_list procedure_declarations
+
+procedure_declarations:
+	dataType procedure_name ';'
+	VOID procedure_name ';'
+	
+procedure_list:
+	procedure_name procedure_body
+	procedure_list procedure_name procedure_body
+	
+procedure_name:
+	NAME '(' ')'
+	NAME '(' parameter_list ')'
+	
+parameter_list:
+	parameters
+	parameter_list ',' parameters
+	
+parameters:
+	dataType NAME 
+	dataType procedure_name ';'
+	
+relop_list :
+	relop_list ',' relop_expression
+	relop_expression
+

@@ -151,7 +151,7 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 	is_same_as_destination = false;
 	register_move_needed = false;
 	load_needed = false;
-
+	int k =0;
 	switch (lcase)
 	{
 	case mc_2m:
@@ -159,17 +159,39 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 			"Destination ast pointer cannot be NULL for m2m scenario in lra");
 		CHECK_INVARIANT(source_memory, 
 			"Sourse ast pointer cannot be NULL for m2m scenario in lra");
+		
 
-		if (typeid(*destination_memory) == typeid(Number_Ast<int>))
+		k =1;
+		if (destination_memory->get_data_type() == int_data_type)
+			k = 0;
+		
+
+		if (typeid(*destination_memory) == typeid(Number_Ast<int>)){
 			destination_register = NULL;
+		}
+		else if (typeid(*destination_memory) == typeid(Number_Ast<float>)){
+			destination_register = NULL; 
+		}
 		else
 		{
 			destination_symbol_entry = &(destination_memory->get_symbol_entry());
 			destination_register = destination_symbol_entry->get_register(); 
 		}
 
+
+
+		
+
+
+
+
+
 		if (typeid(*source_memory) == typeid(Number_Ast<int>))
 			source_register = NULL;
+		else if (typeid(*source_memory) == typeid(Number_Ast<float>)){
+			k =1;
+			source_register = NULL;
+		}
 		else
 		{
 			source_symbol_entry = &(source_memory->get_symbol_entry());
@@ -178,19 +200,28 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 
 		if (source_register != NULL)
 		{
+			//cout<<"source register  "<<endl;
 			result_register = source_register;
 			is_same_as_source = true;
 			load_needed = false;
 		}
 		else if (destination_register != NULL && destination_register->return_size() !=1)
 		{
+			//cout<<"same as destination_register "<<endl;
 			result_register = destination_register;
 			is_same_as_destination = true;
 			load_needed = true;
 		}
 		else 
 		{
-			result_register = machine_dscr_object.get_new_register();
+			//cout<<"intfloat register  "<<endl;
+
+			if (k ==1) {
+				//cout<<"float register  "<<endl;
+				result_register = machine_dscr_object.get_new_register(float_num);
+			}
+			else
+				result_register = machine_dscr_object.get_new_register(int_num);
 			is_a_new_register = true;
 			load_needed = true;
 		}
@@ -202,13 +233,24 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 
 		break;
 
+
+
+
 	case mc_2r:
 		CHECK_INVARIANT(source_memory, "Sourse ast pointer cannot be NULL for m2r scenario in lra");
 
+		//cout<<"mc2_rregister  "<<endl;
+		k =1;
+		if (source_memory->get_data_type() == int_data_type)
+			k = 0;
 		
 
-		if (typeid(*source_memory) == typeid(Number_Ast<int>))
+		if (typeid(*source_memory) == typeid(Number_Ast<int>)){
 			source_register = NULL;
+		}
+		else if (typeid(*source_memory) == typeid(Number_Ast<float>)){
+			source_register = NULL; 
+		}
 		else
 		{
 			source_symbol_entry = &(source_memory->get_symbol_entry());
@@ -226,7 +268,13 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		}
 		else 
 		{
-			result_register = machine_dscr_object.get_new_register();
+			if (k == 1){
+				//cout<<"mc2_rregister  float"<<endl;
+				result_register = machine_dscr_object.get_new_register(float_num);
+			}
+			else
+				result_register = machine_dscr_object.get_new_register(int_num);
+
 			is_a_new_register = true;
 			load_needed = true;
 		}

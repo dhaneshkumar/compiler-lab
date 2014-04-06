@@ -1,0 +1,34 @@
+Program:
+   Procedure: main
+
+      Basic_Block 2
+         Asgn:
+            LHS (Name : f)
+            RHS (Num : 5.00)
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 1.00)
+      Basic_Block 3
+         Asgn:
+            LHS (Name : b)
+            RHS (
+            Arith: MULT
+               LHS (Name : b)
+               RHS (Name : f))
+         Asgn:
+            LHS (Name : f)
+            RHS (
+            Arith: MINUS
+               LHS (Name : f)
+               RHS (Num : 1.00))
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: GT
+               LHS (Name : f)
+               RHS (Num : 0.00))
+               RHS (Num : 0)
+            True Successor: 3
+            False Successor: 4
+      Basic_Block 4
+         Return <NOTHING>

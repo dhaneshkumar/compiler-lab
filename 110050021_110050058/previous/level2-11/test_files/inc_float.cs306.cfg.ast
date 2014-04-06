@@ -1,0 +1,34 @@
+Program:
+   Procedure: main
+
+      Basic_Block 2
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 10.10)
+         Asgn:
+            LHS (Name : i)
+            RHS (Num : 0)
+         Goto statement:
+            Successor: 4
+      Basic_Block 3
+         Asgn:
+            LHS (Name : a)
+            RHS (
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Num : 0.30))
+         Asgn:
+            LHS (Name : i)
+            RHS (
+            Arith: PLUS
+               LHS (Name : i)
+               RHS (Num : 1))
+      Basic_Block 4
+         If_Else statement:
+            Condition: LE
+               LHS (Name : i)
+               RHS (Num : 9)
+            True Successor: 3
+            False Successor: 5
+      Basic_Block 5
+         Return <NOTHING>

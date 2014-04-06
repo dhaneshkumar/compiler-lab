@@ -1,0 +1,86 @@
+Program:
+   Procedure: main
+
+      Basic_Block 2
+         Asgn:
+            LHS (Name : f1)
+            RHS (Num : 10.30)
+         Asgn:
+            LHS (Name : i1)
+            RHS (Num : 10)
+         Asgn:
+            LHS (Name : i2)
+            RHS (Num : 11)
+         Asgn:
+            LHS (Name : a)
+            RHS (
+            Condition: LT
+               LHS (
+            Condition: LT
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (Name : i2))
+         Asgn:
+            LHS (Name : b)
+            RHS (
+            Condition: LE
+               LHS (
+            Condition: LE
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (Name : i2))
+         Asgn:
+            LHS (Name : c)
+            RHS (
+            Condition: GT
+               LHS (
+            Condition: GT
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (Name : i2))
+         Asgn:
+            LHS (Name : d)
+            RHS (
+            Condition: GE
+               LHS (
+            Condition: GE
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (Name : i2))
+         Asgn:
+            LHS (Name : e)
+            RHS (
+            Arith: PLUS
+               LHS (
+            Arith: PLUS
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (Name : i2))
+         Asgn:
+            LHS (Name : f)
+            RHS (
+            Arith: MINUS
+               LHS (
+            Arith: MINUS
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (Name : i2))
+         Asgn:
+            LHS (Name : g)
+            RHS (
+            Arith: DIV
+               LHS (
+            Arith: DIV
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (Name : i2))
+         Asgn:
+            LHS (Name : h)
+            RHS (
+            Arith: MULT
+               LHS (
+            Arith: MULT
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (Name : i2))
+         Return <NOTHING>

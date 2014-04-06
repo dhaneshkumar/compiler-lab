@@ -1,0 +1,32 @@
+Roll No- 110050021, Dhanesh Kumar
+Roll No- 110050058, Abhilash Gupta
+submisssion of lab 3b, level 2b.
+
+Changes made in parser.yy :
+all the following new types and definitions added in 2a has been expanded, i.e. rules for their parsing were written.
+
+-> atomic: representing an atomic intity. For e.g> variable, constant and (relop_expression)
+-> dataType : representing float, double and integer datatype
+-> typecast_exp: representing typecasted exressions of the format - '(' dataType ')' atomic
+-> Extended the relop expression by adding more cases
+	: atomic
+	: relop_expression (+-*/) relop_expression
+	: typecast_exp
+	: - atomic
+
+-> declaration_statement got 2 new expansions :
+	FLOAT NAME ';'
+	DOUBLE NAME ';'
+
+Changes made in local-environment.h and local-environment-table.cc
+A new class "Eval_Result_Value_Float" has been defined and declared same as in the lines of "Eval_Result_Value_Int" to vcater to float numbers
+since the types of variables possible is int and float, all the functions and classes whose members/dependencies were int variable has now become a struct "dtype"
+which has a float and an int data member to cater to int and floating types respectively.
+All the functions that had a dependency on the fata-type had "int" previously. now they have been updated to handle the struct.
+e.g. now the symbol table contains structs instead of ints and/or floats
+
+Changes made in ast.cc :
+Number_Ast has been updated to accomodate float variables.
+Evaluate of Name_Ast was updated to cater for typecasted variables
+Evaluate of Relational_Expr_Ast was updated to cater to unary negatives,arithemtic expressions for both integer variables and floating point variables
+

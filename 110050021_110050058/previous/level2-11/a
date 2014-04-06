@@ -1,0 +1,172 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure main
+      Local Variables (before evaluating):
+         a : undefined
+         b : undefined
+         c : undefined
+         d : undefined
+         f1 : undefined
+         f2 : undefined
+         f3 : undefined
+         f4 : undefined
+         i1 : undefined
+         i2 : undefined
+         i3 : undefined
+         i4 : undefined
+
+
+      Basic Block: 2
+
+         Asgn:
+            LHS (Name : i1)
+            RHS (Num : 10)
+         i1 : 10
+
+
+         Asgn:
+            LHS (Name : i2)
+            RHS (Num : 11)
+         i2 : 11
+
+
+         Asgn:
+            LHS (Name : i3)
+            RHS (Num : 12)
+         i3 : 12
+
+
+         Asgn:
+            LHS (Name : i4)
+            RHS (Num : 13)
+         i4 : 13
+
+
+         Asgn:
+            LHS (Name : f1)
+            RHS (Num : 4.60)
+         f1 : 4.60
+
+
+         Asgn:
+            LHS (Name : f2)
+            RHS (Num : 7.80)
+         f2 : 7.80
+
+
+         Asgn:
+            LHS (Name : f3)
+            RHS (Num : 5.00)
+         f3 : 5.00
+
+
+         Asgn:
+            LHS (Name : f4)
+            RHS (Num : 9.00)
+         f4 : 9.00
+
+
+         Asgn:
+            LHS (Name : a)
+            RHS (
+            Arith: MINUS
+               LHS (
+            Arith: PLUS
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (
+            Arith: MULT
+               LHS (
+            Arith: DIV
+               LHS (
+            Arith: MULT
+               LHS (
+            Arith: MULT
+               LHS (Name : f1)
+               RHS (Name : f2))
+               RHS (Name : i2))
+               RHS (Name : i4))
+               RHS (Name : f4)))
+         a : -258
+
+
+         Asgn:
+            LHS (Name : b)
+            RHS (
+            Arith: MINUS
+               LHS (
+            Arith: PLUS
+               LHS (
+            Arith: MULT
+               LHS (
+            Arith: MULT
+               LHS (
+            Arith: DIV
+               LHS (
+            Arith: DIV
+               LHS (Name : i1)
+               RHS (Name : i2))
+               RHS (Name : f2))
+               RHS (Name : f1))
+               RHS (Name : i3))
+               RHS (Name : i3))
+               RHS (Name : f2))
+         b : 4
+
+
+         Asgn:
+            LHS (Name : c)
+            RHS (
+            Arith: MINUS
+               LHS (
+            Arith: PLUS
+               LHS (
+            Arith: MULT
+               LHS (
+            Arith: DIV
+               LHS (
+            Arith: DIV
+               LHS (Name : i1)
+               RHS (Name : f1))
+               RHS (Name : i3))
+               RHS (Name : f3))
+               RHS (Name : i2))
+               RHS (Name : f1))
+         c : 7
+
+
+         Asgn:
+            LHS (Name : d)
+            RHS (
+            Arith: MINUS
+               LHS (
+            Arith: PLUS
+               LHS (
+            Arith: MINUS
+               LHS (
+            Arith: MULT
+               LHS (Name : i3)
+               RHS (Name : f2))
+               RHS (Name : f3))
+               RHS (Name : f4))
+               RHS (Name : i2))
+         d : 86
+
+
+         Return <NOTHING>
+
+
+      Local Variables (after evaluating):
+         a : -258
+         b : 4
+         c : 7
+         d : 86
+         f1 : 4.60
+         f2 : 7.80
+         f3 : 5.00
+         f4 : 9.00
+         i1 : 10
+         i2 : 11
+         i3 : 12
+         i4 : 13
+   Global Variables (after evaluating):

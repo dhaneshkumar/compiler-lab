@@ -1,0 +1,35 @@
+Program:
+   Procedure: main
+
+      Basic_Block 2
+         Asgn:
+            LHS (Name : i1)
+            RHS (Num : 1)
+         Asgn:
+            LHS (Name : i2)
+            RHS (Num : 2)
+         Asgn:
+            LHS (Name : i3)
+            RHS (Num : 3)
+         Asgn:
+            LHS (Name : i4)
+            RHS (Num : 4)
+         Asgn:
+            LHS (Name : i5)
+            RHS (Num : 5)
+         Asgn:
+            LHS (Name : i1)
+            RHS (
+            Arith: PLUS
+               LHS (
+            Arith: MINUS
+               LHS (Name : i1)
+               RHS (
+            Arith: MULT
+               LHS (Name : i2)
+               RHS (Name : i3)))
+               RHS (
+            Arith: DIV
+               LHS (Name : i4)
+               RHS (Name : i5)))
+         Return <NOTHING>

@@ -1,0 +1,31 @@
+Roll No- 110050021, Dhanesh Kumar
+Roll No- 110050058, Abhilash Gupta
+
+Changes made in scanner.ll :
+All the relational operators were added as lexemes: "<=" -> LE, "<" -> LT, ">=" -> GE, ">" -> GT, "!=" -> NE, "==" ->EQ
+Assignment operator "=" -> ASSIGN_OP
+"BASIC BLOCK" is a new lexeme, consisting of tokens lof the following format : "<bb "[0-9]+">" 
+
+ast.hh, ast.cc :
+
+3 new ast types were defined:
+Goto_Ast, Relational_Expr_Ast, Conditional_Ast which inherits from Ast class, out of which Goto_Ast is defined to be returnable, because it appears at the end of a Basic Block pointing to the next block.
+
+Parser.h, Parser.ih:
+A new function check_bbno_exists was added in parser.ih which checks if all the goto statements point to valid basic blocks and another store_goto which stores numbers of all the valid basic blocks
+N.B. check_bbno_exists is called by parser.yy after checking the structure of the procedure body
+
+Changes made in parser.yy :
+-> Parsing rules were defined wherever required
+the following types were updated :
+
+-> the relational operators were given precedence as per the token codes
+
+->	if_else_clause: //covers the if expression goto __ else goto __
+	IF '(' relop_expression ')' GOTO BB ';' ELSE GOTO BB
+
+
+->	executable_statement :
+	assignment_statement_list GOTO BB ';'
+	assignment_statement_list if_else_clause ';'
+	

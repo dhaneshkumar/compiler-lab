@@ -220,11 +220,12 @@ public:
 //Cnditional AST
 class Typecast_Ast:public Ast
 {
-	Ast* r1;
+	
 	//Data_Type ndt;
 
 
 public:
+	Ast* r1;
 	Typecast_Ast(Ast* r2, int line);
 	~Typecast_Ast();
 
@@ -232,11 +233,11 @@ public:
 	void print(ostream & file_buffer);
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 	void set_data_type(string *k);
-
+	//Ast * get_ast();
 	Code_For_Ast & compile();
 	Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
 	Data_Type get_data_type();
-	Code_For_Ast & create_store_stmt(Register_Descriptor * store_register);
+	
 };
 
 

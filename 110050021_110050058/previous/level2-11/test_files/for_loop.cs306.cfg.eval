@@ -1,0 +1,174 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure main
+      Local Variables (before evaluating):
+         f1 : undefined
+         i1 : undefined
+
+
+      Basic Block: 2
+
+         Asgn:
+            LHS (Name : i1)
+            RHS (Num : 0)
+         i1 : 0
+
+
+         Asgn:
+            LHS (Name : f1)
+            RHS (Num : 2.53)
+         f1 : 2.53
+
+
+         Goto statement:
+            Successor: 4
+         GOTO (BB 4)
+
+      Basic Block: 4
+
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: LT
+               LHS (Name : f1)
+               RHS (Num : 5.00))
+               RHS (Num : 0)
+            True Successor: 3
+            False Successor: 5
+         Condition True : Goto (BB 3)
+
+      Basic Block: 3
+
+         Asgn:
+            LHS (Name : i1)
+            RHS (
+            Arith: PLUS
+               LHS (
+            Arith: PLUS
+               LHS (
+            Arith: PLUS
+               LHS (Name : i1)
+               RHS (Name : i1))
+               RHS (Name : i1))
+               RHS (
+            Arith: MULT
+               LHS (Name : f1)
+               RHS (Num : 2.00)))
+         i1 : 5
+
+
+         Asgn:
+            LHS (Name : f1)
+            RHS (
+            Arith: PLUS
+               LHS (Name : f1)
+               RHS (Num : 1.00))
+         f1 : 3.53
+
+
+      Basic Block: 4
+
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: LT
+               LHS (Name : f1)
+               RHS (Num : 5.00))
+               RHS (Num : 0)
+            True Successor: 3
+            False Successor: 5
+         Condition True : Goto (BB 3)
+
+      Basic Block: 3
+
+         Asgn:
+            LHS (Name : i1)
+            RHS (
+            Arith: PLUS
+               LHS (
+            Arith: PLUS
+               LHS (
+            Arith: PLUS
+               LHS (Name : i1)
+               RHS (Name : i1))
+               RHS (Name : i1))
+               RHS (
+            Arith: MULT
+               LHS (Name : f1)
+               RHS (Num : 2.00)))
+         i1 : 22
+
+
+         Asgn:
+            LHS (Name : f1)
+            RHS (
+            Arith: PLUS
+               LHS (Name : f1)
+               RHS (Num : 1.00))
+         f1 : 4.53
+
+
+      Basic Block: 4
+
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: LT
+               LHS (Name : f1)
+               RHS (Num : 5.00))
+               RHS (Num : 0)
+            True Successor: 3
+            False Successor: 5
+         Condition True : Goto (BB 3)
+
+      Basic Block: 3
+
+         Asgn:
+            LHS (Name : i1)
+            RHS (
+            Arith: PLUS
+               LHS (
+            Arith: PLUS
+               LHS (
+            Arith: PLUS
+               LHS (Name : i1)
+               RHS (Name : i1))
+               RHS (Name : i1))
+               RHS (
+            Arith: MULT
+               LHS (Name : f1)
+               RHS (Num : 2.00)))
+         i1 : 75
+
+
+         Asgn:
+            LHS (Name : f1)
+            RHS (
+            Arith: PLUS
+               LHS (Name : f1)
+               RHS (Num : 1.00))
+         f1 : 5.53
+
+
+      Basic Block: 4
+
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: LT
+               LHS (Name : f1)
+               RHS (Num : 5.00))
+               RHS (Num : 0)
+            True Successor: 3
+            False Successor: 5
+         Condition False : Goto (BB 5)
+
+      Basic Block: 5
+
+         Return <NOTHING>
+
+
+      Local Variables (after evaluating):
+         f1 : 5.53
+         i1 : 75
+   Global Variables (after evaluating):

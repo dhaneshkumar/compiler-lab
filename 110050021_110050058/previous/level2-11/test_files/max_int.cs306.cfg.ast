@@ -1,0 +1,14 @@
+Program:
+   Procedure: main
+
+      Basic_Block 2
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 2147483647)
+         Asgn:
+            LHS (Name : b)
+            RHS (
+            Arith: MULT
+               LHS (Name : a)
+               RHS (Num : 2))
+         Return <NOTHING>

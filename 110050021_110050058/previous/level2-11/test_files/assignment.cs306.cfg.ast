@@ -1,0 +1,17 @@
+Program:
+   Procedure: main
+
+      Basic_Block 2
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 5.00)
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 6)
+         Asgn:
+            LHS (Name : b)
+            RHS (Name : a)
+         Asgn:
+            LHS (Name : a)
+            RHS (Name : b)
+         Return <NOTHING>
