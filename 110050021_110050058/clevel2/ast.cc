@@ -1063,7 +1063,7 @@ Code_For_Ast & Relational_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra){
 	
 
 
-	if (typeid(*rhs) == typeid(Relational_Expr_Ast)) 
+	if ((typeid(*rhs) == typeid(Relational_Expr_Ast))   || (typeid(*rhs) == typeid(Typecast_Ast)))
 	{
 		 load_stmt1 = rhs->compile_and_optimize_ast(lra2);
 	}
